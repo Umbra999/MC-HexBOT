@@ -1,0 +1,3 @@
+﻿using MCHexBOT;
+
+Main.Init();
