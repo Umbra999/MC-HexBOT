@@ -79,6 +79,7 @@ namespace MCHexBOT.Network
             registry.AddPaket(0x49, new Pakets.Client.Play.UpdateViewPositionPaket(), MinecraftState.Play);
             registry.AddPaket(0x1D, new Pakets.Client.Play.UnloadChunkPaket(), MinecraftState.Play);
             registry.AddPaket(0x4B, new Pakets.Client.Play.SpawnPositionPaket(), MinecraftState.Play);
+            registry.AddPaket(0x1A, new Pakets.Client.Play.DisconnectPaket(), MinecraftState.Play);
         }
 
         // Pakets the server can understand

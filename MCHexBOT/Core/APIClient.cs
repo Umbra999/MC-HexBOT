@@ -1,8 +1,7 @@
-﻿using MCHexBOT.Utils;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Net;
 using System.Text;
-using static MCHexBOT.Utils.Misc;
+using static MCHexBOT.Utils.APITypes;
 
 namespace MCHexBOT.Core
 {

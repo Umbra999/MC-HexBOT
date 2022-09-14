@@ -2,7 +2,6 @@
 using MCHexBOT.Pakets;
 using MCHexBOT.Pakets.Client.Login;
 using MCHexBOT.Pakets.Client.Play;
-using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Math;
 using System.Numerics;
@@ -15,10 +14,14 @@ namespace MCHexBOT.Core
     {
         public MinecraftConnection Connection { get; set; }
         private APIClient APIClient { get; set; }
+        private MinecraftClient MinecraftClient { get; set; }
 
-        public PaketHandler(APIClient Client)
+        private bool IsReady = false;
+
+        public PaketHandler(APIClient Client, MinecraftClient minecraft)
         {
             APIClient = Client;
+            MinecraftClient = minecraft;
         }
 
         public void Handshake(IPaket paket)
@@ -45,9 +48,9 @@ namespace MCHexBOT.Core
                 Logger.LogSuccess($"Authenticated as {loginSuccessPaket.Username} [{loginSuccessPaket.Uuid}]");
             }
 
-            if (paket is DisconnectPaket disconnectPaket)
+            if (paket is Pakets.Client.Login.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError("Disconnected: " + disconnectPaket.Message);
+                Logger.LogError("Disconnected [JOIN]: " + disconnectPaket.Message);
             }
         }
 
@@ -55,40 +58,28 @@ namespace MCHexBOT.Core
         {
             if (paket is JoinGamePaket joinGamePaket)
             {
-                Logger.LogSuccess($"{APIClient.CurrentUser.name} joined the game");
-                Logger.LogDebug("Gamemode: " + joinGamePaket.Gamemode);
-                Logger.LogDebug("Sim Dist: " + joinGamePaket.SimulationDistance);
-
-                Connection.SendPaket(new Pakets.Server.Play.ClientSettingsPaket()
+                if (!IsReady)
                 {
-                    AllowServerListings = true,
-                    ChatColors = true,
-                    ChatMode = 0,
-                    DisplayedSkinParts = byte.MaxValue,
-                    MainHand = 0,
-                    EnableTextFiltering = false,
-                    Locale = "en_GB",
-                    ViewDistance = int.MaxValue
-                });
+                    Logger.LogSuccess($"{APIClient.CurrentUser.name} joined the game");
+                    Logger.LogDebug("Gamemode: " + joinGamePaket.Gamemode);
+                    Logger.LogDebug("Sim Dist: " + joinGamePaket.SimulationDistance);
+                    Logger.LogDebug("EntityID: " + joinGamePaket.EntityId);
 
-                Connection.SendPaket(new Pakets.Server.Play.ClientStatusPaket()
-                {
-                    ActionID = 0
-                });
-            }
+                    MinecraftClient.CurrentPlayer.EntityID = joinGamePaket.EntityId;
+                    MinecraftClient.CurrentPlayer.Gamemode = joinGamePaket.Gamemode;
 
-            if (paket is SpawnPositionPaket spawnPaket)
-            {
-                Logger.LogDebug($"Received Spawnpont: {spawnPaket.Location.X}/{spawnPaket.Location.Y}/{spawnPaket.Location.Z} [{spawnPaket.Angle}]");
-                //Connection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
-                //{
-                //    OnGround = true,
-                //    X = spawnPaket.Location.X,
-                //    FeetY = spawnPaket.Location.Y,
-                //    Z = spawnPaket.Location.Z,
-                //    Yaw = 192,
-                //    Pitch = 0
-                //});
+                    Connection.SendPaket(new Pakets.Server.Play.ClientSettingsPaket()
+                    {
+                        AllowServerListings = true,
+                        ChatColors = true,
+                        ChatMode = 0,
+                        DisplayedSkinParts = byte.MaxValue,
+                        MainHand = 0,
+                        EnableTextFiltering = false,
+                        Locale = "en_us",
+                        ViewDistance = 64
+                    });
+                }
             }
 
             if (paket is KeepAlivePaket keepAlivePaket)
@@ -101,7 +92,7 @@ namespace MCHexBOT.Core
 
             if (paket is SpawnPlayerPaket spawnPlayerPaket)
             {
-                Logger.LogDebug($"Spawning player at {spawnPlayerPaket.X} {spawnPlayerPaket.Y} {spawnPlayerPaket.Z} [{spawnPlayerPaket.Yaw} / {spawnPlayerPaket.Pitch}]");
+                //Logger.LogDebug($"Spawning player at {spawnPlayerPaket.X} {spawnPlayerPaket.Y} {spawnPlayerPaket.Z} [{spawnPlayerPaket.Yaw} / {spawnPlayerPaket.Pitch}]");
             }
 
             if (paket is AcknowledgePlayerDiggingPaket acknowledgePlayerDigging)
@@ -118,17 +109,17 @@ namespace MCHexBOT.Core
 
             if (paket is PlayerInfoPaket playerInfoPaket)
             {
-                if (playerInfoPaket.Action == 0)
-                {
-                    foreach (var p in playerInfoPaket.Players)
-                    {
-                        Logger.LogDebug($"PLAYER: {p.Name} > Gamemode: {p.GameMode} Ping: {p.Ping}");
-                    }
-                }
+                //foreach (var p in playerInfoPaket.Players)
+                //{
+                //    Logger.LogDebug($"PLAYER: {p.Name} > Gamemode: {p.GameMode} Ping: {p.Ping}");
+                //}
             }
 
             if (paket is UpdateHealthPaket updateHealthPaket)
             {
+                MinecraftClient.CurrentPlayer.Food = updateHealthPaket.Food;
+                MinecraftClient.CurrentPlayer.Health = updateHealthPaket.Health;
+                MinecraftClient.CurrentPlayer.FoodSaturation = updateHealthPaket.Saturation;
                 //Logger.LogDebug($"Health update: Health: {updateHealthPaket.Health} Food: {updateHealthPaket.Food} Saturation: {updateHealthPaket.Saturation}");
             }
 
@@ -146,6 +137,29 @@ namespace MCHexBOT.Core
                         TeleportID = positionPaket.TeleportID
                     });
                 }
+
+                if (!IsReady)
+                {
+                    IsReady = true;
+                    Connection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
+                    {
+                        X = positionPaket.X,
+                        FeetY = positionPaket.Y,
+                        Z = positionPaket.Z,
+                        OnGround = true,
+                        Pitch = positionPaket.Pitch,
+                        Yaw = positionPaket.Yaw
+                    });
+                }
+
+                MinecraftClient.CurrentPlayer.Position = new Vector3((float)positionPaket.X, (float)positionPaket.Y, (float)positionPaket.Z);
+                MinecraftClient.CurrentPlayer.PositionYaw = positionPaket.Yaw;
+                MinecraftClient.CurrentPlayer.PositionYaw = positionPaket.Pitch;
+            }
+
+            if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
+            {
+                Logger.LogError("Disconnected [PLAY]:: " + disconnectPaket.Message);
             }
         }
 

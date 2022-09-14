@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Core;
+using MCHexBOT.Features;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT
@@ -8,6 +9,26 @@ namespace MCHexBOT
         public static List<MinecraftClient> Clients = new();
         public static void Init()
         {
+            Console.Title = "HexBOT | Minecraft";
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine(@"
+          
+ ▄▀▀▄ ▄▄   ▄▀▀█▄▄▄▄  ▄▀▀▄  ▄▀▄  ▄▀▀█▄▄▄▄  ▄▀▀█▄▄  
+█  █   ▄▀ ▐  ▄▀   ▐ █    █   █ ▐  ▄▀   ▐ █ ▄▀   █ 
+▐  █▄▄▄█    █▄▄▄▄▄  ▐     ▀▄▀    █▄▄▄▄▄  ▐ █    █ 
+   █   █    █    ▌       ▄▀ █    █    ▌    █    █ 
+  ▄▀  ▄▀   ▄▀▄▄▄▄       █  ▄▀   ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
+ █   █     █    ▐     ▄▀  ▄▀    █    ▐   █     ▐  
+ ▐   ▐     ▐         █    ▐     ▐        ▐        
+      _
+     |u|
+   __|m|__
+   \+-b-+/       Beautiful girls, dead feelings...
+    ~|r|~        one day the sun is gonna explode and all this was for nothing.
+     |a|
+      \|
+");
+
             CreateBots();
             RunGUI();
         }
@@ -16,7 +37,7 @@ namespace MCHexBOT
         {
             APIClient Client = new();
 
-            if (await Client.Login("XBL3.0 x=7114187592185725983;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.RWwR0lP0n5WWuJRID3Q4xZvuoMfak0ihkPAx23vtxVzTxyE9UIy-E9pIrpsM4DqoNYzHUBEAXiuWS7CmenFyCiLbcHZNrw3xBkDzjzt0vM0Bquq2DO1d5l-HA_zG4pWvfbRYVR9i3Zq6aImEP6Xgd6LO7_nQM_CO1mHZzQL2M0Xxj5hvO3YHKpJyhuhtCOb9wWtKejrDtDTCLz9LjGn1HzIjkQonWGD5NmbcIE_4KoG4Rg8eW8xndx68WOfUXVxQrU51sl5N4KEySNxi2nQDW2EneXk9lfc8dVDUfLxtktdPD3D0WHUhzmMXXzyzPCfA3XxDSCbGFuQqtF9mHJFYbA.UGTzujogGgtmYlDwoiSsiA.qxm1q2kHQBZj_5pLTFj8RU7FZjRte8Mgya7yx2oznPKGzuocYgueO1LKcwiu0Yn4_fvl5jBk7r6vHW1zkFcIyANA43lzRqUdUBPrUdpl9_OhUYYYlYJfFW6bcLe5BMnw0XH8s3fhFJ_ESi54ZxmurqSTNXDRMf_QBUP4NMZNb7Z3wbv6hVVoVIxLVV1AtxKlwlHqy-vcQhQCe1lM1ju02LoNCWmiz_LyRcBDZ81YtFcG1z_KqhGc77AhGfVJmtRYIAM5v2IbaAMiwqEdadsSsZ_NvYudcXansoWN3y0aQmmfL5SyGG_HX-c0SgT298bHQmOpTwNvgbIiiWwdQ0joNIpjFt_PI0QGF7MH7yDP3hTioGJEtq7xnToAou9e2Qr6vXN0iSpEfwQ_ZfLqctfF2P3oMa9aAMvzETou8WDbyXmbWbtrA8yZCYYKqnuSsQXQVsWLyroz-obkxZt6QaOvMdHt7nrjd72OzM8EiSf8v0a1oEFKzpRkjFxnctIwBUbYnRnc_r6Jlt03wmpq3YE0QFvAL7SkJadiTsMz-Lxq4TqQs0DFEByagQmqYeElsU4LUBfJLMaoCDEhBvKcawqVwxFp-yL-J9jO_q_v5b8xYYUL8tGzXkmch5F-tWHaE9hQFckAjgWwH2FAq7R_kOu7dWeuFNVnQ3DF95NnRBMgldvghN8qek2pAThMnBCrDO3Erf0steE3w4tcYIQkb46HeItJt0tTgLJpYgsr7_8Kyraog7io0X8jY6To4t7hh2_890AH2r-klQz2P87sOym5RbfeDAC70E10XOg3MzZ7HTH38gvjrEC50W3GuBqruK4DjHKywHU4wMETyT7pVTRNkC-ak9gn8rpzzEpPZXgGZwlPwq54VkX6SEhTWxGiCBqfvyeUs16kYj5351zU9lH5r3x_cSzwVmgnPqmg90WoXK7MW-ixRtzuZdeUpJ_SIti6v_RnIYWwWJCL4aIfHbpWOKqOCMl2wrav1mUaQIC4b5T_kpBBqILkWpYmxQJU483vMcMkVEZEoD-fcX5iDxz467RGX0NVS67ATKQjAAdFsIb6CgbtB1nbbN7YKHFzkGppk2D28GN4StCyPftd0Gv1mBSY0m_opMc9fnRsHDXkeQALNQZ2KexssbWD0eXv7ab0jJbIpjyinog7BVOR3iypxHx-UpJuCSBmBsIxUXEograyH_gzXXPCc2FMLyeePefULELgCEMhA82jNh52IRvIFN6e02icZaW_m-rkLd9CSOlQj7khY6jn9XOFXYW4d_oTTL4TJPe9IBL10KuiNzWT4Uut0ok8W6wktDOKOCzPV6tueLxt9Ob2jNbyhF6vdTVtsyMU0ARRI2CtnSKSPCU2DInuk0tZfsrJENYUI1YvPvzmpk8p67SrhLH72cbQLGuDtWfOcdhe9a0S5y_RYO_WF_8A4Cm2JIimJRQvzAhlY06ghqw0yqKX8JzXV36aPXPbmNqtAG8DpJu9Gd9Vf1o1WUMcb_qvKCFkP6MU76TzYLrey4Eq4Bq_xrWE2LdscwjtIaTO8yZUMLGCQYGnAsSo2_7tSXdfVu-YJ7q4M4TFfLg9d8_KYwFAG9weNYUZ7rwL.KtBrQWbIJdxa28PiYv0QgA"))
+            if (await Client.Login("XBL3.0 x=2276113179421336668;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.PtSEQvIm2Ad8cC_FMKi8hbtSJeJ2vFjZecL11MeLaIGQ5BMd1in3bUyLv5_c6Hu2nKMvrvYC7isTDewhVZ5Ee0mmVeX8D_YiLxc0LQN-5wcKfQXOBhS44Y1TlOLomxArVvuEAbuYtPAs3lkrmkDwgEQKFgP9AZP2x0sPAL5Y9zo8rbJadTzV3sUEV_Ie4Tmq4mi-RGPhfpPs6Rl2okFJ2rgdwMK4kxK4fxDkSG3Gr6NaAUyCz2wuWISahqlkRH9-V4prgKFq-P0thkzP67lUCsh230QlA9vG1tSr6rD3NSWDFH0N8Mh_jzEfPqG3qlfDruGfMvEaT5wtrHkEozBkmg.fEi3ENT5ExQI7_WJ6_0PvQ.fKS8Fz1QgspbylXsiyEpIQM6SiL8m1a07wXZqqxoQiLVpWDIh0nKPcQiJEkOs2Uf1XT_Sw1nK87ZsmT03zJ8l57gDLN8TgnIJlXMbc8kU-K9z_AkeEnsBg_k-VHogMZciMbViNjHm6yAEnbQibgWGh9He1AbBQA9RIEH1jUzBrt_6zphGFsK_ImbcxqkGN-pTyt12dE8TujmObiekV7Sa3PpAX2KWHc0uW1PAJa-_93TjOl-P34bmSNB_6oL49V1hs1_Vm8Q5LSTQAjgWhLFWdVSo1PHQYbbAftWj559d3FfR19i9fyNrwtBzY3FkIlr76my1GWtpkNPkZZyWWCgGjMtjA58d2pO0au2Ns4ZaViJZ-IBSAWbrZ5D7QmkCNz4eMfqPZKQpLAG0VGWrc63F5rPxyOdRxyjrgYCz73MwlNH1_09FA6fbiEfWM1Ix_xrGHi6RWcNQaG9fjfbq9SrR_CWaio8Ht_u8_Jk708xCpN3gFGhQE1qLzaFNSRfwo8R25IhGzWpvFwC1itFYh2xCCjJtHKjCudiggMDM0UvkCOHXpupvudtZwoLfWyTujhl2Dpyq9S-q6cdRpdN7IRFVhypP9fjxNEQ2HTYb5XFB5P8KSw5ABd8SDInnY009XhNeMTpJ9T5GZNtSB4zI3HtkuPKxcjixznwALsyhBv2LMPjE2mQ6yb9xp872W1DPiieZG0DxWXki8LAQkoxrLBm5doKOL1NoTLQo8YwUb9JJsBMCPgMCC4iqalpJsT5usjPFpFUs1IfcA34xR7Q-s_q2QpOVLgUIKz6lY8MC9mJEuEskdJa4cTJKHukCVLJpyA5QN2QOXGJLZLOgqhr34U5hMKPPXNbtSPCvSIwBIuQXAq4CrMe1aMHWVpsCWYlXQweCC2sFtHP_12BtxavRBC70jmcg_XzWp-FtHuEAsF4UH0k5CsfA-VA7QIgdjAMTqNP_qPsEoqXyrUMaM2PYcJth_wxpLYDz8mn2QHM1_Kl6KG1TUkfZkrZiYkJYQSKEm4m2TGHHkbSsbGqxqW4aGWFpTz8bYGXNMcm6O__fJoibCClDiNX47Lm6WUBpth5GlxcX5uEVn1ukepBcOn84W45MVY6xwCqRqiVk64oBxOqdtSuozifszFhhcyz_mREvxmzr1fBz2waE02tLCYRdGpS5BKAgWtlbE-33QfO8KD4WRAvNarnrFwEjXzjsv8wgzn-so2dRmXlMZ99Mc7Rhyvy8dreIQGD6yjk2D1RaE4EH7XXvPh5ySMGNUF-DBK_zwYEf52BWps8dhQkrBbzrdRg6pc_98i-VtADFMxNJjMzjwCeI3fy1zn8uhuI6jhzJJFkPTX07MOzXCCp_j_T_NpeRSL0Ofp7d5eaRJFg_2YhuXbKd8cDvB8JSmhOmJrmiCub_3iy6qyU9IQHFA0DO2bE2jU29P06Ic51aauQlaoYFbTVMs1FYyp92Sc0d0FEy4f_HngmzYdfNeeGXHn36j-CfxsnVMyg-Fzj2II4WMXAWAL0rPWqdztspDoDojqgD1DuONvJTcXWI_okJBgqx_VdPGkipW59jjTalJh4iYOMs8RpKkHRArrQ5YiYaEyhmUT_.lxUqHtrpjZiOe-lTZS2CKg"))
             {
                 Clients.Add(new MinecraftClient(Client));
             }
@@ -28,7 +49,9 @@ namespace MCHexBOT
             {
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("J [IP:PORT] - Join a Server");
-                Logger.LogImportant("L - Leave a Server");
+                Logger.LogImportant("C [MESSAGE] - Send a Chat Message");
+                Logger.LogImportant("R - Respawn");
+                Logger.LogImportant("S [true / false] - Skinblinker");
 
                 string input = Console.ReadLine();
                 new Thread(() => { HandleInput(input); Thread.CurrentThread.IsBackground = true; }).Start();
@@ -48,10 +71,31 @@ namespace MCHexBOT
                     }
                     break;
 
-                case "l":
+                case "c":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.Disconnect();
+                        Client.SendChat(input.Substring(2));
+                    }
+                    break;
+
+                case "r":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.SendRespawn();
+                    }
+                    break;
+
+                case "z":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        new Thread(() => { Client.SendMovement(); Thread.CurrentThread.IsBackground = true; }).Start();
+                    }
+                    break;
+
+                case "s":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        SkinBlinker.ToggleSkinBlinker(Client, input.Substring(2) == "true");
                     }
                     break;
             }

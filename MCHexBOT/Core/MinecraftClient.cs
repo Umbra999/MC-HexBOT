@@ -3,35 +3,27 @@ using MCHexBOT.Network;
 using MCHexBOT.Pakets.Server.Handshake;
 using MCHexBOT.Pakets.Server.Login;
 using System.Net.Sockets;
+using MCHexBOT.Pakets.Server.Play;
+using static MCHexBOT.Utils.GameTypes;
 
 namespace MCHexBOT.Core
 {
     public class MinecraftClient
     {
         public readonly APIClient APIClient;
-        MinecraftConnection MCConnection;
+        public MinecraftConnection MCConnection;
+        public Player CurrentPlayer;
 
         public MinecraftClient(APIClient WebClient)
         {
             APIClient = WebClient;
+            CurrentPlayer = new();
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
 
-        public bool Disconnect()
-        {
-            if (MCConnection == null) return false;
-            MCConnection.Dispose();
-            MCConnection = null;
-
-            Logger.LogWarning($"{APIClient.CurrentUser.name} disconnected");
-            return true;
-        }
-
         public void Connect(string Version, string Host, int Port)
         {
-            if (MCConnection != null) Disconnect();
-
             TcpClient cl = new(Host, Port);
 
             MCConnection = new MinecraftConnection(cl);
@@ -47,7 +39,7 @@ namespace MCHexBOT.Core
             MCConnection.WriterRegistry = writer;
             MCConnection.ReaderRegistry = reader;
 
-            MCConnection.Handler = new PaketHandler(APIClient)
+            MCConnection.Handler = new PaketHandler(APIClient, this)
             {
                 Connection = MCConnection
             };
@@ -73,6 +65,38 @@ namespace MCHexBOT.Core
             {
                 Username = APIClient.CurrentUser.name
             });
+        }
+
+        public void SendChat(string Message)
+        {
+            MCConnection.SendPaket(new ChatMessagePaket()
+            {
+                Message = Message
+            });
+        }
+
+        public void SendRespawn()
+        {
+            MCConnection.SendPaket(new ClientStatusPaket()
+            {
+                ActionID = 0
+            });
+        }
+
+        public void SendMovement()
+        {
+            for (; ; )
+            {
+                MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionPaket()
+                {
+                    X = 1143,
+                    FeetY = 92,
+                    Z = -518,
+                    OnGround = true,
+                });
+
+                Thread.Sleep(50);
+            }
         }
     }
 }

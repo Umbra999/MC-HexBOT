@@ -7,13 +7,14 @@ using Ionic.Zlib;
 
 namespace MCHexBOT.Network
 {
-    public class MinecraftConnection : IDisposable
+    public class MinecraftConnection
     {
         private TcpClient Tcp { get; set; }
-        public MinecraftState State { get; set; }
         public MinecraftStream ReadStream { get; private set; }
         public MinecraftStream WriteStream { get; private set; }
         public CancellationToken CancellationToken { get; set; }
+
+        public MinecraftState State { get; set; }
 
         public Queue<PacketQueueItem> PaketQueue { get; set; } = new Queue<PacketQueueItem>();
         public PaketRegistry WriterRegistry { get; set; }
@@ -103,7 +104,7 @@ namespace MCHexBOT.Network
         {
             try
             {
-                SpinWait sw = new SpinWait();
+                SpinWait sw = new();
 
                 while (!CancellationToken.IsCancellationRequested && !TerminateThreads)
                 {
@@ -229,7 +230,7 @@ namespace MCHexBOT.Network
 
                     using MinecraftStream a = new(CancellationToken);
 
-                    using (ZlibStream zstream = new(a, Ionic.Zlib.CompressionMode.Decompress, true))
+                    using (ZlibStream zstream = new(a, CompressionMode.Decompress, true))
                     {
                         zstream.Write(cache);
                     }
@@ -257,8 +258,6 @@ namespace MCHexBOT.Network
             {
                 if (paket == null) return null;
 
-                //Logger.LogWarning($"Received {paket}");
-
                 using (var memoryStream = new MemoryStream(paketData))
                 {
                     using MinecraftStream minecraftStream = new(memoryStream, CancellationToken);
@@ -275,7 +274,7 @@ namespace MCHexBOT.Network
             }
             catch (Exception e)
             {
-                Logger.LogError("EXCEPTION IN READ: " + e.Message);
+                //Logger.LogError("EXCEPTION IN READ: " + e.Message);
                 return null;
             }
         }
@@ -290,18 +289,6 @@ namespace MCHexBOT.Network
                     Paket = paket
                 });
             }
-        }
-
-        public void Dispose()
-        {
-            TerminateThreads = true;
-            Tcp.GetStream().Close();
-            Tcp.Close();
-            Tcp.Dispose();
-            Tcp = null;
-
-            GC.Collect();
-            GC.SuppressFinalize(this);
         }
     }
 }

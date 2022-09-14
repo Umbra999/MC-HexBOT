@@ -1,7 +1,5 @@
 ﻿using MCHexBOT.Utils.Math;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Numerics;
 
 namespace MCHexBOT.Utils.Data
 {
@@ -12,17 +10,17 @@ namespace MCHexBOT.Utils.Data
             switch (face)
             {
                 case BlockFace.Down:
-                    return Vector3.Down;
+                    return new Vector3(0, -1, 0);
                 case BlockFace.Up:
-                    return Vector3.Up;
+                    return new Vector3(0, 1, 0);
                 case BlockFace.East:
-                    return Vector3.Right;
+                    return new Vector3(1, 0, 0);
                 case BlockFace.West:
-                    return Vector3.Left;
+                    return new Vector3(-1, 0, 0);
                 case BlockFace.North:
-                    return Vector3.Forward;
+                    return new Vector3(0, 0, 1);
                 case BlockFace.South:
-                    return Vector3.Backward;
+                    return new Vector3(0, 0, -1);
                 default:
                     return Vector3.Zero;
             }

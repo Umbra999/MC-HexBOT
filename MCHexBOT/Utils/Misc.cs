@@ -1,10 +1,40 @@
-﻿using System.Collections;
+﻿using MCHexBOT.Pakets.Client.Play;
+using Org.BouncyCastle.Asn1.Mozilla;
+using System;
+using System.Collections;
 using System.Text;
 
 namespace MCHexBOT.Utils
 {
-    public class Misc
+    public static class Misc
     {
+        public static string RandomString(int length)
+        {
+            char[] array = "abcdefghlijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToArray();
+            string text = string.Empty;
+            for (int i = 0; i < length; i++)
+            {
+                text += array[new Random(Environment.TickCount).Next(array.Length)].ToString();
+            }
+            return text;
+        }
+
+        public static string RandomNumberString(int length)
+        {
+            char[] array = "0123456789".ToArray();
+            string text = string.Empty;
+            for (int i = 0; i < length; i++)
+            {
+                text += array[new Random(Environment.TickCount).Next(array.Length)].ToString();
+            }
+            return text;
+        }
+
+        public static byte RandomByte()
+        {
+            return (byte)new Random(Environment.TickCount).Next(0, 255);
+        }
+
         public static string FromBase64(string Data)
         {
             var base64EncodedBytes = Convert.FromBase64String(Data);
@@ -14,45 +44,6 @@ namespace MCHexBOT.Utils
         public static string ToBase64(string Data)
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(Data));
-        }
-
-        public class SelfAuthUser
-        {
-            public string access_token { get; set; }
-            public int expires_in { get; set; }
-            public string[] roles { get; set; } // im not sure if string because always empty
-            public string token_type { get; set; }
-            public string username { get; set; }
-        }
-
-        public class SelfAPIUser
-        {
-            public Cape[] capes { get; set; }
-            public string id { get; set; }
-            public string name { get; set; }
-            public Skin[] skins { get; set; }
-        }
-
-        public class Cape
-        {
-            public string alias { get; set; }
-            public string id { get; set; }
-            public string state { get; set; }
-            public string url { get; set; }
-        }
-
-        public class Skin
-        {
-            public string id { get; set; }
-            public string state { get; set; }
-            public string url { get; set; }
-            public string variant { get; set; }
-        }
-
-        public class APIUser
-        {
-            public string id { get; set; }
-            public string name { get; set; }
         }
 
         public static Hashtable ProtocolVersions = new()
@@ -72,5 +63,10 @@ namespace MCHexBOT.Utils
             { "1.18", 758 },
             { "1.19", 760 },
         };
+
+        public class Player
+        {
+
+        }
     }
 }

@@ -2,19 +2,6 @@
   "version": 3,
   "targets": {
     "net6.0": {
-      "fNbt/0.6.4": {
-        "type": "package",
-        "compile": {
-          "lib/net35-client/fNbt.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net35-client/fNbt.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Iconic.Zlib.Netstandard/1.0.0": {
         "type": "package",
         "dependencies": {
@@ -60,6 +47,15 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {
             "related": ".xml"
           }
+        }
+      },
+      "MiNET.fnbt/1.0.22": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp2.1/fNbt.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/fNbt.dll": {}
         }
       },
       "NETStandard.Library/1.6.0": {
@@ -1210,19 +1206,6 @@
     }
   },
   "libraries": {
-    "fNbt/0.6.4": {
-      "sha512": "ApHeYBciy/XixfMdHjknJ4ct4bCrg/rWCOgiI/YyHRp5JMtldEWnQFc23y+S7MOZbL7rG2L+cD8r9P2U1ardqQ==",
-      "type": "package",
-      "path": "fnbt/0.6.4",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "fnbt.0.6.4.nupkg.sha512",
-        "fnbt.nuspec",
-        "lib/net35-client/fNbt.dll",
-        "lib/net35-client/fNbt.xml"
-      ]
-    },
     "Iconic.Zlib.Netstandard/1.0.0": {
       "sha512": "1CqyBU2WER/qDzatH4zRv25/YrUYn5dyJ0zMkk7J78yjQ9VSfwkLoF1VGn6kyXAtMVe2wxQp4AFjj7gbGeIDhg==",
       "type": "package",
@@ -1302,6 +1285,18 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._"
+      ]
+    },
+    "MiNET.fnbt/1.0.22": {
+      "sha512": "gMEJPFWHJ+WXKLnfu5INM6Vn+tgsUpfwhYevnafCCOFDIKFJjCstDBUVYAbbtfe99ZM94Cd9OL2PBJ2pY3bhAA==",
+      "type": "package",
+      "path": "minet.fnbt/1.0.22",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp2.1/fNbt.dll",
+        "minet.fnbt.1.0.22.nupkg.sha512",
+        "minet.fnbt.nuspec"
       ]
     },
     "NETStandard.Library/1.6.0": {
@@ -4324,8 +4319,8 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "Iconic.Zlib.Netstandard >= 1.0.0",
-      "Newtonsoft.Json >= 13.0.1",
-      "fNbt >= 0.6.4"
+      "MiNET.fnbt >= 1.0.22",
+      "Newtonsoft.Json >= 13.0.1"
     ]
   },
   "packageFolders": {
@@ -4335,11 +4330,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Umbra\\source\\repos\\MCHexBOT\\MCHexBOT\\MCHexBOT.csproj",
+      "projectUniqueName": "C:\\Users\\Umbra\\Documents\\GitHub\\HexbotMC\\MCHexBOT\\MCHexBOT.csproj",
       "projectName": "MCHexBOT",
-      "projectPath": "C:\\Users\\Umbra\\source\\repos\\MCHexBOT\\MCHexBOT\\MCHexBOT.csproj",
+      "projectPath": "C:\\Users\\Umbra\\Documents\\GitHub\\HexbotMC\\MCHexBOT\\MCHexBOT.csproj",
       "packagesPath": "C:\\Users\\Umbra\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Umbra\\source\\repos\\MCHexBOT\\MCHexBOT\\obj\\",
+      "outputPath": "C:\\Users\\Umbra\\Documents\\GitHub\\HexbotMC\\MCHexBOT\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -4377,13 +4372,13 @@
             "target": "Package",
             "version": "[1.0.0, )"
           },
+          "MiNET.fnbt": {
+            "target": "Package",
+            "version": "[1.0.22, )"
+          },
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[13.0.1, )"
-          },
-          "fNbt": {
-            "target": "Package",
-            "version": "[0.6.4, )"
           }
         },
         "imports": [
@@ -4405,17 +4400,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Das Paket \"fNbt 0.6.4\" wurde nicht mit dem Projektzielframework \"net6.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
-      "libraryId": "fNbt",
-      "targetGraphs": [
-        "net6.0"
-      ]
-    }
-  ]
+  }
 }

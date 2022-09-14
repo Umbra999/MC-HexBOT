@@ -7,14 +7,10 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
-using System.Threading;
 
 namespace MCHexBOT.Network
 {
@@ -30,12 +26,9 @@ namespace MCHexBOT.Network
 		{
 			get
 			{
-				if (_originalBaseStream is NetworkStream ns)
-				{
-					return ns.DataAvailable;
-				}
+				if (_originalBaseStream is NetworkStream ns) return ns.DataAvailable;
 
-				return _originalBaseStream.Position < _originalBaseStream.Length;
+                return _originalBaseStream.Position < _originalBaseStream.Length;
 			}
 		}
 
@@ -55,12 +48,10 @@ namespace MCHexBOT.Network
 		public void InitEncryption(byte[] key)
 		{
 			EncryptCipher = new BufferedBlockCipher(new CfbBlockCipher(new AesEngine(), 8));
-			EncryptCipher.Init(true, new ParametersWithIV(
-				new KeyParameter(key), key, 0, 16));
+			EncryptCipher.Init(true, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
 
 			DecryptCipher = new BufferedBlockCipher(new CfbBlockCipher(new AesEngine(), 8));
-			DecryptCipher.Init(false, new ParametersWithIV(
-				new KeyParameter(key), key, 0, 16));
+			DecryptCipher.Init(false, new ParametersWithIV(new KeyParameter(key), key, 0, 16));
 
 			BaseStream = new CipherStream(BaseStream, DecryptCipher, EncryptCipher);
 		}
@@ -320,21 +311,6 @@ namespace MCHexBOT.Network
 			var y = Convert.ToSingle(val & 0xFFF);
 			var z = Convert.ToSingle((val << 38 >> 38) >> 12);
 
-			/*if (x >= (2^25))
-			{
-				x -= 2^26;
-			}
-
-			if (y >= (2^11))
-			{
-				y -= 2^12;
-			}
-
-			if (z >= (2^25))
-			{
-				z -= 2^26;
-			}*/
-
 			return new Vector3(x, y, z);
 		}
 
@@ -344,12 +320,11 @@ namespace MCHexBOT.Network
 			if (!present) return null;
 
 			int id = ReadVarInt();
-			byte count = 0;
 			short damage = 0;
 			NbtCompound nbt = null;
 
 
-			count = (byte)ReadByte();
+			byte count = (byte)ReadByte();
 			//	damage = ReadShort();
 			nbt = ReadNbtCompound();
 
@@ -366,8 +341,7 @@ namespace MCHexBOT.Network
 		public void WriteSlot(SlotData slot)
 		{
 			WriteBool(slot != null && slot.ItemID != -1);
-			if (slot == null)
-				return;
+			if (slot == null) return;
 
 			WriteVarInt(slot.ItemID);
 			WriteByte(slot.Count);
@@ -395,23 +369,20 @@ namespace MCHexBOT.Network
 
 		private ushort[] NetworkToHostOrder(ushort[] network)
 		{
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(network);
+			if (BitConverter.IsLittleEndian) Array.Reverse(network);
 			return network;
 		}
 
 		private ushort NetworkToHostOrder(ushort network)
 		{
 			var net = BitConverter.GetBytes(network);
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(net);
+			if (BitConverter.IsLittleEndian) Array.Reverse(net);
 			return BitConverter.ToUInt16(net, 0);
 		}
 		private ulong NetworkToHostOrder(ulong network)
 		{
 			var net = BitConverter.GetBytes(network);
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(net);
+			if (BitConverter.IsLittleEndian) Array.Reverse(net);
 			return BitConverter.ToUInt64(net, 0);
 		}
 
@@ -421,7 +392,7 @@ namespace MCHexBOT.Network
 
 		public void Write(byte[] data)
 		{
-			this.Write(data, 0, data.Length);
+			Write(data, 0, data.Length);
 		}
 
 		public void WritePosition(Vector3 position)

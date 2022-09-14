@@ -9,20 +9,12 @@
       "MCHexBOT/1.0.0": {
         "dependencies": {
           "Iconic.Zlib.Netstandard": "1.0.0",
+          "MiNET.fnbt": "1.0.22",
           "Newtonsoft.Json": "13.0.1",
-          "fNbt": "0.6.4",
           "BouncyCastle.Crypto": "1.9.0.0"
         },
         "runtime": {
           "MCHexBOT.dll": {}
-        }
-      },
-      "fNbt/0.6.4": {
-        "runtime": {
-          "lib/net35-client/fNbt.dll": {
-            "assemblyVersion": "0.6.4.0",
-            "fileVersion": "0.6.4.0"
-          }
         }
       },
       "Iconic.Zlib.Netstandard/1.0.0": {
@@ -43,6 +35,14 @@
           "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
+        }
+      },
+      "MiNET.fnbt/1.0.22": {
+        "runtime": {
+          "lib/netcoreapp2.1/fNbt.dll": {
+            "assemblyVersion": "1.0.22.0",
+            "fileVersion": "1.0.22.0"
+          }
         }
       },
       "NETStandard.Library/1.6.0": {
@@ -705,13 +705,6 @@
       "serviceable": false,
       "sha512": ""
     },
-    "fNbt/0.6.4": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-ApHeYBciy/XixfMdHjknJ4ct4bCrg/rWCOgiI/YyHRp5JMtldEWnQFc23y+S7MOZbL7rG2L+cD8r9P2U1ardqQ==",
-      "path": "fnbt/0.6.4",
-      "hashPath": "fnbt.0.6.4.nupkg.sha512"
-    },
     "Iconic.Zlib.Netstandard/1.0.0": {
       "type": "package",
       "serviceable": true,
@@ -739,6 +732,13 @@
       "sha512": "sha512-fQnBHO9DgcmkC9dYSJoBqo6sH1VJwJprUHh8F3hbcRlxiQiBUuTntdk8tUwV490OqC2kQUrinGwZyQHTieuXRA==",
       "path": "microsoft.win32.primitives/4.0.1",
       "hashPath": "microsoft.win32.primitives.4.0.1.nupkg.sha512"
+    },
+    "MiNET.fnbt/1.0.22": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gMEJPFWHJ+WXKLnfu5INM6Vn+tgsUpfwhYevnafCCOFDIKFJjCstDBUVYAbbtfe99ZM94Cd9OL2PBJ2pY3bhAA==",
+      "path": "minet.fnbt/1.0.22",
+      "hashPath": "minet.fnbt.1.0.22.nupkg.sha512"
     },
     "NETStandard.Library/1.6.0": {
       "type": "package",
