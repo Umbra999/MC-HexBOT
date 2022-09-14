@@ -86,10 +86,7 @@ namespace MCHexBOT
                     break;
 
                 case "z":
-                    foreach (MinecraftClient Client in Clients)
-                    {
-                        new Thread(() => { Client.SendMovement(); Thread.CurrentThread.IsBackground = true; }).Start();
-                    }
+                    Movement.OffsetX = 1;
                     break;
 
                 case "s":

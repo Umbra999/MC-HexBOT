@@ -82,21 +82,5 @@ namespace MCHexBOT.Core
                 ActionID = 0
             });
         }
-
-        public void SendMovement()
-        {
-            for (; ; )
-            {
-                MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionPaket()
-                {
-                    X = 1143,
-                    FeetY = 92,
-                    Z = -518,
-                    OnGround = true,
-                });
-
-                Thread.Sleep(50);
-            }
-        }
     }
 }

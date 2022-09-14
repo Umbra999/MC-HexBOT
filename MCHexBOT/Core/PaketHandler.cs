@@ -1,4 +1,5 @@
-﻿using MCHexBOT.Network;
+﻿using MCHexBOT.Features;
+using MCHexBOT.Network;
 using MCHexBOT.Pakets;
 using MCHexBOT.Pakets.Client.Login;
 using MCHexBOT.Pakets.Client.Play;
@@ -95,6 +96,12 @@ namespace MCHexBOT.Core
                 //Logger.LogDebug($"Spawning player at {spawnPlayerPaket.X} {spawnPlayerPaket.Y} {spawnPlayerPaket.Z} [{spawnPlayerPaket.Yaw} / {spawnPlayerPaket.Pitch}]");
             }
 
+            if (paket is DeathCombatPaket deathPaket)
+            {
+                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.TargetEntityID}: {deathPaket.Message}");
+                MinecraftClient.SendRespawn();
+            }
+
             if (paket is AcknowledgePlayerDiggingPaket acknowledgePlayerDigging)
             {
                 var pos = acknowledgePlayerDigging.Location;
@@ -151,10 +158,6 @@ namespace MCHexBOT.Core
                         Yaw = positionPaket.Yaw
                     });
                 }
-
-                MinecraftClient.CurrentPlayer.Position = new Vector3((float)positionPaket.X, (float)positionPaket.Y, (float)positionPaket.Z);
-                MinecraftClient.CurrentPlayer.PositionYaw = positionPaket.Yaw;
-                MinecraftClient.CurrentPlayer.PositionYaw = positionPaket.Pitch;
             }
 
             if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
