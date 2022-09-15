@@ -24,11 +24,15 @@ namespace MCHexBOT.Core
 
         public void Connect(string Version, string Host, int Port)
         {
+            if (!Misc.ProtocolVersions.TryGetValue(Version, out int ProtocolVersion))
+            {
+                Logger.LogError($"{Version} is not Supported");
+                return; 
+            }
+
             TcpClient cl = new(Host, Port);
 
             MCConnection = new MinecraftConnection(cl);
-
-            int ProtocolVersion = 757;
 
             PaketRegistry writer = new();
             PaketRegistry.RegisterServerPakets(writer, ProtocolVersion);

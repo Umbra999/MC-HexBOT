@@ -51,7 +51,7 @@ namespace MCHexBOT.Utils
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(Data));
         }
 
-        public static Hashtable ProtocolVersions = new()
+        public static Dictionary<string, int> ProtocolVersions = new()
         {
             { "1.7", 4 },
             { "1.8", 47 },
@@ -62,10 +62,9 @@ namespace MCHexBOT.Utils
             { "1.13", 404 },
             { "1.14", 498 },
             { "1.15", 578 },
-            { "1.15", 578 },
             { "1.16", 754 },
             { "1.17", 756 },
-            { "1.18", 758 },
+            { "1.18", 757 },
             { "1.19", 760 },
         };
     }
