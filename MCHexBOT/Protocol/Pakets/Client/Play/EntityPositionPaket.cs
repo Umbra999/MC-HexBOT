@@ -1,5 +1,4 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Utils.Data;
 
 namespace MCHexBOT.Pakets.Client.Play
 {
@@ -23,9 +22,9 @@ namespace MCHexBOT.Pakets.Client.Play
         public void Encode(MinecraftStream minecraftStream)
         {
             minecraftStream.WriteVarInt(EntityId);
-            minecraftStream.WriteDouble(DeltaX);
-            minecraftStream.WriteDouble(DeltaY);
-            minecraftStream.WriteDouble(DeltaZ);
+            minecraftStream.WriteShort(DeltaX);
+            minecraftStream.WriteShort(DeltaY);
+            minecraftStream.WriteShort(DeltaZ);
             minecraftStream.WriteBool(OnGround);
         }
     }
