@@ -4,7 +4,6 @@ using MCHexBOT.Pakets.Server.Handshake;
 using MCHexBOT.Pakets.Server.Login;
 using System.Net.Sockets;
 using MCHexBOT.Pakets.Server.Play;
-using static MCHexBOT.Utils.GameTypes;
 using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Core
@@ -13,12 +12,12 @@ namespace MCHexBOT.Core
     {
         public readonly APIClient APIClient;
         public MinecraftConnection MCConnection;
-        public Player CurrentPlayer;
+        public Player LocalPlayer;
 
         public MinecraftClient(APIClient WebClient)
         {
             APIClient = WebClient;
-            CurrentPlayer = new();
+            LocalPlayer = new();
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
@@ -88,9 +87,23 @@ namespace MCHexBOT.Core
         {
             MCConnection.SendPaket(new EntityActionPaket()
             {
-                EntityId = CurrentPlayer.EntityID,
+                EntityId = LocalPlayer.EntityID,
                 ActionId = (int)Action,
                 JumpBoost = Action == PlayerAction.StartHorseJump ? 100 : 0,
+            });
+        }
+
+        public void SendEntityInteraction(int EntityID, bool Sneaking, EntityInteractHandType Hand, EntityInteractType Interact)
+        {
+            MCConnection.SendPaket(new InteractEntityPaket()
+            {
+                EntityID = EntityID,
+                Sneaking = Sneaking,
+                InteractType = Interact,
+                HandType = Hand,
+                TargetX = 0,
+                TargetY = 0,
+                TargetZ = 0,
             });
         }
 

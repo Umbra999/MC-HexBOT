@@ -5,10 +5,15 @@ namespace MCHexBOT.Pakets.Client.Play
     public class PlayerPositionAndLookPaket : IPaket
     {
         public double X { get; set; }
+        public bool XAbsolute { get; set; }
         public double Y { get; set; }
+        public bool YAbsolute { get; set; }
         public double Z { get; set; }
+        public bool ZAbsolute { get; set; }
         public float Yaw { get; set; }
+        public bool YawAbsolute { get; set; }
         public float Pitch { get; set; }
+        public bool PitchAbsolute { get; set; }
         public int Flags { get; set; }
         public int TeleportID { get; set; }
         public bool DismountVehicle { get; set; }
@@ -23,6 +28,11 @@ namespace MCHexBOT.Pakets.Client.Play
             Flags = minecraftStream.ReadByte();
             TeleportID = minecraftStream.ReadVarInt();
             DismountVehicle = minecraftStream.ReadBool();
+            XAbsolute = (Flags & 1) == 0;
+            YAbsolute = (Flags & 2) == 0;
+            ZAbsolute = (Flags & 4) == 0;
+            PitchAbsolute = (Flags & 8) == 0;
+            YawAbsolute = (Flags & 16) == 0;
         }
 
         public void Encode(MinecraftStream minecraftStream)

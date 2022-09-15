@@ -2,6 +2,7 @@
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Data;
 using MCHexBOT.Utils.Math;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
@@ -520,6 +521,11 @@ namespace MCHexBOT.Network
 			Write(long2);
 		}
 
+		public void WriteChatObject(ChatMessage data)
+		{
+			WriteString(JsonConvert.SerializeObject(data));
+		}
+
 		public UUID ReadUuid()
 		{
 			var long1 = Read(8);
@@ -622,11 +628,10 @@ namespace MCHexBOT.Network
 			//WriteByte(0);
 		}
 
-		public string ReadChatObject()
+		public ChatMessage ReadChatObject()
 		{
 			string raw = ReadString();
-			// TODO: ChatObject?
-			return raw;
+			return JsonConvert.DeserializeObject<ChatMessage>(raw);
 		}
 	}
 }

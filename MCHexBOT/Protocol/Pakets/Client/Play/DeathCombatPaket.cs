@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Network;
+using MCHexBOT.Utils;
 
 namespace MCHexBOT.Pakets.Client.Play
 {
@@ -6,7 +7,7 @@ namespace MCHexBOT.Pakets.Client.Play
     {
         public int EntityID { get; set; }
         public int KillerEntityID  { get; set; }
-        public string Message { get; set; }
+        public ChatMessage Message { get; set; }
         public void Decode(MinecraftStream minecraftStream)
         {
             EntityID = minecraftStream.ReadVarInt();
@@ -18,7 +19,7 @@ namespace MCHexBOT.Pakets.Client.Play
         {
             minecraftStream.WriteVarInt(EntityID);
             minecraftStream.WriteInt(KillerEntityID);
-            minecraftStream.WriteString(Message);
+            minecraftStream.WriteChatObject(Message);
         }
     }
 }

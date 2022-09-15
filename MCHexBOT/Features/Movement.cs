@@ -21,12 +21,12 @@ namespace MCHexBOT.Features
             {
                 Bot.MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
                 {
-                    X = Bot.CurrentPlayer.Position.X + OffsetX,
-                    FeetY = Bot.CurrentPlayer.Position.Y + OffsetY,
-                    Z = Bot.CurrentPlayer.Position.Z + OffsetZ,
+                    X = Bot.LocalPlayer.Position.X + OffsetX,
+                    FeetY = Bot.LocalPlayer.Position.Y + OffsetY,
+                    Z = Bot.LocalPlayer.Position.Z + OffsetZ,
                     OnGround = true,
-                    //Pitch = Bot.CurrentPlayer.PositionPitch,
-                    //Yaw = Bot.CurrentPlayer.PositionYaw,
+                    Pitch = Bot.LocalPlayer.PositionPitch,
+                    Yaw = Bot.LocalPlayer.PositionYaw,
                 });
 
                 Thread.Sleep(50);

@@ -6,6 +6,7 @@ using MCHexBOT.Pakets.Client.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Math;
+using Newtonsoft.Json;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,14 +16,12 @@ namespace MCHexBOT.Core
     internal class PaketHandler : IPaketHandler
     {
         public MinecraftConnection Connection { get; set; }
-        private APIClient APIClient { get; set; }
         private MinecraftClient MinecraftClient { get; set; }
 
         private bool IsReady = false;
 
         public PaketHandler(APIClient Client, MinecraftClient minecraft)
         {
-            APIClient = Client;
             MinecraftClient = minecraft;
         }
 
@@ -52,7 +51,7 @@ namespace MCHexBOT.Core
 
             if (paket is Pakets.Client.Login.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError("Disconnected [JOIN]: " + disconnectPaket.Message);
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: " + disconnectPaket.Message);
             }
         }
 
@@ -62,13 +61,13 @@ namespace MCHexBOT.Core
             {
                 if (!IsReady)
                 {
-                    Logger.LogSuccess($"{APIClient.CurrentUser.name} joined the game");
+                    Logger.LogSuccess($"{MinecraftClient.APIClient.CurrentUser.name} joined the game");
                     Logger.LogDebug("Gamemode: " + joinGamePaket.Gamemode);
                     Logger.LogDebug("Sim Dist: " + joinGamePaket.SimulationDistance);
                     Logger.LogDebug("EntityID: " + joinGamePaket.EntityId);
 
-                    MinecraftClient.CurrentPlayer.EntityID = joinGamePaket.EntityId;
-                    MinecraftClient.CurrentPlayer.Gamemode = joinGamePaket.Gamemode;
+                    MinecraftClient.LocalPlayer.EntityID = joinGamePaket.EntityId;
+                    MinecraftClient.LocalPlayer.Gamemode = joinGamePaket.Gamemode;
 
                     MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
                 }
@@ -115,15 +114,20 @@ namespace MCHexBOT.Core
 
             if (paket is UpdateHealthPaket updateHealthPaket)
             {
-                MinecraftClient.CurrentPlayer.Food = updateHealthPaket.Food;
-                MinecraftClient.CurrentPlayer.Health = updateHealthPaket.Health;
-                MinecraftClient.CurrentPlayer.FoodSaturation = updateHealthPaket.Saturation;
+                MinecraftClient.LocalPlayer.Food = updateHealthPaket.Food;
+                MinecraftClient.LocalPlayer.Health = updateHealthPaket.Health;
+                MinecraftClient.LocalPlayer.FoodSaturation = updateHealthPaket.Saturation;
                 //Logger.LogDebug($"Health update: Health: {updateHealthPaket.Health} Food: {updateHealthPaket.Food} Saturation: {updateHealthPaket.Saturation}");
             }
 
             if (paket is ChunkDataUpdateLightPaket chunk)
             {
                 //Logger.LogDebug($"Received chunk: {chunk.ChunkX} {chunk.ChunkZ} with {chunk.TileEntities.Count} entities");
+            }
+
+            if (paket is ChatMessagePaket messagePaket)
+            {
+                ChatCommands.HandleChat(MinecraftClient, messagePaket.JsonData);
             }
 
             if (paket is PlayerPositionAndLookPaket positionPaket)
@@ -153,7 +157,7 @@ namespace MCHexBOT.Core
 
             if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError("Disconnected [PLAY]:: " + disconnectPaket.Message);
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: " + disconnectPaket.Message);
             }
         }
 
@@ -175,7 +179,7 @@ namespace MCHexBOT.Core
             if (b < 0) Hex = "-" + (-b).ToString("x").TrimStart('0');
             else Hex = b.ToString("x").TrimStart('0');
 
-            await APIClient.JoinServer(Hex);
+            await MinecraftClient.APIClient.JoinServer(Hex);
 
             RSA rsa = RsaHelper.DecodePublicKey(Paket.PublicKey!);
             if (rsa == null)

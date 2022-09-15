@@ -1,10 +1,6 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils.Data;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MCHexBOT.Pakets.Client.Play
 {
     public class PlayerInfoPaket : IPaket
@@ -34,13 +30,14 @@ namespace MCHexBOT.Pakets.Client.Play
                         
                         for(int ii = 0; ii < pi.NumberOfProperties; ii++)
                         {
-                            var prop = new PlayerInfo.Property();
+                            var prop = new PlayerInfo.Property
+                            {
+                                Name = minecraftStream.ReadString(),
+                                Value = minecraftStream.ReadString(),
+                                Singed = minecraftStream.ReadBool()
+                            };
 
-                            prop.Name = minecraftStream.ReadString();
-                            prop.Value = minecraftStream.ReadString();
-                            prop.Singed = minecraftStream.ReadBool();
-
-                            if(prop.Singed)
+                            if (prop.Singed)
                             {
                                 prop.Signature = minecraftStream.ReadString();
                             }

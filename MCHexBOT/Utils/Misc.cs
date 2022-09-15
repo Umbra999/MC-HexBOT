@@ -30,6 +30,11 @@ namespace MCHexBOT.Utils
             return text;
         }
 
+        public static int RandomNumber(int Lowest, int Highest)
+        {
+            return new Random(Environment.TickCount).Next(Lowest, Highest);
+        }
+
         public static byte RandomByte()
         {
             return (byte)new Random(Environment.TickCount).Next(0, 255);
@@ -63,10 +68,5 @@ namespace MCHexBOT.Utils
             { "1.18", 758 },
             { "1.19", 760 },
         };
-
-        public class Player
-        {
-
-        }
     }
 }
