@@ -26,27 +26,6 @@ namespace MCHexBOT.Utils.Data
             }
         }
 
-        public static BlockCoordinates GetBlockCoordinates(this BlockFace face)
-        {
-            switch (face)
-            {
-                case BlockFace.Down:
-                    return BlockCoordinates.Down;
-                case BlockFace.Up:
-                    return BlockCoordinates.Up;
-                case BlockFace.East:
-                    return BlockCoordinates.Right;
-                case BlockFace.West:
-                    return BlockCoordinates.Left;
-                case BlockFace.North:
-                    return BlockCoordinates.Backwards;
-                case BlockFace.South:
-                    return BlockCoordinates.Forwards;
-                default:
-                    return BlockCoordinates.Zero;
-            }
-        }
-
         public static BlockFace Opposite(this BlockFace face)
         {
             switch (face)

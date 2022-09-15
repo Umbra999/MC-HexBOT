@@ -405,11 +405,6 @@ namespace MCHexBOT.Network
 			WriteLong(toSend);
 		}
 
-		public void WritePosition(BlockCoordinates pos)
-		{
-			WritePosition(new Vector3(pos.X, pos.Y, pos.Z));
-		}
-
 		private int WriteRawVarInt32(uint value)
 		{
 			int written = 0;

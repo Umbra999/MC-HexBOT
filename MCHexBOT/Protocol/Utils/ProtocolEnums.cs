@@ -151,4 +151,11 @@
         System = 1,
         Hotbar = 2
     }
+
+    public enum PlayerDiggingType
+    {
+        Start = 0,
+        Cancel = 1,
+        Finish = 2
+    }
 }

@@ -99,20 +99,9 @@ namespace MCHexBOT.Utils.Math
 			_pitch = pitch;
 		}
 
-		/*public PlayerLocation(MiNET.Utils.PlayerLocation p)
+		public Vector3 GetCoordinates3D()
 		{
-			if (p == null) return;
-			X = p.X;
-			Y = p.Y;
-			Z = p.Z;
-			Yaw = p.Yaw;
-			HeadYaw = p.HeadYaw;
-			Pitch = p.Pitch;
-		}*/
-
-		public BlockCoordinates GetCoordinates3D()
-		{
-			return new BlockCoordinates((int)X, (int)Y, (int)Z);
+			return new Vector3(X, Y, Z);
 		}
 
 		public double DistanceTo(PlayerLocation other)
@@ -178,7 +167,7 @@ namespace MCHexBOT.Utils.Math
 			return new Vector3(a.X, a.Y, a.Z);
 		}
 
-		public static implicit operator PlayerLocation(BlockCoordinates v)
+		public static implicit operator PlayerLocation(Vector3 v)
 		{
 			return new PlayerLocation(v.X, v.Y, v.Z);
 		}
