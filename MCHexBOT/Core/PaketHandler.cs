@@ -51,7 +51,7 @@ namespace MCHexBOT.Core
 
             if (paket is Pakets.Client.Login.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: " + disconnectPaket.Message);
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {JsonConvert.SerializeObject(disconnectPaket.Message)}");
             }
         }
 
@@ -67,7 +67,6 @@ namespace MCHexBOT.Core
                     Logger.LogDebug("EntityID: " + joinGamePaket.EntityId);
 
                     MinecraftClient.LocalPlayer.EntityID = joinGamePaket.EntityId;
-                    MinecraftClient.LocalPlayer.Gamemode = joinGamePaket.Gamemode;
 
                     MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
                 }
@@ -83,6 +82,15 @@ namespace MCHexBOT.Core
 
             if (paket is SpawnPlayerPaket spawnPlayerPaket)
             {
+                foreach (Player player in MinecraftClient.Players)
+                {
+                    if (player.PlayerInfo.UUID.ToString() == spawnPlayerPaket.UUID.ToString())
+                    {
+                        player.Position = new Vector3((float)spawnPlayerPaket.X, (float)spawnPlayerPaket.Y, (float)spawnPlayerPaket.Z);
+                        player.Rotation = new Vector2(spawnPlayerPaket.Yaw, spawnPlayerPaket.Pitch);
+                        player.EntityID = spawnPlayerPaket.EntityId;
+                    }
+                }
                 //Logger.LogDebug($"Spawning player at {spawnPlayerPaket.X} {spawnPlayerPaket.Y} {spawnPlayerPaket.Z} [{spawnPlayerPaket.Yaw} / {spawnPlayerPaket.Pitch}]");
             }
 
@@ -92,31 +100,72 @@ namespace MCHexBOT.Core
                 MinecraftClient.SendRespawn();
             }
 
-            if (paket is AcknowledgePlayerDiggingPaket acknowledgePlayerDigging)
-            {
-                var pos = acknowledgePlayerDigging.Location;
-                //Logger.LogDebug($"Player is digging at {pos.X} {pos.Y} {pos.Z}");
-            }
-
-            if (paket is BlockChangePaket blockChangePaket)
-            {
-                var pos = blockChangePaket.Location;
-                //Logger.LogDebug($"Block changed at {pos.X} {pos.Y} {pos.Z} to {blockChangePaket.BlockId}");
-            }
-
             if (paket is PlayerInfoPaket playerInfoPaket)
             {
-                //foreach (var p in playerInfoPaket.Players)
-                //{
-                //    Logger.LogDebug($"PLAYER: {p.Name} > Gamemode: {p.GameMode} Ping: {p.Ping}");
-                //}
+                switch (playerInfoPaket.Action)
+                {
+                    case 0:
+                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        {
+                            if (MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()).ToArray().Length < 1)
+                            {
+                                MinecraftClient.Players.Add(new Player()
+                                {
+                                    PlayerInfo = player
+                                });
+                            }
+                        }
+                        break;
+
+                    case 1:
+                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        {
+                            foreach (Player Cache in MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()))
+                            {
+                                Cache.PlayerInfo.GameMode = player.GameMode;
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        {
+                            foreach (Player Cache in MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()))
+                            {
+                                Cache.PlayerInfo.Ping = player.Ping;
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        {
+                            foreach (Player Cache in MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()))
+                            {
+                                Cache.PlayerInfo.HasDisplayName = player.HasDisplayName;
+                                Cache.PlayerInfo.DisplayName = player.DisplayName;
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        {
+                            var List = MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()).ToList();
+                            foreach (Player Cache in List)
+                            {
+                                MinecraftClient.Players.Remove(Cache);
+                            }
+                        }
+                        break;
+                }
             }
 
             if (paket is UpdateHealthPaket updateHealthPaket)
             {
                 MinecraftClient.LocalPlayer.Food = updateHealthPaket.Food;
                 MinecraftClient.LocalPlayer.Health = updateHealthPaket.Health;
-                MinecraftClient.LocalPlayer.FoodSaturation = updateHealthPaket.Saturation;
+                MinecraftClient.LocalPlayer.Saturation = updateHealthPaket.Saturation;
                 //Logger.LogDebug($"Health update: Health: {updateHealthPaket.Health} Food: {updateHealthPaket.Food} Saturation: {updateHealthPaket.Saturation}");
             }
 
@@ -135,13 +184,19 @@ namespace MCHexBOT.Core
                     });
                 }
 
+                Logger.LogImportant($"X: {positionPaket.X}");
+                Logger.LogImportant($"Y: {positionPaket.Y}");
+                Logger.LogImportant($"Z: {positionPaket.Z}");
+                Logger.LogImportant($"PITCH: {positionPaket.Pitch}");
+                Logger.LogImportant($"YAW: {positionPaket.Yaw}");
+
                 if (!IsReady)
                 {
                     IsReady = true;
                     Connection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
                     {
                         X = positionPaket.X,
-                        FeetY = positionPaket.Y,
+                        Y = positionPaket.Y,
                         Z = positionPaket.Z,
                         OnGround = true,
                         Pitch = positionPaket.Pitch,

@@ -1,5 +1,4 @@
 ﻿using MCHexBOT.Core;
-using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
 {
@@ -12,7 +11,7 @@ namespace MCHexBOT.Features
 
         public static void StartMovementLoop(MinecraftClient Bot)
         {
-            new Thread(() => { SendMovement(Bot); Thread.CurrentThread.IsBackground = true; }).Start();;
+            new Thread(() => { SendMovement(Bot); Thread.CurrentThread.IsBackground = true; }).Start();
         }
 
         private static void SendMovement(MinecraftClient Bot)
@@ -22,11 +21,11 @@ namespace MCHexBOT.Features
                 Bot.MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
                 {
                     X = Bot.LocalPlayer.Position.X + OffsetX,
-                    FeetY = Bot.LocalPlayer.Position.Y + OffsetY,
+                    Y = Bot.LocalPlayer.Position.Y + OffsetY,
                     Z = Bot.LocalPlayer.Position.Z + OffsetZ,
                     OnGround = true,
-                    Pitch = Bot.LocalPlayer.PositionPitch,
-                    Yaw = Bot.LocalPlayer.PositionYaw,
+                    Yaw = Bot.LocalPlayer.Rotation.X,
+                    Pitch = Bot.LocalPlayer.Rotation.Y,
                 });
 
                 Thread.Sleep(50);

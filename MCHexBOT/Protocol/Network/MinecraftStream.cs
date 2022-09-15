@@ -134,18 +134,15 @@ namespace MCHexBOT.Network
 			var buffer = new byte[length];
 			while (read < buffer.Length && !CancelationToken.IsCancellationRequested)
 			{
-				int oldRead = read;
-
-				int r = this.Read(buffer, read, length - read);
-				if (r < 0) //No data read?
+				int r = Read(buffer, read, length - read);
+				if (r < 0) 
 				{
 					break;
 				}
 
 				read += r;
 
-				if (CancelationToken.IsCancellationRequested)
-					throw new ObjectDisposedException("");
+				if (CancelationToken.IsCancellationRequested) throw new ObjectDisposedException("");
 			}
 
 			return buffer;
@@ -287,13 +284,13 @@ namespace MCHexBOT.Network
 
 		public string ReadString()
 		{
-			var length = ReadVarInt();
-			var stringValue = Read(length);
+            var length = ReadVarInt();
+            var stringValue = Read(length);
 
-			return Encoding.UTF8.GetString(stringValue);
-		}
+            return Encoding.UTF8.GetString(stringValue);
+        }
 
-		public long ReadLong()
+        public long ReadLong()
 		{
 			var l = Read(8);
 			return IPAddress.NetworkToHostOrder(BitConverter.ToInt64(l, 0));

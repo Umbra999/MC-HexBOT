@@ -1,5 +1,5 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Utils.Data;
+using MCHexBOT.Utils;
 
 namespace MCHexBOT.Pakets.Client.Play
 {
@@ -27,33 +27,26 @@ namespace MCHexBOT.Pakets.Client.Play
                         pi.Name = minecraftStream.ReadString();
                         pi.NumberOfProperties = minecraftStream.ReadVarInt();
                         pi.Properties = new List<PlayerInfo.Property>();
-                        
-                        for(int ii = 0; ii < pi.NumberOfProperties; ii++)
-                        {
-                            var prop = new PlayerInfo.Property
-                            {
-                                Name = minecraftStream.ReadString(),
-                                Value = minecraftStream.ReadString(),
-                                Singed = minecraftStream.ReadBool()
-                            };
 
-                            if (prop.Singed)
-                            {
-                                prop.Signature = minecraftStream.ReadString();
-                            }
+                        //for (int ii = 0; ii <= pi.NumberOfProperties; ii++)
+                        //{
+                        //    var prop = new PlayerInfo.Property
+                        //    {
+                        //        Name = minecraftStream.ReadString(),
+                        //        Value = minecraftStream.ReadString(),
+                        //        Singed = minecraftStream.ReadBool(),
+                        //    };
 
-                            pi.Properties.Add(prop);
-                        }
+                        //    if (prop.Singed) prop.Signature = minecraftStream.ReadString();
 
-                        pi.GameMode = minecraftStream.ReadVarInt();
-                        pi.Ping = minecraftStream.ReadVarInt();
-                        pi.HasDisplayName = minecraftStream.ReadBool();
+                        //    pi.Properties.Add(prop);
+                        //}
 
-                        if(pi.HasDisplayName)
-                        {
-                            pi.DisplayName = minecraftStream.ReadString();
-                        }
-
+                        //pi.GameMode = minecraftStream.ReadVarInt();
+                        //pi.Ping = minecraftStream.ReadVarInt();
+                        //pi.HasDisplayName = minecraftStream.ReadBool();
+                        //pi.DisplayName = minecraftStream.ReadChatObject();
+                        //if (pi.HasDisplayName) pi.DisplayName = minecraftStream.ReadChatObject();
                         break;
 
                     case 1:
@@ -67,7 +60,7 @@ namespace MCHexBOT.Pakets.Client.Play
 
                         if (pi.HasDisplayName)
                         {
-                            pi.DisplayName = minecraftStream.ReadString();
+                            pi.DisplayName = minecraftStream.ReadChatObject();
                         }
                         break;
                 }
@@ -85,7 +78,7 @@ namespace MCHexBOT.Pakets.Client.Play
             {
                 minecraftStream.WriteUuid(p.UUID);
 
-                switch(Action)
+                switch (Action)
                 {
                     case 0:
                         minecraftStream.WriteString(p.Name);
@@ -108,7 +101,7 @@ namespace MCHexBOT.Pakets.Client.Play
                         minecraftStream.WriteBool(p.HasDisplayName);
 
                         if (p.HasDisplayName)
-                            minecraftStream.WriteString(p.DisplayName);
+                            minecraftStream.WriteChatObject(p.DisplayName);
 
                         break;
 
@@ -124,32 +117,11 @@ namespace MCHexBOT.Pakets.Client.Play
                         minecraftStream.WriteBool(p.HasDisplayName);
 
                         if (p.HasDisplayName)
-                            minecraftStream.WriteString(p.DisplayName);
+                            minecraftStream.WriteChatObject(p.DisplayName);
 
                         break;
                 }
             }
-        }
-
-        public struct PlayerInfo
-        {
-            public UUID UUID { get; set; }
-            public string Name { get; set; }
-            public int NumberOfProperties { get; set; }
-            public List<Property> Properties { get; set; }
-
-            public struct Property
-            {
-                public string Name { get; set; }
-                public string Value { get; set; }
-                public bool Singed { get; set; }
-                public string Signature { get; set; }
-            }
-
-            public int GameMode { get; set; }
-            public int Ping { get; set; }
-            public bool HasDisplayName { get; set; }
-            public string DisplayName { get; set; }
         }
     }
 }

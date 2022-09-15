@@ -32,7 +32,7 @@ namespace MCHexBOT.Features
                     break;
 
                 case "health":
-                    Bot.SendChat($"Health: {Bot.LocalPlayer.Health} | Food: {Bot.LocalPlayer.Food} | Saturation {Bot.LocalPlayer.FoodSaturation}");
+                    Bot.SendChat($"Health: {Bot.LocalPlayer.Health} | Food: {Bot.LocalPlayer.Food} | Saturation {Bot.LocalPlayer.Saturation}");
                     break;
             }
         }

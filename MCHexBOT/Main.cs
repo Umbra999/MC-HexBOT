@@ -63,7 +63,7 @@ namespace MCHexBOT
                 Logger.LogImportant("-----------------");
 
                 string input = Console.ReadLine();
-                new Thread(() => { HandleInput(input); Thread.CurrentThread.IsBackground = true; }).Start();
+                HandleInput(input);
             }
         }
 
@@ -112,6 +112,24 @@ namespace MCHexBOT
                     foreach (MinecraftClient Client in Clients)
                     {
                         SkinBlinker.ToggleSkinBlinker(Client, input.Substring(2) == "true");
+                    }
+                    break;
+
+                case "v":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.MCConnection.SendPaket(new Pakets.Server.Play.PlayerMovementPaket()
+                        {
+                            OnGround = true,
+                        });
+
+                        Client.MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionPaket()
+                        {
+                            X = -180.6,
+                            Y = 99,
+                            Z = 1559.5,
+                            OnGround = true,
+                        });
                     }
                     break;
             }

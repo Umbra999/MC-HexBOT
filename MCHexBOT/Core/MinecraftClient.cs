@@ -12,6 +12,7 @@ namespace MCHexBOT.Core
     {
         public readonly APIClient APIClient;
         public MinecraftConnection MCConnection;
+        public List<Player> Players = new();
         public Player LocalPlayer;
 
         public MinecraftClient(APIClient WebClient)

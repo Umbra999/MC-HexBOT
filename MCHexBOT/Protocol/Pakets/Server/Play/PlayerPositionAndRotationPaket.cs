@@ -5,7 +5,7 @@ namespace MCHexBOT.Pakets.Server.Play
     public class PlayerPositionAndRotationPaket : IPaket
     {
         public double X { get; set; }
-        public double FeetY { get; set; }
+        public double Y { get; set; }
         public double Z { get; set; }
         public float Yaw { get; set; }
         public float Pitch { get; set; }
@@ -14,7 +14,7 @@ namespace MCHexBOT.Pakets.Server.Play
         public void Decode(MinecraftStream minecraftStream)
         {
             X = minecraftStream.ReadDouble();
-            FeetY = minecraftStream.ReadDouble();
+            Y = minecraftStream.ReadDouble();
             Z = minecraftStream.ReadDouble();
             Yaw = minecraftStream.ReadFloat();
             Pitch = minecraftStream.ReadFloat();
@@ -24,7 +24,7 @@ namespace MCHexBOT.Pakets.Server.Play
         public void Encode(MinecraftStream minecraftStream)
         {
             minecraftStream.WriteDouble(X);
-            minecraftStream.WriteDouble(FeetY);
+            minecraftStream.WriteDouble(Y);
             minecraftStream.WriteDouble(Z);
             minecraftStream.WriteFloat(Yaw);
             minecraftStream.WriteFloat(Pitch);
