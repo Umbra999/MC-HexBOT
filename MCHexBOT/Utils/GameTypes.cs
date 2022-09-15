@@ -28,8 +28,8 @@ namespace MCHexBOT.Utils
         public string insertion { get; set; }
         public string color { get; set; }
         public ChatClickEvent clickEvent { get; set; }
-        public ChatMessage[] extra { get; set; } = new ChatMessage[0];
-        public ChatMessage[] with { get; set; } = new ChatMessage[0];
+        public ChatMessage[] extra { get; set; }
+        public ChatMessage[] with { get; set; }
     }
 
     public class ChatClickEvent

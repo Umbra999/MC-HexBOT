@@ -63,7 +63,6 @@ namespace MCHexBOT.Network
             registry.AddPaket(0x0C, new Pakets.Client.Play.BlockChangePaket(), ConnectionState.Play);
             registry.AddPaket(0x36, new Pakets.Client.Play.PlayerInfoPaket(), ConnectionState.Play);
             registry.AddPaket(0x52, new Pakets.Client.Play.UpdateHealthPaket(), ConnectionState.Play);
-            registry.AddPaket(0x22, new Pakets.Client.Play.ChunkDataUpdateLightPaket(), ConnectionState.Play);
             registry.AddPaket(0x38, new Pakets.Client.Play.PlayerPositionAndLookPaket(), ConnectionState.Play);
             registry.AddPaket(0x0F, new Pakets.Client.Play.ChatMessagePaket(), ConnectionState.Play);
             registry.AddPaket(0x29, new Pakets.Client.Play.EntityPositionPaket(), ConnectionState.Play);

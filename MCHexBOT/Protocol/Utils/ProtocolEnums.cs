@@ -144,4 +144,11 @@
         ElectricSpark = 86,
         Scrape = 87
     }
+
+    public enum ChatMessagePosition : byte
+    {
+        Chat = 0,
+        System = 1,
+        Hotbar = 2
+    }
 }

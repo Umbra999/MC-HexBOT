@@ -20,9 +20,9 @@ namespace MCHexBOT.Features
             while (TeaBaggerToggle)
             {
                 Bot.SendEntityAction(PlayerAction.StartSneaking);
-                Thread.Sleep(50);
+                Thread.Sleep(40);
                 Bot.SendEntityAction(PlayerAction.StopSneaking);
-                Thread.Sleep(50);
+                Thread.Sleep(40);
             }
 
             TeaBaggerToggle = false;

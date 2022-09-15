@@ -88,7 +88,7 @@ namespace MCHexBOT.Core
 
             if (paket is DeathCombatPaket deathPaket)
             {
-                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.EntityID}: {deathPaket.Message}");
+                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.EntityID}: {JsonConvert.SerializeObject(deathPaket.Message)}");
                 MinecraftClient.SendRespawn();
             }
 
@@ -118,11 +118,6 @@ namespace MCHexBOT.Core
                 MinecraftClient.LocalPlayer.Health = updateHealthPaket.Health;
                 MinecraftClient.LocalPlayer.FoodSaturation = updateHealthPaket.Saturation;
                 //Logger.LogDebug($"Health update: Health: {updateHealthPaket.Health} Food: {updateHealthPaket.Food} Saturation: {updateHealthPaket.Saturation}");
-            }
-
-            if (paket is ChunkDataUpdateLightPaket chunk)
-            {
-                //Logger.LogDebug($"Received chunk: {chunk.ChunkX} {chunk.ChunkZ} with {chunk.TileEntities.Count} entities");
             }
 
             if (paket is ChatMessagePaket messagePaket)
@@ -157,7 +152,7 @@ namespace MCHexBOT.Core
 
             if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: " + disconnectPaket.Message);
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: " + JsonConvert.SerializeObject(disconnectPaket.Message));
             }
         }
 

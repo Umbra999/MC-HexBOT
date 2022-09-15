@@ -24,8 +24,6 @@ namespace MCHexBOT.Pakets.Server.Play
             MainHand = (MainHandType)minecraftStream.ReadVarInt();
             EnableTextFiltering = minecraftStream.ReadBool();
             AllowServerListings = minecraftStream.ReadBool();
-
-            byte flags = 1 | 2 | 4;
         }
 
         public void Encode(MinecraftStream minecraftStream)

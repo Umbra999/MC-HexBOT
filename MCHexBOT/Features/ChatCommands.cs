@@ -7,10 +7,14 @@ namespace MCHexBOT.Features
     {
         public static void HandleChat(MinecraftClient Bot, ChatMessage MessageObject)
         {
-            string Message = MessageObject.text;
-            foreach (ChatMessage Extra in MessageObject.extra)
+            string Message = MessageObject.text ?? "";
+
+            if (MessageObject.extra != null)
             {
-                Message += Extra.text;
+                foreach (ChatMessage Extra in MessageObject.extra)
+                {
+                    if (Extra.text != null) Message += Extra.text;
+                }
             }
 
             string[] Splitted = Message.Split('!');
@@ -20,10 +24,11 @@ namespace MCHexBOT.Features
         private static void HandleCommmand(MinecraftClient Bot, string Command)
         {
             string[] CommandArguments = Command.Split(' ');
-            switch (CommandArguments[0].ToLower())
+
+            switch (CommandArguments[0])
             {
                 case "dice":
-                    Bot.SendChat("Dice rolled a: " + Misc.RandomNumber(1, 6).ToString());
+                    Bot.SendChat("Dice: " + Misc.RandomNumber(1, 6).ToString());
                     break;
 
                 case "health":
