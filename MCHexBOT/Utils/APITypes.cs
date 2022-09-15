@@ -38,4 +38,25 @@
         public string id { get; set; }
         public string name { get; set; }
     }
+
+    public class Serverstats
+    {
+        public string status { get; set; }
+        public bool online { get; set; }
+        public string motd { get; set; }
+        public ServerstatsPlayers players { get; set; }
+        public ServerstatsServer server { get; set; }
+    }
+
+    public class ServerstatsPlayers
+    {
+        public int max { get; set; }
+        public int now { get; set; }
+    }
+
+    public class ServerstatsServer
+    {
+        public string name { get; set; }
+        public int protocol { get; set; }
+    }
 }

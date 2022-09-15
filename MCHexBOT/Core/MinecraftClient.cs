@@ -22,12 +22,31 @@ namespace MCHexBOT.Core
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
 
-        public void Connect(string Version, string Host, int Port)
+        public async void Connect(string Version, string Host, int Port)
         {
+            if (MCConnection != null)
+            {
+                Logger.LogError($"Bot is already connected");
+                return;
+            }
+
             if (!Misc.ProtocolVersions.TryGetValue(Version, out int ProtocolVersion))
             {
-                Logger.LogError($"{Version} is not Supported");
+                Logger.LogError($"{Version} is not Supported"); // replace by Server stats protocol once done
                 return; 
+            }
+
+            Serverstats Stats = await APIClient.GetServerStats($"{Host}:{Port}");
+            if (Stats == null)
+            {
+                Logger.LogError($"Failed to fetch Server");
+                return;
+            }
+
+            if (Stats.status != "success")
+            {
+                Logger.LogError($"Server was unable to Ping");
+                return;
             }
 
             TcpClient cl = new(Host, Port);
@@ -123,6 +142,17 @@ namespace MCHexBOT.Core
                 EnableTextFiltering = TextFiltering,
                 Locale = LanguageTag,
                 ViewDistance = ViewDistance
+            });
+        }
+
+        public void SendHeldItemSlotSwitch(short Slot)
+        {
+            if (Slot < 0) Slot = 0;
+            else if (Slot > 8) Slot = 8;
+
+            MCConnection.SendPaket(new HeldItemChangePaket()
+            {
+                Slot = Slot
             });
         }
     }

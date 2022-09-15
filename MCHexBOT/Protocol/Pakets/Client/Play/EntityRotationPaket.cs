@@ -1,7 +1,6 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Pakets;
 
-namespace MCHexBOT.Protocol.Pakets.Client.Play
+namespace MCHexBOT.Pakets.Client.Play
 {
     internal class EntityRotationPaket : IPaket
     {

@@ -72,6 +72,8 @@ namespace MCHexBOT.Network
             registry.AddPaket(0x4B, new Pakets.Client.Play.SpawnPositionPaket(), ConnectionState.Play);
             registry.AddPaket(0x1A, new Pakets.Client.Play.DisconnectPaket(), ConnectionState.Play);
             registry.AddPaket(0x35, new Pakets.Client.Play.DeathCombatPaket(), ConnectionState.Play);
+            registry.AddPaket(0x2B, new Pakets.Client.Play.EntityRotationPaket(), ConnectionState.Play);
+            registry.AddPaket(0x62, new Pakets.Client.Play.EntityTeleportPaket(), ConnectionState.Play);
         }
 
         // Pakets the server can understand
@@ -100,6 +102,7 @@ namespace MCHexBOT.Network
             registry.AddPaket(0x14, new Pakets.Server.Play.PlayerMovementPaket(), ConnectionState.Play);
             registry.AddPaket(0x13, new Pakets.Server.Play.PlayerRotationPaket(), ConnectionState.Play);
             registry.AddPaket(0x0D, new Pakets.Server.Play.InteractEntityPaket(), ConnectionState.Play);
+            registry.AddPaket(0x25, new Pakets.Server.Play.HeldItemChangePaket(), ConnectionState.Play);
         }
     }
 }
