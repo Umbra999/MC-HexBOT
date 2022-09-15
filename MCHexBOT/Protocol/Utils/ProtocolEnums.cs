@@ -1,10 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MCHexBOT.Enums
+﻿namespace MCHexBOT.Protocol
 {
-    public enum MinecraftParticle : byte
+    public enum ConnectionState
+    {
+        Handshaking,
+        Status,
+        Login,
+        Play
+    }
+
+    public enum HandshakeType
+    {
+        Status = 1,
+        Login = 2
+    }
+
+    public enum EntityInteractType
+    {
+        Interact = 0,
+        Attack = 1,
+        InteractAt = 2,
+    }
+
+    public enum EntityInteractHandType
+    {
+        Main = 0,
+        Second = 1
+    }
+
+    public enum ChatMode
+    {
+        Enabled = 0,
+        Commands = 1,
+        Hidden = 2
+    }
+
+    public enum PlayerAction
+    {
+        StartSneaking = 0,
+        StopSneaking = 1,
+        LeaveBed = 2,
+        StartSprinting = 3,
+        StopSprinting = 4,
+        StartHorseJump = 5,
+        StopHorseJump = 6,
+        OpenHorseInventory = 7,
+        StartElytraFlying = 8
+    }
+
+    public enum MainHandType
+    {
+        Left = 0,
+        Right = 1
+    }
+
+    public enum ParticleType : byte
     {
         AmbientEntityEffect = 0,
         AngryVillager = 1,
@@ -35,20 +84,20 @@ namespace MCHexBOT.Enums
         Fishing = 26,
         Flame = 27,
         SoulFireFlame = 28,
-        Soul  = 29,
+        Soul = 29,
         Flash = 30,
         HappyVillager = 31,
         Composter = 32,
         Heart = 33,
         InstantEffect = 34,
         Item = 35,
-        Vibration =  36,
-        ItemSlime   = 37,
+        Vibration = 36,
+        ItemSlime = 37,
         ItemSnowball = 38,
-        LargeSmoke =  39,
+        LargeSmoke = 39,
         Lava = 40,
         Mycelium = 41,
-        Note =  42,
+        Note = 42,
         Poof = 43,
         Portal = 44,
         Rain = 45,
@@ -65,7 +114,7 @@ namespace MCHexBOT.Enums
         CurrentDown = 56,
         BubbleColumnUp = 57,
         Nautilus = 58,
-        Dolphin =  59,
+        Dolphin = 59,
         CampfireCosySmoke = 60,
         CampfireSignalSmoke = 61,
         DrippingHoney = 62,

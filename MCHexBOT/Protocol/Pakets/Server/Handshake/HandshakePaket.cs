@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Network;
+using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Pakets.Server.Handshake
 {
@@ -7,14 +8,14 @@ namespace MCHexBOT.Pakets.Server.Handshake
         public int ProtocolVersion { get; set; }
         public string ServerAddress { get; set; }
         public ushort ServerPort { get; set; }
-        public int NextState { get; set; }
+        public HandshakeType NextState { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
             ProtocolVersion = minecraftStream.ReadVarInt();
             ServerAddress = minecraftStream.ReadString();
             ServerPort = minecraftStream.ReadUShort();
-            NextState = minecraftStream.ReadVarInt();
+            NextState = (HandshakeType)minecraftStream.ReadVarInt();
         }
 
         public void Encode(MinecraftStream minecraftStream)
@@ -22,7 +23,7 @@ namespace MCHexBOT.Pakets.Server.Handshake
             minecraftStream.WriteVarInt(ProtocolVersion);
             minecraftStream.WriteString(ServerAddress);
             minecraftStream.WriteUShort(ServerPort);
-            minecraftStream.WriteVarInt(NextState);
+            minecraftStream.WriteVarInt((int)NextState);
         }
     }
 }

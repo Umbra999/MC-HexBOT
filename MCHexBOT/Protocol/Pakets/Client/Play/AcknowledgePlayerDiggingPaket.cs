@@ -1,10 +1,6 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils.Math;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MCHexBOT.Pakets.Client.Play
 {
     public class AcknowledgePlayerDiggingPaket : IPaket

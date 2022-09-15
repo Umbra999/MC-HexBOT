@@ -1,9 +1,9 @@
 ﻿using System.Net.Sockets;
-using MCHexBOT.Enums;
 using MCHexBOT.Pakets;
 using MCHexBOT.Pakets.Client.Login;
 using MCHexBOT.Utils;
 using Ionic.Zlib;
+using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Network
 {
@@ -14,7 +14,7 @@ namespace MCHexBOT.Network
         public MinecraftStream WriteStream { get; private set; }
         public CancellationToken CancellationToken { get; set; }
 
-        public MinecraftState State { get; set; }
+        public ConnectionState State { get; set; }
 
         public Queue<PacketQueueItem> PaketQueue { get; set; } = new Queue<PacketQueueItem>();
         public PaketRegistry WriterRegistry { get; set; }
@@ -34,7 +34,7 @@ namespace MCHexBOT.Network
         {
             Tcp = tcp;
 
-            State = MinecraftState.Handshaking;
+            State = ConnectionState.Handshaking;
 
             ReadStream = new MinecraftStream(Tcp.GetStream(), CancellationToken.None);
             WriteStream = new MinecraftStream(Tcp.GetStream(), CancellationToken.None);
@@ -76,16 +76,16 @@ namespace MCHexBOT.Network
                         {
                             switch (State)
                             {
-                                case MinecraftState.Handshaking:
+                                case ConnectionState.Handshaking:
                                     Handler.Handshake(paket);
                                     break;
-                                case MinecraftState.Status:
+                                case ConnectionState.Status:
                                     Handler.Status(paket);
                                     break;
-                                case MinecraftState.Login:
+                                case ConnectionState.Login:
                                     Handler.Login(paket);
                                     break;
-                                case MinecraftState.Play:
+                                case ConnectionState.Play:
                                     Handler.Play(paket);
                                     break;
                             }
@@ -111,7 +111,7 @@ namespace MCHexBOT.Network
                     if (CancellationToken.IsCancellationRequested) break;
 
                     IPaket toSend = null;
-                    MinecraftState state = MinecraftState.Handshaking;
+                    ConnectionState state = ConnectionState.Handshaking;
 
                     lock (PaketQueue)
                     {
@@ -142,7 +142,7 @@ namespace MCHexBOT.Network
             }
         }
 
-        public byte[] EncodePaket(IPaket paket, MinecraftState state)
+        public byte[] EncodePaket(IPaket paket, ConnectionState state)
         {
             byte[] encodedPacket;
 

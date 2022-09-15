@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Core;
+using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
@@ -21,17 +22,7 @@ namespace MCHexBOT.Features
             {
                 byte Random = Misc.RandomByte();
 
-                Bot.MCConnection.SendPaket(new Pakets.Server.Play.ClientSettingsPaket()
-                {
-                    AllowServerListings = true,
-                    ChatColors = true,
-                    ChatMode = 0,
-                    DisplayedSkinParts = Random,
-                    MainHand = Random > 127 ? 1 : 0,
-                    EnableTextFiltering = false,
-                    Locale = "en_us",
-                    ViewDistance = 64
-                });
+                Bot.SendPlayerSetings(true, true, ChatMode.Enabled, Random, Random > 127 ? MainHandType.Left : MainHandType.Right, false, "en_us", 64);
 
                 Thread.Sleep(50);
             }

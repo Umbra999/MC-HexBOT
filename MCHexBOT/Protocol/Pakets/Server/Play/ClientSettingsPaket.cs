@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Network;
+using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Pakets.Server.Play
 {
@@ -6,10 +7,10 @@ namespace MCHexBOT.Pakets.Server.Play
     {
         public string Locale { get; set; }
         public int ViewDistance { get; set; }
-        public int ChatMode { get; set; }
+        public ChatMode ChatMode { get; set; }
         public bool ChatColors { get; set; }
         public uint DisplayedSkinParts { get; set; }
-        public int MainHand { get; set; }
+        public MainHandType MainHand { get; set; }
         public bool EnableTextFiltering { get; set; }
         public bool AllowServerListings { get; set; }
 
@@ -17,10 +18,10 @@ namespace MCHexBOT.Pakets.Server.Play
         {
             Locale = minecraftStream.ReadString();
             ViewDistance = minecraftStream.ReadByte();
-            ChatMode = minecraftStream.ReadVarInt();
+            ChatMode = (ChatMode)minecraftStream.ReadVarInt();
             ChatColors = minecraftStream.ReadBool();
             DisplayedSkinParts = minecraftStream.ReadUnsignedByte();
-            MainHand = minecraftStream.ReadVarInt();
+            MainHand = (MainHandType)minecraftStream.ReadVarInt();
             EnableTextFiltering = minecraftStream.ReadBool();
             AllowServerListings = minecraftStream.ReadBool();
         }
@@ -29,10 +30,10 @@ namespace MCHexBOT.Pakets.Server.Play
         {
             minecraftStream.WriteString(Locale);
             minecraftStream.WriteByte((byte)ViewDistance);
-            minecraftStream.WriteVarInt(ChatMode);
+            minecraftStream.WriteVarInt((int)ChatMode);
             minecraftStream.WriteBool(ChatColors);
             minecraftStream.WriteByte((byte)DisplayedSkinParts);
-            minecraftStream.WriteVarInt(MainHand);
+            minecraftStream.WriteVarInt((int)MainHand);
             minecraftStream.WriteBool(EnableTextFiltering);
             minecraftStream.WriteBool(AllowServerListings);
         }

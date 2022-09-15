@@ -3,6 +3,7 @@ using MCHexBOT.Network;
 using MCHexBOT.Pakets;
 using MCHexBOT.Pakets.Client.Login;
 using MCHexBOT.Pakets.Client.Play;
+using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Math;
 using System.Numerics;
@@ -45,7 +46,7 @@ namespace MCHexBOT.Core
 
             if (paket is LoginSuccessPaket loginSuccessPaket)
             {
-                Connection.State = Enums.MinecraftState.Play;
+                Connection.State = ConnectionState.Play;
                 Logger.LogSuccess($"Authenticated as {loginSuccessPaket.Username} [{loginSuccessPaket.Uuid}]");
             }
 
@@ -69,17 +70,7 @@ namespace MCHexBOT.Core
                     MinecraftClient.CurrentPlayer.EntityID = joinGamePaket.EntityId;
                     MinecraftClient.CurrentPlayer.Gamemode = joinGamePaket.Gamemode;
 
-                    Connection.SendPaket(new Pakets.Server.Play.ClientSettingsPaket()
-                    {
-                        AllowServerListings = true,
-                        ChatColors = true,
-                        ChatMode = 0,
-                        DisplayedSkinParts = byte.MaxValue,
-                        MainHand = 0,
-                        EnableTextFiltering = false,
-                        Locale = "en_us",
-                        ViewDistance = 64
-                    });
+                    MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
                 }
             }
 
@@ -98,7 +89,7 @@ namespace MCHexBOT.Core
 
             if (paket is DeathCombatPaket deathPaket)
             {
-                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.TargetEntityID}: {deathPaket.Message}");
+                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.EntityID}: {deathPaket.Message}");
                 MinecraftClient.SendRespawn();
             }
 

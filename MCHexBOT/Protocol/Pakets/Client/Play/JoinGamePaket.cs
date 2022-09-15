@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using fNbt;
+﻿using fNbt;
 
 using MCHexBOT.Network;
 
@@ -34,7 +32,7 @@ namespace MCHexBOT.Pakets.Client.Play
             PreviousGamemode = minecraftStream.ReadByte();
             WorldCount = minecraftStream.ReadVarInt();
 
-            List<string> names = new List<string>();
+            List<string> names = new();
 
             for (int i = 0; i <= WorldCount; i++)
             {

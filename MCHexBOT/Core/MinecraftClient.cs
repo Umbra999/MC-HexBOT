@@ -5,6 +5,7 @@ using MCHexBOT.Pakets.Server.Login;
 using System.Net.Sockets;
 using MCHexBOT.Pakets.Server.Play;
 using static MCHexBOT.Utils.GameTypes;
+using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Core
 {
@@ -45,19 +46,19 @@ namespace MCHexBOT.Core
             };
 
             MCConnection.Start();
-            MCConnection.State = Enums.MinecraftState.Handshaking;
+            MCConnection.State = ConnectionState.Handshaking;
 
             Logger.LogWarning("Sending Handshake");
 
             MCConnection.SendPaket(new HandshakePaket()
             {
-                NextState = 2,
+                NextState = HandshakeType.Login,
                 ProtocolVersion = ProtocolVersion,
                 ServerAddress = Host,
                 ServerPort = (ushort)Port
             });
 
-            MCConnection.State = Enums.MinecraftState.Login;
+            MCConnection.State = ConnectionState.Login;
 
             Logger.LogWarning("Sending Login");
 
@@ -80,6 +81,31 @@ namespace MCHexBOT.Core
             MCConnection.SendPaket(new ClientStatusPaket()
             {
                 ActionID = 0
+            });
+        }
+
+        public void SendEntityAction(PlayerAction Action)
+        {
+            MCConnection.SendPaket(new EntityActionPaket()
+            {
+                EntityId = CurrentPlayer.EntityID,
+                ActionId = (int)Action,
+                JumpBoost = Action == PlayerAction.StartHorseJump ? 100 : 0,
+            });
+        }
+
+        public void SendPlayerSetings(bool ServerListing, bool ChatColors, ChatMode Chatmode, byte Skinparts, MainHandType MainHand, bool TextFiltering, string LanguageTag, byte ViewDistance)
+        {
+            MCConnection.SendPaket(new ClientSettingsPaket()
+            {
+                AllowServerListings = ServerListing,
+                ChatColors = ChatColors,
+                ChatMode = Chatmode,
+                DisplayedSkinParts = Skinparts,
+                MainHand = MainHand,
+                EnableTextFiltering = TextFiltering,
+                Locale = LanguageTag,
+                ViewDistance = ViewDistance
             });
         }
     }

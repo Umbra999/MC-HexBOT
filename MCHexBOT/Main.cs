@@ -1,5 +1,6 @@
 ﻿using MCHexBOT.Core;
 using MCHexBOT.Features;
+using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT
@@ -50,8 +51,11 @@ namespace MCHexBOT
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("J [IP:PORT] - Join a Server");
                 Logger.LogImportant("C [MESSAGE] - Send a Chat Message");
-                Logger.LogImportant("R - Respawn");
+                Logger.LogImportant("-----------------");
                 Logger.LogImportant("S [true / false] - Skinblinker");
+                Logger.LogImportant("T [true / false] - Teabagger");
+                Logger.LogImportant("Z [true / false] - Sneak");
+                Logger.LogImportant("-----------------");
 
                 string input = Console.ReadLine();
                 new Thread(() => { HandleInput(input); Thread.CurrentThread.IsBackground = true; }).Start();
@@ -67,7 +71,7 @@ namespace MCHexBOT
                     string Server = input.Substring(2);
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.Connect("1.18", Server.Split(':')[0], Convert.ToInt32(Server.Split(':')[1]));
+                        Client.Connect("1.18", Server.Split(':')[0], Server.Split(':').Length > 1 ? Convert.ToInt32(Server.Split(':')[1]) : 25565);
                     }
                     break;
 
@@ -86,7 +90,17 @@ namespace MCHexBOT
                     break;
 
                 case "z":
-                    Movement.OffsetX = 1;
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.SendEntityAction(input.Substring(2) == "true" ? PlayerAction.StartSneaking : PlayerAction.StopSneaking);
+                    }
+                    break;
+
+                case "t":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        TeaBagger.ToggleTeaBagger(Client, input.Substring(2) == "true");
+                    }
                     break;
 
                 case "s":
