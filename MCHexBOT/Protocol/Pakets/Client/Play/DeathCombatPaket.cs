@@ -7,19 +7,19 @@ namespace MCHexBOT.Pakets.Client.Play
     {
         public int EntityID { get; set; }
         public int KillerEntityID  { get; set; }
-        public ChatMessage Message { get; set; }
+        public string Message { get; set; }
         public void Decode(MinecraftStream minecraftStream)
         {
             EntityID = minecraftStream.ReadVarInt();
             KillerEntityID = minecraftStream.ReadInt();
-            Message = minecraftStream.ReadChatObject();
+            Message = minecraftStream.ReadString();
         }
 
         public void Encode(MinecraftStream minecraftStream)
         {
             minecraftStream.WriteVarInt(EntityID);
             minecraftStream.WriteInt(KillerEntityID);
-            minecraftStream.WriteChatObject(Message);
+            minecraftStream.WriteString(Message);
         }
     }
 }

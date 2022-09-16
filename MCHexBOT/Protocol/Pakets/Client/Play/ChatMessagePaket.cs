@@ -7,20 +7,20 @@ namespace MCHexBOT.Pakets.Client.Play
 {
     public class ChatMessagePaket : IPaket
     {
-        public ChatMessage JsonData { get; set; }
+        public string JsonData { get; set; }
         public ChatMessagePosition Position { get; set; }
         public UUID Sender { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
-            JsonData = minecraftStream.ReadChatObject();
+            JsonData = minecraftStream.ReadString();
             Position = (ChatMessagePosition)minecraftStream.ReadByte();
             Sender = minecraftStream.ReadUuid();
         }
 
         public void Encode(MinecraftStream minecraftStream)
         {
-            minecraftStream.WriteChatObject(JsonData);
+            minecraftStream.WriteString(JsonData);
             minecraftStream.WriteByte((byte)Position);
             minecraftStream.WriteUuid(Sender);
         }

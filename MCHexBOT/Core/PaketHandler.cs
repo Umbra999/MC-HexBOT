@@ -52,7 +52,7 @@ namespace MCHexBOT.Core
 
             if (paket is Pakets.Client.Login.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {JsonConvert.SerializeObject(disconnectPaket.Message)}");
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPaket.Message}");
             }
         }
 
@@ -70,7 +70,6 @@ namespace MCHexBOT.Core
                     MinecraftClient.LocalPlayer.EntityID = joinGamePaket.EntityId;
 
                     MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
-                    MinecraftClient.SendRespawn();
                 }
             }
 
@@ -98,7 +97,7 @@ namespace MCHexBOT.Core
 
             if (paket is DeathCombatPaket deathPaket)
             {
-                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.EntityID}: {JsonConvert.SerializeObject(deathPaket.Message)}");
+                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.EntityID}: {deathPaket.Message}");
                 MinecraftClient.SendRespawn();
             }
 
@@ -173,16 +172,16 @@ namespace MCHexBOT.Core
 
             if (paket is ChatMessagePaket messagePaket)
             {
-                ChatCommands.HandleChat(MinecraftClient, messagePaket.JsonData);
+                //ChatCommands.HandleChat(MinecraftClient, messagePaket.JsonData);
             }
 
             if (paket is PlayerPositionAndLookPaket positionPaket)
             {
-                Logger.LogImportant($"X: {positionPaket.X}");
-                Logger.LogImportant($"Y: {positionPaket.Y}");
-                Logger.LogImportant($"Z: {positionPaket.Z}");
-                Logger.LogImportant($"PITCH: {positionPaket.Pitch}");
-                Logger.LogImportant($"YAW: {positionPaket.Yaw}");
+                //Logger.LogImportant($"X: {positionPaket.X}");
+                //Logger.LogImportant($"Y: {positionPaket.Y}");
+                //Logger.LogImportant($"Z: {positionPaket.Z}");
+                //Logger.LogImportant($"PITCH: {positionPaket.Pitch}");
+                //Logger.LogImportant($"YAW: {positionPaket.Yaw}");
 
                 Vector3 NewPos = MinecraftClient.LocalPlayer.Position;
                 Vector2 NewRot = MinecraftClient.LocalPlayer.Rotation;

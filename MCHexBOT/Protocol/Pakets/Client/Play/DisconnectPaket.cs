@@ -5,15 +5,15 @@ namespace MCHexBOT.Pakets.Client.Play
 {
     internal class DisconnectPaket : IPaket
     {
-        public ChatMessage Message { get; set; }
+        public string Message { get; set; }
         public void Decode(MinecraftStream minecraftStream)
         {
-            Message = minecraftStream.ReadChatObject();   
+            Message = minecraftStream.ReadString();   
         }
 
         public void Encode(MinecraftStream minecraftStream)
         {
-            minecraftStream.WriteChatObject(Message);
+            minecraftStream.WriteString(Message);
         }
     }
 }

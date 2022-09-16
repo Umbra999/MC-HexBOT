@@ -8,8 +8,8 @@ namespace MCHexBOT.Pakets.Client.Play
         public short DeltaX { get; set; }
         public short DeltaY { get; set; }
         public short DeltaZ { get; set; }
-        public int Yaw { get; set; }
-        public int Pitch { get; set; }
+        public byte Yaw { get; set; }
+        public byte Pitch { get; set; }
         public bool OnGround { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
@@ -18,8 +18,8 @@ namespace MCHexBOT.Pakets.Client.Play
             DeltaX = minecraftStream.ReadShort();
             DeltaY = minecraftStream.ReadShort();
             DeltaZ = minecraftStream.ReadShort();
-            Yaw = minecraftStream.ReadByte();
-            Pitch = minecraftStream.ReadByte();
+            Yaw = (byte)minecraftStream.ReadByte();
+            Pitch = (byte)minecraftStream.ReadByte();
             OnGround = minecraftStream.ReadBool();
         }
 
@@ -29,8 +29,8 @@ namespace MCHexBOT.Pakets.Client.Play
             minecraftStream.WriteDouble(DeltaX);
             minecraftStream.WriteDouble(DeltaY);
             minecraftStream.WriteDouble(DeltaZ);
-            minecraftStream.WriteByte((byte)Yaw);
-            minecraftStream.WriteByte((byte)Pitch);
+            minecraftStream.WriteByte(Yaw);
+            minecraftStream.WriteByte(Pitch);
             minecraftStream.WriteBool(OnGround);
         }
     }

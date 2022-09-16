@@ -5,16 +5,16 @@ namespace MCHexBOT.Pakets.Client.Login
 {
     public class DisconnectPaket : IPaket
     {
-        public ChatMessage Message { get; set; }
+        public string Message { get; set; } // shpuld be chat object
 
         public void Decode(MinecraftStream minecraftStream)
         {
-            Message = minecraftStream.ReadChatObject();
+            Message = minecraftStream.ReadString();
         }
 
         public void Encode(MinecraftStream minecraftStream)
         {
-            minecraftStream.WriteChatObject(Message);
+            minecraftStream.WriteString(Message);
         }
     }
 }
