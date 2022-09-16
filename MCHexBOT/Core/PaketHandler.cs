@@ -226,7 +226,7 @@ namespace MCHexBOT.Core
 
             if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
             {
-                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: " + JsonConvert.SerializeObject(disconnectPaket.Message));
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPaket.Message}");
             }
         }
 

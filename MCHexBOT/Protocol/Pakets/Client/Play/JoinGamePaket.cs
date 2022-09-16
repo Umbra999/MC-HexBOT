@@ -8,8 +8,8 @@ namespace MCHexBOT.Pakets.Client.Play
     {
         public int EntityId { get; set; }
         public bool IsHardcore { get; set; }
-        public int Gamemode { get; set; }
-        public int PreviousGamemode { get; set; }
+        public byte Gamemode { get; set; }
+        public byte PreviousGamemode { get; set; }
         public int WorldCount { get; set; }
         public string[] WorldNames { get; set; }
         public NbtCompound DimesionCodec { get; set; }
@@ -28,8 +28,8 @@ namespace MCHexBOT.Pakets.Client.Play
         {
             EntityId = minecraftStream.ReadInt();
             IsHardcore = minecraftStream.ReadBool();
-            Gamemode = minecraftStream.ReadByte();
-            PreviousGamemode = minecraftStream.ReadByte();
+            Gamemode = minecraftStream.ReadUnsignedByte();
+            PreviousGamemode = (byte)minecraftStream.ReadByte();
             WorldCount = minecraftStream.ReadVarInt();
 
             List<string> names = new();
@@ -59,8 +59,8 @@ namespace MCHexBOT.Pakets.Client.Play
         {
             minecraftStream.WriteVarInt(EntityId);
             minecraftStream.WriteBool(IsHardcore);
-            minecraftStream.WriteByte((byte)Gamemode);
-            minecraftStream.WriteByte((byte)PreviousGamemode);
+            minecraftStream.WriteByte(Gamemode);
+            minecraftStream.WriteByte(PreviousGamemode);
             minecraftStream.WriteVarInt(WorldCount);
 
             for(int i = 0; i <= WorldCount; i++)
