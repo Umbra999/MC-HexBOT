@@ -6,9 +6,12 @@ namespace MCHexBOT.Utils
     public class Player
     {
         public int EntityID { get; set; }
+        public bool IsLocal { get; set; }
         public PlayerInfo PlayerInfo { get; set; }
         public Vector3 Position { get; set; }
         public Vector2 Rotation { get; set; }
+        public Vector3 Velocity { get; set; }
+        public bool IsOnGround { get; set; }
         public int Food { get; set; }
         public float Health { get; set; }
         public float Saturation { get; set; }

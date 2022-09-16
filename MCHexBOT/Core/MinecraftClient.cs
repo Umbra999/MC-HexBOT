@@ -13,12 +13,22 @@ namespace MCHexBOT.Core
         public readonly APIClient APIClient;
         public MinecraftConnection MCConnection;
         public List<Player> Players = new();
-        public Player LocalPlayer;
+
+        public Player GetLocalPlayer()
+        {
+            foreach (Player player in Players)
+            {
+                if (player.PlayerInfo?.Name == APIClient.CurrentUser.name) return player;
+            }
+
+            Player Local = new() { IsLocal = true };
+            Players.Add(Local);
+            return Local;
+        }
 
         public MinecraftClient(APIClient WebClient)
         {
             APIClient = WebClient;
-            LocalPlayer = new();
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
@@ -111,7 +121,7 @@ namespace MCHexBOT.Core
         {
             MCConnection.SendPaket(new EntityActionPaket()
             {
-                EntityId = LocalPlayer.EntityID,
+                EntityId = GetLocalPlayer().EntityID,
                 ActionId = (int)Action,
                 JumpBoost = Action == PlayerAction.StartHorseJump ? 100 : 0,
             });
@@ -155,6 +165,25 @@ namespace MCHexBOT.Core
             {
                 Slot = Slot
             });
+        }
+
+        public void SendMovement(bool X, bool Y, bool Z)
+        {
+            var x = GetLocalPlayer().Position.X + (X ? 0.25 : 0);
+            var y = GetLocalPlayer().Position.Y + (Y ? 0.25 : 0);
+            var z = GetLocalPlayer().Position.Z + (Z ? 0.25 : 0);
+
+            MCConnection.SendPaket(new PlayerPositionAndRotationPaket()
+            {
+                X = x,
+                Y = y,
+                Z = z,
+                Pitch = GetLocalPlayer().Rotation.Y,
+                Yaw = GetLocalPlayer().Rotation.X,
+                OnGround = GetLocalPlayer().IsOnGround,
+            });
+
+            GetLocalPlayer().Position = new System.Numerics.Vector3((float)x, (float)y, (float)z);
         }
     }
 }

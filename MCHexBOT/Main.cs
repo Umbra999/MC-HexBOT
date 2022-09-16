@@ -118,15 +118,7 @@ namespace MCHexBOT
                 case "v":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
-                        {
-                            X = Client.LocalPlayer.Position.X + 1,
-                            Y = Client.LocalPlayer.Position.Y,
-                            Z = Client.LocalPlayer.Position.Z,
-                            Pitch = Client.LocalPlayer.Rotation.Y,
-                            Yaw = Client.LocalPlayer.Rotation.X,
-                            OnGround = true,
-                        });
+                        Client.SendMovement(false, false, true);
                     }
                     break;
             }

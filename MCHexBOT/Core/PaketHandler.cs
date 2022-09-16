@@ -6,8 +6,7 @@ using MCHexBOT.Pakets.Client.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Math;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Bcpg;
+using System.Data.Common;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -60,17 +59,14 @@ namespace MCHexBOT.Core
         {
             if (paket is JoinGamePaket joinGamePaket)
             {
-                if (!IsReady)
-                {
-                    Logger.LogSuccess($"{MinecraftClient.APIClient.CurrentUser.name} joined the game");
-                    Logger.LogDebug("Gamemode: " + joinGamePaket.Gamemode);
-                    Logger.LogDebug("Sim Dist: " + joinGamePaket.SimulationDistance);
-                    Logger.LogDebug("EntityID: " + joinGamePaket.EntityId);
+                Logger.LogSuccess($"{MinecraftClient.APIClient.CurrentUser.name} joined the game");
+                Logger.LogDebug("Gamemode: " + joinGamePaket.Gamemode);
+                Logger.LogDebug("Sim Dist: " + joinGamePaket.SimulationDistance);
+                Logger.LogDebug("EntityID: " + joinGamePaket.EntityId);
 
-                    MinecraftClient.LocalPlayer.EntityID = joinGamePaket.EntityId;
+                MinecraftClient.GetLocalPlayer().EntityID = joinGamePaket.EntityId;
 
-                    MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
-                }
+                MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
             }
 
             if (paket is KeepAlivePaket keepAlivePaket)
@@ -108,11 +104,31 @@ namespace MCHexBOT.Core
                     case 0:
                         foreach (PlayerInfo player in playerInfoPaket.Players)
                         {
-                            if (MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()).ToArray().Length < 1)
+                            if (player.Name == MinecraftClient.APIClient.CurrentUser.name)
+                            {
+                                foreach (Player Local in MinecraftClient.Players.Where(x => x.IsLocal))
+                                {
+                                    Local.PlayerInfo = player;
+                                    Local.IsOnGround = true;
+                                    Local.Health = 20;
+                                    Local.Food = 20;
+                                    Local.Saturation = 5;
+                                    Local.Position = new Vector3(0, 0, 0);
+                                    Local.Rotation = new Vector2(0, 0);
+                                }
+                            }
+
+                            else if (MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == player.UUID.ToString()).ToArray().Length < 1)
                             {
                                 MinecraftClient.Players.Add(new Player()
                                 {
-                                    PlayerInfo = player
+                                    PlayerInfo = player,
+                                    IsOnGround = true,
+                                    Health = 20,
+                                    Food = 20,
+                                    Saturation = 5,
+                                    Position = new Vector3(0, 0, 0),
+                                    Rotation = new Vector2(0, 0)
                                 });
                             }
                         }
@@ -164,9 +180,9 @@ namespace MCHexBOT.Core
 
             if (paket is UpdateHealthPaket updateHealthPaket)
             {
-                MinecraftClient.LocalPlayer.Food = updateHealthPaket.Food;
-                MinecraftClient.LocalPlayer.Health = updateHealthPaket.Health;
-                MinecraftClient.LocalPlayer.Saturation = updateHealthPaket.Saturation;
+                MinecraftClient.GetLocalPlayer().Food = updateHealthPaket.Food;
+                MinecraftClient.GetLocalPlayer().Health = updateHealthPaket.Health;
+                MinecraftClient.GetLocalPlayer().Saturation = updateHealthPaket.Saturation;
                 //Logger.LogDebug($"Health update: Health: {updateHealthPaket.Health} Food: {updateHealthPaket.Food} Saturation: {updateHealthPaket.Saturation}");
             }
 
@@ -183,8 +199,8 @@ namespace MCHexBOT.Core
                 //Logger.LogImportant($"PITCH: {positionPaket.Pitch}");
                 //Logger.LogImportant($"YAW: {positionPaket.Yaw}");
 
-                Vector3 NewPos = MinecraftClient.LocalPlayer.Position;
-                Vector2 NewRot = MinecraftClient.LocalPlayer.Rotation;
+                Vector3 NewPos = MinecraftClient.GetLocalPlayer().Position;
+                Vector2 NewRot = MinecraftClient.GetLocalPlayer().Rotation;
 
                 if ((positionPaket.Flags & 0x01) == 0x01) NewPos.X += (float)positionPaket.X;
                 else NewPos.X = (float)positionPaket.X;
@@ -201,8 +217,8 @@ namespace MCHexBOT.Core
                 if ((positionPaket.Flags & 0x10) == 0x10) NewPos.X += positionPaket.Yaw!;
                 else NewRot.X = positionPaket.Yaw!;
 
-                MinecraftClient.LocalPlayer.Position = NewPos;
-                MinecraftClient.LocalPlayer.Rotation = NewRot;
+                MinecraftClient.GetLocalPlayer().Position = NewPos;
+                MinecraftClient.GetLocalPlayer().Rotation = NewRot;
 
                 Connection.SendPaket(new Pakets.Server.Play.TeleportConfirmPaket()
                 {
@@ -217,7 +233,7 @@ namespace MCHexBOT.Core
                         X = positionPaket.X,
                         Y = positionPaket.Y,
                         Z = positionPaket.Z,
-                        OnGround = true,
+                        OnGround = MinecraftClient.GetLocalPlayer().IsOnGround,
                         Pitch = positionPaket.Pitch,
                         Yaw = positionPaket.Yaw
                     });
@@ -227,6 +243,56 @@ namespace MCHexBOT.Core
             if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
             {
                 Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPaket.Message}");
+            }
+
+            // Entity 
+            if (paket is SpawnEntityPaket entitySpawnPaket)
+            {
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entitySpawnPaket.EntityId || x.PlayerInfo.UUID.ToString() == entitySpawnPaket.ObjectUUID.ToString()))
+                {
+                    player.EntityID = entitySpawnPaket.EntityId;
+                    player.Position = new Vector3((float)entitySpawnPaket.XPosition, (float)entitySpawnPaket.YPosition, (float)entitySpawnPaket.ZPosition);
+                    player.Rotation = new Vector2(entitySpawnPaket.Yaw, entitySpawnPaket.Pitch);
+                    player.Velocity = new Vector3(entitySpawnPaket.XVelocity, entitySpawnPaket.YVelocity, entitySpawnPaket.ZVelocity);
+                }
+            }
+
+            if (paket is EntityPositionAndRotationPaket entityPosAndRotPaket)
+            {
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosAndRotPaket.EntityId))
+                {
+                    player.Position = new Vector3((float)(entityPosAndRotPaket.DeltaX / (128 * 32d)), (float)(entityPosAndRotPaket.DeltaY / (128 * 32d)), (float)(entityPosAndRotPaket.DeltaZ / (128 * 32d)));
+                    player.Rotation = new Vector2(entityPosAndRotPaket.Yaw, entityPosAndRotPaket.Pitch);
+                    player.IsOnGround = entityPosAndRotPaket.OnGround;
+                }
+            }
+
+            if (paket is EntityPositionPaket entityPosPaket)
+            {
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosPaket.EntityId))
+                {
+                    player.Position = new Vector3((float)(entityPosPaket.DeltaX / (128 * 32d)), (float)(entityPosPaket.DeltaY / (128 * 32d)), (float)(entityPosPaket.DeltaZ / (128 * 32d)));
+                    player.IsOnGround = entityPosPaket.OnGround;
+                }
+            }
+
+            if (paket is EntityRotationPaket entityRotPaket)
+            {
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityRotPaket.EntityId))
+                {
+                    player.Rotation = new Vector2(entityRotPaket.Yaw, entityRotPaket.Pitch);
+                    player.IsOnGround = entityRotPaket.OnGround;
+                }
+            }
+
+            if (paket is EntityTeleportPaket entityTeleportPaket)
+            {
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityTeleportPaket.EntityId))
+                {
+                    player.Position = new Vector3((float)entityTeleportPaket.X, (float)entityTeleportPaket.Y, (float)entityTeleportPaket.Z);
+                    player.Rotation = new Vector2(entityTeleportPaket.Yaw, entityTeleportPaket.Pitch);
+                    player.IsOnGround = entityTeleportPaket.OnGround;
+                }
             }
         }
 

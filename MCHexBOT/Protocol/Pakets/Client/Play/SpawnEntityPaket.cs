@@ -5,7 +5,7 @@ namespace MCHexBOT.Pakets.Client.Play
 {
     public class SpawnEntityPaket : IPaket
     {
-        public int EntityID { get; set; }
+        public int EntityId { get; set; }
         public UUID ObjectUUID { get; set; }
         public int Type { get; set; }
         public double XPosition { get; set; }
@@ -20,7 +20,7 @@ namespace MCHexBOT.Pakets.Client.Play
 
         public void Decode(MinecraftStream minecraftStream)
         {
-            EntityID = minecraftStream.ReadVarInt();
+            EntityId = minecraftStream.ReadVarInt();
             ObjectUUID = minecraftStream.ReadUuid();
             Type = minecraftStream.ReadVarInt();
             XPosition = minecraftStream.ReadDouble();
@@ -36,7 +36,7 @@ namespace MCHexBOT.Pakets.Client.Play
 
         public void Encode(MinecraftStream minecraftStream)
         {
-            minecraftStream.WriteVarInt(EntityID);
+            minecraftStream.WriteVarInt(EntityId);
             minecraftStream.WriteUuid(ObjectUUID);
             minecraftStream.WriteVarInt(Type);
             minecraftStream.WriteDouble(XPosition);
