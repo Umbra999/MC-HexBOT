@@ -7,6 +7,7 @@ using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Math;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Bcpg;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -69,6 +70,7 @@ namespace MCHexBOT.Core
                     MinecraftClient.LocalPlayer.EntityID = joinGamePaket.EntityId;
 
                     MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
+                    MinecraftClient.SendRespawn();
                 }
             }
 
@@ -176,19 +178,37 @@ namespace MCHexBOT.Core
 
             if (paket is PlayerPositionAndLookPaket positionPaket)
             {
-                if (positionPaket.TeleportID != 0)
-                {
-                    Connection.SendPaket(new Pakets.Server.Play.TeleportConfirmPaket()
-                    {
-                        TeleportID = positionPaket.TeleportID
-                    });
-                }
-
                 Logger.LogImportant($"X: {positionPaket.X}");
                 Logger.LogImportant($"Y: {positionPaket.Y}");
                 Logger.LogImportant($"Z: {positionPaket.Z}");
                 Logger.LogImportant($"PITCH: {positionPaket.Pitch}");
                 Logger.LogImportant($"YAW: {positionPaket.Yaw}");
+
+                Vector3 NewPos = MinecraftClient.LocalPlayer.Position;
+                Vector2 NewRot = MinecraftClient.LocalPlayer.Rotation;
+
+                if ((positionPaket.Flags & 0x01) == 0x01) NewPos.X += (float)positionPaket.X;
+                else NewPos.X = (float)positionPaket.X;
+
+                if ((positionPaket.Flags & 0x02) == 0x02) NewPos.Y += (float)positionPaket.Y!;
+                else NewPos.Y = (float)positionPaket.Y!;
+
+                if ((positionPaket.Flags & 0x04) == 0x04) NewPos.Z += (float)positionPaket.Z!;
+                else NewPos.Z = (float)positionPaket.Z!;
+
+                if ((positionPaket.Flags & 0x08) == 0x08) NewRot.Y += positionPaket.Pitch!;
+                else NewRot.Y = positionPaket.Pitch!;
+
+                if ((positionPaket.Flags & 0x10) == 0x10) NewPos.X += positionPaket.Yaw!;
+                else NewRot.X = positionPaket.Yaw!;
+
+                MinecraftClient.LocalPlayer.Position = NewPos;
+                MinecraftClient.LocalPlayer.Rotation = NewRot;
+
+                Connection.SendPaket(new Pakets.Server.Play.TeleportConfirmPaket()
+                {
+                    TeleportID = positionPaket.TeleportID
+                });
 
                 if (!IsReady)
                 {

@@ -6,7 +6,7 @@ namespace MCHexBOT.Pakets.Server.Play
     public class ClientSettingsPaket : IPaket
     {
         public string Locale { get; set; }
-        public int ViewDistance { get; set; }
+        public byte ViewDistance { get; set; }
         public ChatMode ChatMode { get; set; }
         public bool ChatColors { get; set; }
         public uint DisplayedSkinParts { get; set; }
@@ -17,7 +17,7 @@ namespace MCHexBOT.Pakets.Server.Play
         public void Decode(MinecraftStream minecraftStream)
         {
             Locale = minecraftStream.ReadString();
-            ViewDistance = minecraftStream.ReadByte();
+            ViewDistance = (byte)minecraftStream.ReadByte();
             ChatMode = (ChatMode)minecraftStream.ReadVarInt();
             ChatColors = minecraftStream.ReadBool();
             DisplayedSkinParts = minecraftStream.ReadUnsignedByte();
@@ -29,7 +29,7 @@ namespace MCHexBOT.Pakets.Server.Play
         public void Encode(MinecraftStream minecraftStream)
         {
             minecraftStream.WriteString(Locale);
-            minecraftStream.WriteByte((byte)ViewDistance);
+            minecraftStream.WriteByte(ViewDistance);
             minecraftStream.WriteVarInt((int)ChatMode);
             minecraftStream.WriteBool(ChatColors);
             minecraftStream.WriteByte((byte)DisplayedSkinParts);

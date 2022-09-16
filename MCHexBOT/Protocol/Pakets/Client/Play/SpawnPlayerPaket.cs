@@ -10,8 +10,8 @@ namespace MCHexBOT.Pakets.Client.Play
         public double X { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
-        public int Yaw { get; set; }
-        public int Pitch { get; set; }
+        public byte Yaw { get; set; }
+        public byte Pitch { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
@@ -20,8 +20,8 @@ namespace MCHexBOT.Pakets.Client.Play
             X = minecraftStream.ReadDouble();
             Y = minecraftStream.ReadDouble();
             Z = minecraftStream.ReadDouble();
-            Yaw = minecraftStream.ReadByte();
-            Pitch = minecraftStream.ReadByte();
+            Yaw = (byte)minecraftStream.ReadByte();
+            Pitch = (byte)minecraftStream.ReadByte();
         }
 
         public void Encode(MinecraftStream minecraftStream)
@@ -31,8 +31,8 @@ namespace MCHexBOT.Pakets.Client.Play
             minecraftStream.WriteDouble(X);
             minecraftStream.WriteDouble(Y);
             minecraftStream.WriteDouble(Z);
-            minecraftStream.WriteByte((byte)Yaw);
-            minecraftStream.WriteByte((byte)Pitch);
+            minecraftStream.WriteByte(Yaw);
+            minecraftStream.WriteByte(Pitch);
         }
     }
 }
