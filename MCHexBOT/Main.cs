@@ -59,7 +59,12 @@ namespace MCHexBOT
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("S [true / false] - Skinblinker");
                 Logger.LogImportant("T [true / false] - Teabagger");
-                Logger.LogImportant("Z [true / false] - Sneak");
+                Logger.LogImportant("K [true / false] - Sneak");
+                Logger.LogImportant("-----------------");
+                Logger.LogImportant("F [Name] - Follow a Player");
+                Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
+                Logger.LogImportant("Y [+,-,/] - Move the Y Cordinate");
+                Logger.LogImportant("Z [+,-,/] - Move the Z Cordinate");
                 Logger.LogImportant("-----------------");
 
                 string input = Console.ReadLine();
@@ -94,7 +99,7 @@ namespace MCHexBOT
                     }
                     break;
 
-                case "z":
+                case "k":
                     foreach (MinecraftClient Client in Clients)
                     {
                         Client.SendEntityAction(input.Substring(2) == "true" ? PlayerAction.StartSneaking : PlayerAction.StopSneaking);
@@ -115,8 +120,65 @@ namespace MCHexBOT
                     }
                     break;
 
-                case "v":
+                case "f":
                     Movement.CopyMovementTarget = input.Substring(2);
+                    break;
+
+                case "x":
+                    {
+                        switch (input.Substring(2))
+                        {
+                            case "/":
+                                Movement.WalkX = Movement.MovementPosition.None;
+                                break;
+
+                            case "+":
+                                Movement.WalkX = Movement.MovementPosition.Forward;
+                                break;
+
+                            case "-":
+                                Movement.WalkX = Movement.MovementPosition.Backward;
+                                break;
+                        }
+                    }
+                    break;
+
+                case "y":
+                    {
+                        switch (input.Substring(2))
+                        {
+                            case "/":
+                                Movement.WalkY = Movement.MovementPosition.None;
+                                break;
+
+                            case "+":
+                                Movement.WalkY = Movement.MovementPosition.Forward;
+                                break;
+
+                            case "-":
+                                Movement.WalkY = Movement.MovementPosition.Backward;
+                                break;
+                        }
+                    }
+                    break;
+
+                case "z":
+                    {
+                        switch (input.Substring(2))
+                        {
+                            case "/":
+                                Movement.WalkZ = Movement.MovementPosition.None;
+                                break;
+
+                            case "+":
+                                Movement.WalkZ = Movement.MovementPosition.Forward;
+                                break;
+
+                            case "-":
+                                Movement.WalkZ = Movement.MovementPosition.Backward;
+                                break;
+                        }
+                    }
                     break;
             }
         }

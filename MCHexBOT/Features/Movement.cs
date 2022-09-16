@@ -6,7 +6,24 @@ namespace MCHexBOT.Features
 {
     internal class Movement
     {
+        public enum MovementPosition
+        {
+            None,
+            Forward,
+            Backward,
+        }
+
         public static string CopyMovementTarget = "";
+
+        private static float WalkSpeed = 0.21585f;
+        private static float SprintSpeed = 0.2806f;
+        private static float SneakSpeed = 0.0655f;
+        private static float SwimmingSpeed = 0.11f;
+
+        public static MovementPosition WalkX = MovementPosition.None;
+        public static MovementPosition WalkY = MovementPosition.None;
+        public static MovementPosition WalkZ = MovementPosition.None;
+
 
         public static void MovementLoop(MinecraftClient Bot)
         {
@@ -14,8 +31,20 @@ namespace MCHexBOT.Features
             {
                 for (; ; )
                 {
-                    if (Bot.MCConnection.State == Protocol.ConnectionState.Play) SendOnGround(Bot, Bot.GetLocalPlayer().IsOnGround);
-                    Thread.Sleep(1000);
+                    if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
+                    {
+                        Vector3 Positions = Bot.GetLocalPlayer().Position;
+                        Vector2 Rotations = Bot.GetLocalPlayer().Rotation;
+                        bool IsGround = Bot.GetLocalPlayer().IsOnGround;
+
+                        if (WalkX != MovementPosition.None) Positions.X += WalkX == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+                        if (WalkY != MovementPosition.None) Positions.Y += WalkY == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+                        if (WalkZ != MovementPosition.None) Positions.Z += WalkZ == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+
+                        else SendMovement(Bot, Positions, Rotations, IsGround);
+                    }
+
+                    Thread.Sleep(50);
                 }
             }).Start();
         }
@@ -28,13 +57,6 @@ namespace MCHexBOT.Features
             }
         }
 
-        public static void AcceptTeleport(MinecraftClient Bot, int ID)
-        {
-            Bot.MCConnection.SendPaket(new Pakets.Server.Play.TeleportConfirmPaket()
-            {
-                TeleportID = ID
-            });
-        }
 
         private static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {

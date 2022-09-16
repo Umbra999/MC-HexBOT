@@ -126,6 +126,7 @@ namespace MCHexBOT.Core
                                     Position = new Vector3(0, 0, 0),
                                     Rotation = new Vector2(0, 0)
                                 });
+                                Logger.Log($"[ + ] {player.Name}");
                             }
                         }
                         break;
@@ -167,6 +168,7 @@ namespace MCHexBOT.Core
                             var List = MinecraftClient.Players.Where(x => x.PlayerInfo?.UUID.ToString() == player.UUID.ToString()).ToList();
                             foreach (Player Cache in List)
                             {
+                                Logger.Log($"[ - ] {Cache.PlayerInfo.Name}");
                                 MinecraftClient.Players.Remove(Cache);
                             }
                         }
@@ -217,6 +219,11 @@ namespace MCHexBOT.Core
 
             if (paket is PlayerPositionAndLookPaket positionPaket)
             {
+                Connection.SendPaket(new Pakets.Server.Play.TeleportConfirmPaket()
+                {
+                    TeleportID = positionPaket.TeleportID
+                });
+
                 Vector3 NewPos = MinecraftClient.GetLocalPlayer().Position;
                 Vector2 NewRot = MinecraftClient.GetLocalPlayer().Rotation;
 
@@ -236,9 +243,7 @@ namespace MCHexBOT.Core
                 else NewRot.X = positionPaket.Yaw!;
 
                 MinecraftClient.GetLocalPlayer().Position = NewPos;
-                MinecraftClient.GetLocalPlayer().Rotation = NewRot;
-
-                Movement.AcceptTeleport(MinecraftClient, positionPaket.TeleportID);
+                MinecraftClient.GetLocalPlayer().Rotation = NewRot;;
 
                 if (!IsReady)
                 {
@@ -278,23 +283,15 @@ namespace MCHexBOT.Core
             // Entity 
             if (paket is SpawnLivingEntity entityAliveSpawnPaket)
             {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityAliveSpawnPaket.EntityId || x.PlayerInfo.UUID.ToString() == entityAliveSpawnPaket.EntityUUID.ToString()))
+                if (entityAliveSpawnPaket.Type == 116)
                 {
-                    player.EntityID = entityAliveSpawnPaket.EntityId;
-                    player.Position = new Vector3((float)entityAliveSpawnPaket.XPosition, (float)entityAliveSpawnPaket.YPosition, (float)entityAliveSpawnPaket.ZPosition);
-                    player.Rotation = new Vector2(entityAliveSpawnPaket.Yaw, entityAliveSpawnPaket.Pitch);
-                    player.Velocity = new Vector3(entityAliveSpawnPaket.XVelocity, entityAliveSpawnPaket.YVelocity, entityAliveSpawnPaket.ZVelocity);
-                }
-            }
-
-            if (paket is SpawnEntityPaket entitySpawnPaket)
-            {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entitySpawnPaket.EntityId || x.PlayerInfo.UUID.ToString() == entitySpawnPaket.ObjectUUID.ToString()))
-                {
-                    player.EntityID = entitySpawnPaket.EntityId;
-                    player.Position = new Vector3((float)entitySpawnPaket.XPosition, (float)entitySpawnPaket.YPosition, (float)entitySpawnPaket.ZPosition);
-                    player.Rotation = new Vector2(entitySpawnPaket.Yaw, entitySpawnPaket.Pitch);
-                    player.Velocity = new Vector3(entitySpawnPaket.XVelocity, entitySpawnPaket.YVelocity, entitySpawnPaket.ZVelocity);
+                    foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityAliveSpawnPaket.EntityId || x.PlayerInfo.UUID.ToString() == entityAliveSpawnPaket.EntityUUID.ToString()))
+                    {
+                        player.EntityID = entityAliveSpawnPaket.EntityId;
+                        player.Position = new Vector3((float)entityAliveSpawnPaket.XPosition, (float)entityAliveSpawnPaket.YPosition, (float)entityAliveSpawnPaket.ZPosition);
+                        player.Rotation = new Vector2(entityAliveSpawnPaket.Yaw, entityAliveSpawnPaket.Pitch);
+                        player.Velocity = new Vector3(entityAliveSpawnPaket.XVelocity, entityAliveSpawnPaket.YVelocity, entityAliveSpawnPaket.ZVelocity);
+                    }
                 }
             }
 
@@ -312,6 +309,7 @@ namespace MCHexBOT.Core
 
             if (paket is EntityPositionPaket entityPosPaket)
             {
+  
                 foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosPaket.EntityId))
                 {
                     player.Position += new Vector3(entityPosPaket.DeltaX / 4096, entityPosPaket.DeltaY / 4096, entityPosPaket.DeltaZ / 4096);
