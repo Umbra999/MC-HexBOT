@@ -28,8 +28,6 @@ namespace MCHexBOT.Network
 
         public IPaketHandler Handler { get; set; }
 
-        private bool TerminateThreads = false;
-
         public MinecraftConnection(TcpClient tcp)
         {
             Tcp = tcp;
@@ -64,7 +62,7 @@ namespace MCHexBOT.Network
             {
                 SpinWait sw = new();
 
-                while (!CancellationToken.IsCancellationRequested && !TerminateThreads)
+                while (!CancellationToken.IsCancellationRequested)
                 {
                     if (CancellationToken.IsCancellationRequested) break;
 
@@ -106,7 +104,7 @@ namespace MCHexBOT.Network
             {
                 SpinWait sw = new();
 
-                while (!CancellationToken.IsCancellationRequested && !TerminateThreads)
+                while (!CancellationToken.IsCancellationRequested)
                 {
                     if (CancellationToken.IsCancellationRequested) break;
 

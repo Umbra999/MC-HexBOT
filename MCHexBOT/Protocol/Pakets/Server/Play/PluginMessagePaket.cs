@@ -1,6 +1,6 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Pakets.Server.Play
 {
     internal class PluginMessagePaket : IPaket
     {

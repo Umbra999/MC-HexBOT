@@ -5,6 +5,7 @@ using MCHexBOT.Pakets.Server.Login;
 using System.Net.Sockets;
 using MCHexBOT.Pakets.Server.Play;
 using MCHexBOT.Protocol;
+using MCHexBOT.Features;
 
 namespace MCHexBOT.Core
 {
@@ -99,6 +100,8 @@ namespace MCHexBOT.Core
             {
                 Username = APIClient.CurrentUser.name
             });
+
+            Movement.MovementLoop(this);
         }
 
         public void SendChat(string Message)
@@ -165,25 +168,6 @@ namespace MCHexBOT.Core
             {
                 Slot = Slot
             });
-        }
-
-        public void SendMovement(bool X, bool Y, bool Z)
-        {
-            var x = GetLocalPlayer().Position.X + (X ? 0.25 : 0);
-            var y = GetLocalPlayer().Position.Y + (Y ? 0.25 : 0);
-            var z = GetLocalPlayer().Position.Z + (Z ? 0.25 : 0);
-
-            MCConnection.SendPaket(new PlayerPositionAndRotationPaket()
-            {
-                X = x,
-                Y = y,
-                Z = z,
-                Pitch = GetLocalPlayer().Rotation.Y,
-                Yaw = GetLocalPlayer().Rotation.X,
-                OnGround = GetLocalPlayer().IsOnGround,
-            });
-
-            GetLocalPlayer().Position = new System.Numerics.Vector3((float)x, (float)y, (float)z);
         }
     }
 }

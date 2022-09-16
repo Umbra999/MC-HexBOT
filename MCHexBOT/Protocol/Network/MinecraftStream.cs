@@ -328,7 +328,7 @@ namespace MCHexBOT.Network
 			nbt = ReadNbtCompound();
 
 
-			SlotData slot = new SlotData();
+			SlotData slot = new();
 			slot.Count = count;
 			slot.Nbt = nbt;
 			slot.ItemID = id;

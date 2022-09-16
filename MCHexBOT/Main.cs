@@ -116,10 +116,7 @@ namespace MCHexBOT
                     break;
 
                 case "v":
-                    foreach (MinecraftClient Client in Clients)
-                    {
-                        Client.SendMovement(false, false, true);
-                    }
+                    Movement.CopyMovementTarget = input.Substring(2);
                     break;
             }
         }

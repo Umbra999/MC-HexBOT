@@ -56,11 +56,13 @@ namespace MCHexBOT.Network
 
             // Play
             registry.AddPaket(0x00, new Pakets.Client.Play.SpawnEntityPaket(), ConnectionState.Play);
+            registry.AddPaket(0x02, new Pakets.Client.Play.SpawnLivingEntity(), ConnectionState.Play);
             registry.AddPaket(0x26, new Pakets.Client.Play.JoinGamePaket(), ConnectionState.Play);
             registry.AddPaket(0x21, new Pakets.Client.Play.KeepAlivePaket(), ConnectionState.Play);
             registry.AddPaket(0x04, new Pakets.Client.Play.SpawnPlayerPaket(), ConnectionState.Play);
             registry.AddPaket(0x08, new Pakets.Client.Play.AcknowledgePlayerDiggingPaket(), ConnectionState.Play);
             registry.AddPaket(0x0C, new Pakets.Client.Play.BlockChangePaket(), ConnectionState.Play);
+            registry.AddPaket(0x30, new Pakets.Client.Play.PingPaket(), ConnectionState.Play);
             registry.AddPaket(0x36, new Pakets.Client.Play.PlayerInfoPaket(), ConnectionState.Play);
             registry.AddPaket(0x52, new Pakets.Client.Play.UpdateHealthPaket(), ConnectionState.Play);
             registry.AddPaket(0x38, new Pakets.Client.Play.PlayerPositionAndLookPaket(), ConnectionState.Play);
@@ -74,6 +76,10 @@ namespace MCHexBOT.Network
             registry.AddPaket(0x35, new Pakets.Client.Play.DeathCombatPaket(), ConnectionState.Play);
             registry.AddPaket(0x2B, new Pakets.Client.Play.EntityRotationPaket(), ConnectionState.Play);
             registry.AddPaket(0x62, new Pakets.Client.Play.EntityTeleportPaket(), ConnectionState.Play);
+            registry.AddPaket(0x4F, new Pakets.Client.Play.EntityVelocityPaket(), ConnectionState.Play);
+            registry.AddPaket(0x3E, new Pakets.Client.Play.EntityHeadLookPaket(), ConnectionState.Play);
+            registry.AddPaket(0x18, new Pakets.Client.Play.PluginMessagePaket(), ConnectionState.Play);
+            registry.AddPaket(0x48, new Pakets.Client.Play.SlotSelectionPaket(), ConnectionState.Play);
         }
 
         // Pakets the server can understand
@@ -103,6 +109,8 @@ namespace MCHexBOT.Network
             registry.AddPaket(0x13, new Pakets.Server.Play.PlayerRotationPaket(), ConnectionState.Play);
             registry.AddPaket(0x0D, new Pakets.Server.Play.InteractEntityPaket(), ConnectionState.Play);
             registry.AddPaket(0x25, new Pakets.Server.Play.HeldItemChangePaket(), ConnectionState.Play);
+            registry.AddPaket(0x0A, new Pakets.Server.Play.PluginMessagePaket(), ConnectionState.Play);
+            registry.AddPaket(0x1D, new Pakets.Server.Play.PongPaket(), ConnectionState.Play);
         }
     }
 }
