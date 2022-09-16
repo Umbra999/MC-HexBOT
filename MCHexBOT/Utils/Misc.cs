@@ -2,6 +2,7 @@
 using Org.BouncyCastle.Asn1.Mozilla;
 using System;
 using System.Collections;
+using System.Numerics;
 using System.Text;
 
 namespace MCHexBOT.Utils
@@ -49,6 +50,12 @@ namespace MCHexBOT.Utils
         public static string ToBase64(string Data)
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(Data));
+        }
+
+        public static double DistanceSquared(Vector3 From, Vector3 To)
+        {
+            var diff = new Vector3(From.X - To.X, From.Y - To.Y, From.Z - To.Z);
+            return diff.X * diff.X + diff.Y * diff.Y + diff.Z * diff.Z;
         }
 
         public static Dictionary<string, int> ProtocolVersions = new()

@@ -60,6 +60,7 @@ namespace MCHexBOT
                 Logger.LogImportant("S [true / false] - Skinblinker");
                 Logger.LogImportant("T [true / false] - Teabagger");
                 Logger.LogImportant("K [true / false] - Sneak");
+                Logger.LogImportant("O [NAME] - Target on Killlist");
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("F [Name] - Follow a Player");
                 Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
@@ -122,6 +123,10 @@ namespace MCHexBOT
 
                 case "f":
                     Movement.CopyMovementTarget = input.Substring(2);
+                    break;
+
+                case "o":
+                    Combat.ToggleAttack(input.Substring(2));
                     break;
 
                 case "x":

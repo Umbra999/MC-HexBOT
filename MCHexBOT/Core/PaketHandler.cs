@@ -126,7 +126,7 @@ namespace MCHexBOT.Core
                                     Position = new Vector3(0, 0, 0),
                                     Rotation = new Vector2(0, 0)
                                 });
-                                Logger.Log($"[ + ] {player.Name}");
+                                //Logger.Log($"[ + ] {player.Name}");
                             }
                         }
                         break;
@@ -168,7 +168,7 @@ namespace MCHexBOT.Core
                             var List = MinecraftClient.Players.Where(x => x.PlayerInfo?.UUID.ToString() == player.UUID.ToString()).ToList();
                             foreach (Player Cache in List)
                             {
-                                Logger.Log($"[ - ] {Cache.PlayerInfo.Name}");
+                                //Logger.Log($"[ - ] {Cache.PlayerInfo.Name}");
                                 MinecraftClient.Players.Remove(Cache);
                             }
                         }
@@ -302,8 +302,6 @@ namespace MCHexBOT.Core
                     player.Position += new Vector3(entityPosAndRotPaket.DeltaX / 4096, entityPosAndRotPaket.DeltaY / 4096, entityPosAndRotPaket.DeltaZ / 4096);
                     player.Rotation = new Vector2(entityPosAndRotPaket.Yaw, entityPosAndRotPaket.Pitch);
                     player.IsOnGround = entityPosAndRotPaket.OnGround;
-
-                    Movement.HandleMovement(MinecraftClient, player);
                 }
             }
 
@@ -314,8 +312,6 @@ namespace MCHexBOT.Core
                 {
                     player.Position += new Vector3(entityPosPaket.DeltaX / 4096, entityPosPaket.DeltaY / 4096, entityPosPaket.DeltaZ / 4096);
                     player.IsOnGround = entityPosPaket.OnGround;
-
-                    Movement.HandleMovement(MinecraftClient, player);
                 }
             }
 
@@ -325,8 +321,6 @@ namespace MCHexBOT.Core
                 {
                     player.Rotation = new Vector2(entityRotPaket.Yaw, entityRotPaket.Pitch);
                     player.IsOnGround = entityRotPaket.OnGround;
-
-                    Movement.HandleMovement(MinecraftClient, player);
                 }
             }
 
@@ -337,8 +331,6 @@ namespace MCHexBOT.Core
                     player.Position = new Vector3((float)entityTeleportPaket.X, (float)entityTeleportPaket.Y, (float)entityTeleportPaket.Z);
                     player.Rotation = new Vector2(entityTeleportPaket.Yaw, entityTeleportPaket.Pitch);
                     player.IsOnGround = entityTeleportPaket.OnGround;
-
-                    Movement.HandleMovement(MinecraftClient, player);
                 }
             }
 
@@ -347,6 +339,14 @@ namespace MCHexBOT.Core
                 foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityVelocityPaket.EntityId))
                 {
                     player.Velocity = new Vector3(entityVelocityPaket.XVelocity, entityVelocityPaket.YVelocity, entityVelocityPaket.ZVelocity);
+                }
+            }
+
+            if (paket is EntityHeadLookPaket entityLookPaket)
+            {
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityLookPaket.EntityId))
+                {
+                    player.Rotation = new Vector2(entityLookPaket.HeadYaw, player.Rotation.Y);
                 }
             }
         }

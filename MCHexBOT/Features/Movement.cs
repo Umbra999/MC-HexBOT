@@ -19,6 +19,7 @@ namespace MCHexBOT.Features
         private static float SprintSpeed = 0.2806f;
         private static float SneakSpeed = 0.0655f;
         private static float SwimmingSpeed = 0.11f;
+        private static float JumpSpeed = 0.1f;
 
         public static MovementPosition WalkX = MovementPosition.None;
         public static MovementPosition WalkY = MovementPosition.None;
@@ -37,26 +38,42 @@ namespace MCHexBOT.Features
                         Vector2 Rotations = Bot.GetLocalPlayer().Rotation;
                         bool IsGround = Bot.GetLocalPlayer().IsOnGround;
 
-                        if (WalkX != MovementPosition.None) Positions.X += WalkX == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
-                        if (WalkY != MovementPosition.None) Positions.Y += WalkY == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
-                        if (WalkZ != MovementPosition.None) Positions.Z += WalkZ == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+                        if (CopyMovementTarget != "")
+                        {
+                            try
+                            {
+                                foreach (Player player in Bot.Players.Where(x => x.PlayerInfo?.Name == CopyMovementTarget))
+                                {
+                                    Vector3 Distance = player.Position - Bot.GetLocalPlayer().Position;
+                                    Rotations = player.Rotation;
+                                    IsGround = player.IsOnGround;
 
-                        else SendMovement(Bot, Positions, Rotations, IsGround);
+                                    if (Distance.X < 0) Positions.X += -WalkSpeed;
+                                    else if (Distance.X > 0) Positions.X += WalkSpeed;
+
+                                    if (Distance.Y < 0) Positions.Y += -WalkSpeed;
+                                    else if (Distance.Y > 0) Positions.Y += JumpSpeed;
+
+                                    if (Distance.Z < 0) Positions.Z += -WalkSpeed;
+                                    else if (Distance.Z > 0) Positions.Z = WalkSpeed;
+                                }
+                            }
+                            catch { }
+                        }
+                        else
+                        {
+                            if (WalkX != MovementPosition.None) Positions.X += WalkX == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+                            if (WalkY != MovementPosition.None) Positions.Y += WalkY == MovementPosition.Forward ? JumpSpeed : -JumpSpeed;
+                            if (WalkZ != MovementPosition.None) Positions.Z += WalkZ == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+                        }
+
+                        SendMovement(Bot, Positions, Rotations, IsGround);
                     }
 
                     Thread.Sleep(50);
                 }
             }).Start();
         }
-
-        public static void HandleMovement(MinecraftClient Bot, Player player)
-        {
-            if (player.PlayerInfo.Name == CopyMovementTarget)
-            {
-                SendMovement(Bot, player.Position, player.Rotation, player.IsOnGround);
-            }
-        }
-
 
         private static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {

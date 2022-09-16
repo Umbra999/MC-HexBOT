@@ -17,10 +17,13 @@ namespace MCHexBOT.Pakets.Server.Play
         {
             EntityID = minecraftStream.ReadVarInt();
             InteractType = (EntityInteractType)minecraftStream.ReadVarInt();
-            TargetX = minecraftStream.ReadFloat();
-            TargetY = minecraftStream.ReadFloat();
-            TargetZ = minecraftStream.ReadFloat();
-            HandType = (EntityInteractHandType)minecraftStream.ReadVarInt();
+            if (InteractType == EntityInteractType.InteractAt)
+            {
+                TargetX = minecraftStream.ReadFloat();
+                TargetY = minecraftStream.ReadFloat();
+                TargetZ = minecraftStream.ReadFloat();
+                HandType = (EntityInteractHandType)minecraftStream.ReadVarInt();
+            }
             Sneaking = minecraftStream.ReadBool();
         }
 
@@ -28,10 +31,13 @@ namespace MCHexBOT.Pakets.Server.Play
         {
             minecraftStream.WriteVarInt(EntityID);
             minecraftStream.WriteVarInt((int)InteractType);
-            minecraftStream.WriteFloat(TargetX);
-            minecraftStream.WriteFloat(TargetY);
-            minecraftStream.WriteFloat(TargetZ);
-            minecraftStream.WriteVarInt((int)HandType);
+            if (InteractType == EntityInteractType.InteractAt)
+            {
+                minecraftStream.WriteFloat(TargetX);
+                minecraftStream.WriteFloat(TargetY);
+                minecraftStream.WriteFloat(TargetZ);
+                minecraftStream.WriteVarInt((int)HandType);
+            }
             minecraftStream.WriteBool(Sneaking);
         }
     }

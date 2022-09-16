@@ -102,6 +102,7 @@ namespace MCHexBOT.Core
             });
 
             Movement.MovementLoop(this);
+            Combat.CombatLoop(this);
         }
 
         public void SendChat(string Message)
