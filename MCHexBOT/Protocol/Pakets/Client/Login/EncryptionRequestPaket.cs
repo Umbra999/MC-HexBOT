@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils;
 
-namespace MCHexBOT.Pakets.Client.Login
+namespace MCHexBOT.Packets.Client.Login
 {
-    public class EncryptionRequestPaket : IPaket
+    public class EncryptionRequestPacket : IPacket
     {
         public string ServerId { get; set; }
         public int PublicKeyLenght { get; set; }

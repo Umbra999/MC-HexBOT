@@ -3,9 +3,9 @@
 using MCHexBOT.Network;
 using MCHexBOT.Utils.Data;
 
-namespace MCHexBOT.Pakets.Client.Login
+namespace MCHexBOT.Packets.Client.Login
 {
-    public class LoginSuccessPaket : IPaket
+    public class LoginSuccessPacket : IPacket
     {
         public UUID Uuid { get; set; }
         public string Username { get; set; }

@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class UpdateHealthPaket : IPaket
+    public class UpdateHealthPacket : IPacket
     {
         public float Health { get; set; }
         public int Food { get; set; }

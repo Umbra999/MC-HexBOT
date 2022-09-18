@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils.Data;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class SpawnPlayerPaket : IPaket
+    public class SpawnPlayerPacket : IPacket
     {
         public int EntityId { get; set; }
         public UUID UUID { get; set; }

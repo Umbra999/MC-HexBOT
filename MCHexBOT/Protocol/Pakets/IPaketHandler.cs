@@ -1,10 +1,10 @@
-﻿namespace MCHexBOT.Pakets
+﻿namespace MCHexBOT.Packets
 {
-    public interface IPaketHandler
+    public interface IPacketHandler
     {
-        public void Handshake(IPaket paket);
-        public void Status(IPaket paket);
-        public void Login(IPaket paket);
-        public void Play(IPaket paket);
+        public void Handshake(IPacket Packet);
+        public void Status(IPacket Packet);
+        public void Login(IPacket Packet);
+        public void Play(IPacket Packet);
     }
 }

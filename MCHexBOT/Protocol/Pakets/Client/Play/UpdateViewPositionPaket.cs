@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class UpdateViewPositionPaket : IPaket
+    public class UpdateViewPositionPacket : IPacket
     {
         public int ChunkX { get; set; }
         public int ChunkZ { get; set; }

@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class PlayerInfoPaket : IPaket
+    public class PlayerInfoPacket : IPacket
     {
         public int Action { get; set; }
         public int NumberOfPlayers { get; set; }
@@ -26,27 +26,25 @@ namespace MCHexBOT.Pakets.Client.Play
                     case 0:
                         pi.Name = minecraftStream.ReadString();
                         pi.NumberOfProperties = minecraftStream.ReadVarInt();
-                        pi.Properties = new List<PlayerInfo.Property>();
+                        pi.Properties = new List<PlayerInfoProperty>();
 
-                        //for (int ii = 0; ii <= pi.NumberOfProperties; ii++)
-                        //{
-                        //    var prop = new PlayerInfo.Property
-                        //    {
-                        //        Name = minecraftStream.ReadString(),
-                        //        Value = minecraftStream.ReadString(),
-                        //        Singed = minecraftStream.ReadBool(),
-                        //    };
+                        for (int ii = 0; ii < pi.NumberOfProperties; ii++)
+                        {
+                            var prop = new PlayerInfoProperty
+                            {
+                                Name = minecraftStream.ReadString(),
+                                Value = minecraftStream.ReadString(),
+                                Singed = minecraftStream.ReadBool(),
+                            };
+                            if (prop.Singed) prop.Signature = minecraftStream.ReadString();
 
-                        //    if (prop.Singed) prop.Signature = minecraftStream.ReadString();
-
-                        //    pi.Properties.Add(prop);
-                        //}
+                            pi.Properties.Add(prop);
+                        }
 
                         //pi.GameMode = minecraftStream.ReadVarInt();
                         //pi.Ping = minecraftStream.ReadVarInt();
                         //pi.HasDisplayName = minecraftStream.ReadBool();
-                        //pi.DisplayName = minecraftStream.ReadChatObject();
-                        //if (pi.HasDisplayName) pi.DisplayName = minecraftStream.ReadChatObject();
+                        //if (pi.HasDisplayName) pi.DisplayName = minecraftStream.ReadString();
                         break;
 
                     case 1:
@@ -57,11 +55,7 @@ namespace MCHexBOT.Pakets.Client.Play
                         break;
                     case 3:
                         pi.HasDisplayName = minecraftStream.ReadBool();
-
-                        if (pi.HasDisplayName)
-                        {
-                            pi.DisplayName = minecraftStream.ReadChatObject();
-                        }
+                        if (pi.HasDisplayName) pi.DisplayName = minecraftStream.ReadString();
                         break;
                 }
 
@@ -74,7 +68,7 @@ namespace MCHexBOT.Pakets.Client.Play
             minecraftStream.WriteVarInt(Action);
             minecraftStream.WriteVarInt(NumberOfPlayers);
 
-            foreach(var p in Players)
+            foreach(PlayerInfo p in Players)
             {
                 minecraftStream.WriteUuid(p.UUID);
 
@@ -90,18 +84,14 @@ namespace MCHexBOT.Pakets.Client.Play
                             minecraftStream.WriteString(prop.Value);
                             minecraftStream.WriteBool(prop.Singed);
 
-                            if(prop.Singed)
-                            {
-                                minecraftStream.WriteString(prop.Signature);
-                            }
+                            if(prop.Singed) minecraftStream.WriteString(prop.Signature);
                         }
 
                         minecraftStream.WriteVarInt(p.GameMode);
                         minecraftStream.WriteVarInt(p.Ping);
                         minecraftStream.WriteBool(p.HasDisplayName);
 
-                        if (p.HasDisplayName)
-                            minecraftStream.WriteChatObject(p.DisplayName);
+                        if (p.HasDisplayName) minecraftStream.WriteString(p.DisplayName);
 
                         break;
 
@@ -115,10 +105,7 @@ namespace MCHexBOT.Pakets.Client.Play
 
                     case 3:
                         minecraftStream.WriteBool(p.HasDisplayName);
-
-                        if (p.HasDisplayName)
-                            minecraftStream.WriteChatObject(p.DisplayName);
-
+                        if (p.HasDisplayName) minecraftStream.WriteString(p.DisplayName);
                         break;
                 }
             }

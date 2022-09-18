@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    internal class PongPaket : IPaket
+    internal class PongPacket : IPacket
     {
         public int ID { get; set; }
         public void Decode(MinecraftStream minecraftStream)

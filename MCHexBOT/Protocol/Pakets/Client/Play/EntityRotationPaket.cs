@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class EntityRotationPaket : IPaket
+    internal class EntityRotationPacket : IPacket
     {
         public int EntityId { get; set; }
         public byte Yaw { get; set; }

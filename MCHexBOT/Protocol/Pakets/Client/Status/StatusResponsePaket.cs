@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Status
+namespace MCHexBOT.Packets.Client.Status
 {
-    public class StatusResponsePaket : IPaket
+    public class StatusResponsePacket : IPacket
     {
         public string Status { get; set; }
 

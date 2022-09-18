@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class EntityTeleportPaket : IPaket
+    internal class EntityTeleportPacket : IPacket
     {
         public int EntityId { get; set; }
         public double X { get; set; }

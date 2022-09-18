@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class ClientStatusPaket : IPaket
+    public class ClientStatusPacket : IPacket
     {
         public int ActionID { get; set; }
 

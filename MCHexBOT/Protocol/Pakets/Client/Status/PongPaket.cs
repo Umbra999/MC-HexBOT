@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Status
+namespace MCHexBOT.Packets.Client.Status
 {
-    public class PongPaket : IPaket
+    public class PongPacket : IPacket
     {
         public long Payload { get; set; }
 

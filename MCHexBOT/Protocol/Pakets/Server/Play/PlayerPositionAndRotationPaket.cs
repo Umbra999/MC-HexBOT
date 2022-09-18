@@ -1,8 +1,8 @@
 using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class PlayerPositionAndRotationPaket : IPaket
+    public class PlayerPositionAndRotationPacket : IPacket
     {
         public double X { get; set; }
         public double Y { get; set; }

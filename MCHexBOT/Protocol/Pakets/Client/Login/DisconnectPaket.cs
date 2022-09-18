@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils;
 
-namespace MCHexBOT.Pakets.Client.Login
+namespace MCHexBOT.Packets.Client.Login
 {
-    public class DisconnectPaket : IPaket
+    public class DisconnectPacket : IPacket
     {
         public string Message { get; set; } // shpuld be chat object
 

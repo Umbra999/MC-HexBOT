@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class DeathCombatPaket : IPaket
+    internal class DeathCombatPacket : IPacket
     {
         public int EntityID { get; set; }
         public int KillerEntityID  { get; set; }

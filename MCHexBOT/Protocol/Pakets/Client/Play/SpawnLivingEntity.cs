@@ -1,10 +1,10 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Pakets;
+using MCHexBOT.Packets;
 using MCHexBOT.Utils.Data;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class SpawnLivingEntity : IPaket
+    public class SpawnLivingEntity : IPacket
     {
         public int EntityId { get; set; }
         public UUID EntityUUID { get; set; }

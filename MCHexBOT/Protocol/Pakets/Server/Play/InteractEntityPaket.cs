@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Protocol;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    internal class InteractEntityPaket : IPaket
+    internal class InteractEntityPacket : IPacket
     {
         public int EntityID { get; set; }
         public EntityInteractType InteractType { get; set; }

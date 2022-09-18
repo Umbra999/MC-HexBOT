@@ -3,9 +3,9 @@ using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Data;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class ChatMessagePaket : IPaket
+    public class ChatMessagePacket : IPacket
     {
         public string JsonData { get; set; }
         public ChatMessagePosition Position { get; set; }

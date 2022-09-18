@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class TeleportConfirmPaket : IPaket
+    public class TeleportConfirmPacket : IPacket
     {
         public int TeleportID { get; set; }
 

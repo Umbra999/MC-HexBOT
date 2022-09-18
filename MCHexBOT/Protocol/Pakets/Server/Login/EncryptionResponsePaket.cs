@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Login
+namespace MCHexBOT.Packets.Server.Login
 {
-    public class EncryptionResponsePaket : IPaket
+    public class EncryptionResponsePacket : IPacket
     {
         public int SharedKeyLenght { get; set; }
         public byte[] SharedKey { get; set; }

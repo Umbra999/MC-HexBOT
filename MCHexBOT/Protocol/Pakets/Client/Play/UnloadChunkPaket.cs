@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class UnloadChunkPaket : IPaket
+    public class UnloadChunkPacket : IPacket
     {
         public int ChunkX { get; set; }
         public int ChunkZ { get; set; }

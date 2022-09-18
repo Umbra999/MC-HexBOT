@@ -142,8 +142,7 @@ namespace MCHexBOT.Network
 
 				read += r;
 
-				if (CancelationToken.IsCancellationRequested)
-					throw new ObjectDisposedException("");
+				if (CancelationToken.IsCancellationRequested) throw new ObjectDisposedException("");
 			}
 
 			return buffer;
@@ -421,19 +420,6 @@ namespace MCHexBOT.Network
 		public int WriteVarInt(int value)
 		{
 			return WriteRawVarInt32((uint)value);
-			int write = 0;
-			do
-			{
-				byte temp = (byte)(value & 127);
-				value >>= 7;
-				if (value != 0)
-				{
-					temp |= 128;
-				}
-				WriteByte(temp);
-				write++;
-			} while (value != 0);
-			return write;
 		}
 
 		public int WriteVarLong(long value)
@@ -532,8 +518,7 @@ namespace MCHexBOT.Network
 		{
 			var data = BitConverter.GetBytes(d);
 
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(data);
+			if (BitConverter.IsLittleEndian) Array.Reverse(data);
 
 			return data;
 		}
@@ -595,7 +580,7 @@ namespace MCHexBOT.Network
 				if (t != NbtTagType.Compound) return null;
 				Position--;
 
-				NbtFile file = new NbtFile() { BigEndian = true };
+				NbtFile file = new() { BigEndian = true };
 
 				file.LoadFromStream(this, NbtCompression.None);
 

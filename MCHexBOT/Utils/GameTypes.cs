@@ -46,19 +46,18 @@ namespace MCHexBOT.Utils
         public UUID UUID { get; set; }
         public string Name { get; set; }
         public int NumberOfProperties { get; set; }
-        public List<Property> Properties { get; set; }
-
-        public class Property
-        {
-            public string Name { get; set; }
-            public string Value { get; set; }
-            public bool Singed { get; set; }
-            public string Signature { get; set; }
-        }
-
+        public List<PlayerInfoProperty> Properties { get; set; }
         public int GameMode { get; set; }
         public int Ping { get; set; }
         public bool HasDisplayName { get; set; }
-        public ChatMessage DisplayName { get; set; }
+        public string DisplayName { get; set; }
+    }
+
+    public class PlayerInfoProperty
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public bool Singed { get; set; }
+        public string Signature { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Utils;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class DisconnectPaket : IPaket
+    internal class DisconnectPacket : IPacket
     {
         public string Message { get; set; }
         public void Decode(MinecraftStream minecraftStream)

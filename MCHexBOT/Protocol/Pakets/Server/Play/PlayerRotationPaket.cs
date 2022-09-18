@@ -1,8 +1,8 @@
 using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class PlayerRotationPaket : IPaket
+    public class PlayerRotationPacket : IPacket
     {
         public float Yaw { get; set; }
         public float Pitch { get; set; }

@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Pakets;
+using MCHexBOT.Packets;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class EntityHeadLookPaket : IPaket
+    internal class EntityHeadLookPacket : IPacket
     {
         public int EntityId { get; set; }
         public byte HeadYaw { get; set; }

@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class EntityPositionPaket : IPaket
+    public class EntityPositionPacket : IPacket
     {
         public int EntityId { get; set; }
         public short DeltaX { get; set; }

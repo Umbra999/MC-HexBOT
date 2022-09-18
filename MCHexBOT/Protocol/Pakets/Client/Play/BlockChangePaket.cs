@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using System.Numerics;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class BlockChangePaket : IPaket
+    public class BlockChangePacket : IPacket
     {
         public Vector3 Location { get; set; }
         public int BlockId { get; set; }

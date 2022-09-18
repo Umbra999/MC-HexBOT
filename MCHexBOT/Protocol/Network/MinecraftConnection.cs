@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
-using MCHexBOT.Pakets;
-using MCHexBOT.Pakets.Client.Login;
+using MCHexBOT.Packets;
+using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Utils;
 using Ionic.Zlib;
 using MCHexBOT.Protocol;
@@ -16,9 +16,9 @@ namespace MCHexBOT.Network
 
         public ConnectionState State { get; set; }
 
-        public Queue<PacketQueueItem> PaketQueue { get; set; } = new Queue<PacketQueueItem>();
-        public PaketRegistry WriterRegistry { get; set; }
-        public PaketRegistry ReaderRegistry { get; set; }
+        public Queue<PacketQueueItem> PacketQueue { get; set; } = new Queue<PacketQueueItem>();
+        public PacketRegistry WriterRegistry { get; set; }
+        public PacketRegistry ReaderRegistry { get; set; }
 
         public Thread ReadThread { get; private set; }
         public Thread WriteThread { get; private set; }
@@ -26,7 +26,7 @@ namespace MCHexBOT.Network
         public bool CompressionEnabled { get; set; } = false;
         public int CompressionThreshold { get; set; } = 256;
 
-        public IPaketHandler Handler { get; set; }
+        public IPacketHandler Handler { get; set; }
 
         public MinecraftConnection(TcpClient tcp)
         {
@@ -68,23 +68,23 @@ namespace MCHexBOT.Network
 
                     if (ReadStream.DataAvailable)
                     {
-                        IPaket paket = TryReadPacket(ReadStream, out var lastPaketId);
+                        IPacket Packet = TryReadPacket(ReadStream, out var lastPacketId);
 
-                        if (paket != null && Handler != null)
+                        if (Packet != null && Handler != null)
                         {
                             switch (State)
                             {
                                 case ConnectionState.Handshaking:
-                                    Handler.Handshake(paket);
+                                    Handler.Handshake(Packet);
                                     break;
                                 case ConnectionState.Status:
-                                    Handler.Status(paket);
+                                    Handler.Status(Packet);
                                     break;
                                 case ConnectionState.Login:
-                                    Handler.Login(paket);
+                                    Handler.Login(Packet);
                                     break;
                                 case ConnectionState.Play:
-                                    Handler.Play(paket);
+                                    Handler.Play(Packet);
                                     break;
                             }
                         }
@@ -94,7 +94,7 @@ namespace MCHexBOT.Network
             }
             catch (Exception e)
             {
-                Logger.LogError($"Error reading paket: (State {State}) {e.Message}");
+                Logger.LogError($"Error reading Packet: (State {State}) {e.Message}");
             }
         }
 
@@ -108,27 +108,27 @@ namespace MCHexBOT.Network
                 {
                     if (CancellationToken.IsCancellationRequested) break;
 
-                    IPaket toSend = null;
+                    IPacket toSend = null;
                     ConnectionState state = ConnectionState.Handshaking;
 
-                    lock (PaketQueue)
+                    lock (PacketQueue)
                     {
-                        if (PaketQueue.Count > 0)
+                        if (PacketQueue.Count > 0)
                         {
-                            var mcs = PaketQueue.Dequeue();
-                            toSend = mcs.Paket;
+                            var mcs = PacketQueue.Dequeue();
+                            toSend = mcs.Packet;
                             state = mcs.State;
                         }
                     }
 
                     if (toSend != null)
                     {
-                        byte[] data = EncodePaket(toSend, state);
+                        byte[] data = EncodePacket(toSend, state);
 
                         WriteStream.WriteVarInt(data.Length);
                         WriteStream.Write(data);
 
-                        if (toSend is SetCompressionPaket) CompressionEnabled = true;
+                        if (toSend is SetCompressionPacket) CompressionEnabled = true;
                     }
 
                     sw.SpinOnce();
@@ -136,21 +136,21 @@ namespace MCHexBOT.Network
             }
             catch (Exception e)
             {
-                Logger.LogError($"Error writing paket: (State: {State}) {e.Message}");
+                Logger.LogError($"Error writing Packet: (State: {State}) {e.Message}");
             }
         }
 
-        public byte[] EncodePaket(IPaket paket, ConnectionState state)
+        public byte[] EncodePacket(IPacket Packet, ConnectionState state)
         {
             byte[] encodedPacket;
 
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new())
             {
-                using (MinecraftStream mc = new MinecraftStream(ms, CancellationToken))
+                using (MinecraftStream mc = new(ms, CancellationToken))
                 {
-                    int id = WriterRegistry.GetPaketId(paket, state);
+                    int id = WriterRegistry.GetPacketId(Packet, state);
                     mc.WriteVarInt(id);
-                    paket.Encode(mc);
+                    Packet.Encode(mc);
                 }
 
                 encodedPacket = ms.ToArray();
@@ -169,7 +169,7 @@ namespace MCHexBOT.Network
 
                         mc.WriteVarInt(encodedPacket.Length);
 
-                        using ZlibStream outZStream = new ZlibStream(mc, Ionic.Zlib.CompressionMode.Compress, true);
+                        using ZlibStream outZStream = new(mc, CompressionMode.Compress, true);
                         outZStream.Write(encodedPacket, 0, encodedPacket.Length);
                         //mc.Write(compressed);
                     }
@@ -186,45 +186,45 @@ namespace MCHexBOT.Network
             return encodedPacket;
         }
 
-        public IPaket TryReadPacket(MinecraftStream stream, out int lastPacketId)
+        public IPacket TryReadPacket(MinecraftStream stream, out int lastPacketId)
         {
-            IPaket paket = null;
-            int paketId = -1;
-            byte[] paketData;
+            IPacket Packet = null;
+            int PacketId = -1;
+            byte[] PacketData;
 
             if (!CompressionEnabled)
             {
                 //Logger.LogWarning("Using default reader");
 
                 int lenght = stream.ReadVarInt();
-                paketId = stream.ReadVarInt(out int paketIdLenght);
+                PacketId = stream.ReadVarInt(out int PacketIdLenght);
 
-                int dataLenght = lenght - paketIdLenght;
+                int dataLenght = lenght - PacketIdLenght;
 
-                if (dataLenght > 0) paketData = stream.Read(dataLenght);
+                if (dataLenght > 0) PacketData = stream.Read(dataLenght);
                 else
                 {
-                    paketData = new byte[0];
-                    //Logger.LogWarning("Received Empty paket");
+                    PacketData = new byte[0];
+                    //Logger.LogWarning("Received Empty Packet");
                 }
             }
             else
             {
-                int paketLenght = stream.ReadVarInt();
+                int PacketLenght = stream.ReadVarInt();
                 int dataLenght = stream.ReadVarInt(out int dataLenghtLenght);
 
                 if (dataLenght == 0)
                 {
                     //Logger.LogWarning("Using reader without compressing -> threshold");
 
-                    paketId = stream.ReadVarInt(out int paketIdLenght);
-                    paketData = stream.Read(paketLenght - dataLenghtLenght - paketIdLenght);
+                    PacketId = stream.ReadVarInt(out int PacketIdLenght);
+                    PacketData = stream.Read(PacketLenght - dataLenghtLenght - PacketIdLenght);
                 }
                 else
                 {
                     //Logger.LogWarning("Using compress reader");
 
-                    var cache = stream.Read(paketLenght - dataLenghtLenght);
+                    var cache = stream.Read(PacketLenght - dataLenghtLenght);
 
                     using MinecraftStream a = new(CancellationToken);
 
@@ -235,40 +235,40 @@ namespace MCHexBOT.Network
 
                     a.Seek(0, SeekOrigin.Begin);
 
-                    int paketIdLenght;
-                    paketId = a.ReadVarInt(out paketIdLenght);
+                    int PacketIdLenght;
+                    PacketId = a.ReadVarInt(out PacketIdLenght);
 
-                    int dataSize = paketLenght - dataLenghtLenght - paketIdLenght;
-                    paketData = a.Read(dataSize);
+                    int dataSize = PacketLenght - dataLenghtLenght - PacketIdLenght;
+                    PacketData = a.Read(dataSize);
                 }
             }
 
-            lastPacketId = paketId;
+            lastPacketId = PacketId;
 
-            if (ReaderRegistry.Pakets[State].ContainsKey((byte)paketId))
+            if (ReaderRegistry.Packets[State].ContainsKey((byte)PacketId))
             {
-                paket = ReaderRegistry.Pakets[State][(byte)paketId];
+                Packet = ReaderRegistry.Packets[State][(byte)PacketId];
             }
 
-            //Logger.LogWarning($"Got packet: {paket} (0x{paketId:X2})");
+            Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
 
             try
             {
-                if (paket == null) return null;
+                if (Packet == null) return null;
 
-                using (var memoryStream = new MemoryStream(paketData))
+                using (var memoryStream = new MemoryStream(PacketData))
                 {
                     using MinecraftStream minecraftStream = new(memoryStream, CancellationToken);
-                    paket.Decode(minecraftStream);
+                    Packet.Decode(minecraftStream);
                 }
 
-                if (paket is SetCompressionPaket setCompressionPaket)
+                if (Packet is SetCompressionPacket setCompressionPacket)
                 {
-                    CompressionThreshold = setCompressionPaket.Threshold;
+                    CompressionThreshold = setCompressionPacket.Threshold;
                     CompressionEnabled = true;
                 }
 
-                return paket;
+                return Packet;
             }
             catch (Exception e)
             {
@@ -277,14 +277,14 @@ namespace MCHexBOT.Network
             }
         }
 
-        public void SendPaket(IPaket paket)
+        public void SendPacket(IPacket Packet)
         {
-            lock (PaketQueue)
+            lock (PacketQueue)
             {
-                PaketQueue.Enqueue(new PacketQueueItem()
+                PacketQueue.Enqueue(new PacketQueueItem()
                 {
                     State = State,
-                    Paket = paket
+                    Packet = Packet
                 });
             }
         }

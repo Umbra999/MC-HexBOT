@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Protocol;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class ClientSettingsPaket : IPaket
+    public class ClientSettingsPacket : IPacket
     {
         public string Locale { get; set; }
         public byte ViewDistance { get; set; }

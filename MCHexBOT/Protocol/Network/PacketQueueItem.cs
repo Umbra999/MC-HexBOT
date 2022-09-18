@@ -1,11 +1,11 @@
-﻿using MCHexBOT.Pakets;
+﻿using MCHexBOT.Packets;
 using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Network
 {
     public class PacketQueueItem
     {
-        public IPaket Paket { get; set; }
+        public IPacket Packet { get; set; }
         public ConnectionState State { get; set; }
     }
 }

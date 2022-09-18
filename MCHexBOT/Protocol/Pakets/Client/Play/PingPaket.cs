@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class PingPaket : IPaket
+    internal class PingPacket : IPacket
     {
         public int ID { get; set; }
         public void Decode(MinecraftStream minecraftStream)

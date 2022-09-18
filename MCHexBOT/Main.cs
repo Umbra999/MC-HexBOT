@@ -10,7 +10,7 @@ namespace MCHexBOT
         public static List<MinecraftClient> Clients = new();
         public static List<string> AccountTokens = new()
         {
-            "XBL3.0 x=3482949924638196216;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.wgqPhA2DcyZr5VwSpYCzi965ELlMQEkjm9tQFgbc5fZ08FpKoBCrKlrA90aQ2_xS9ql9eyZ2We0FYgTeqmwKs9DEOUK6pm9AzrZiyXoB9orqaKqdXVf1sL_Hywk7ALKku9EQoajtU5Bai4b48WUlq2nmqmbehvwMbvx-OAQ_xw1SNIXUNL62RucwBTuDHX2CQDo1mLK0Pws4JtDKh7FFml_V_vY6MYNoY4JS52xGZcUbu1Vb9BkRELOdNtWlI_nz96D66Qng6hGHzMohR973bBFKuljRkAPS_ecppZpi1cpBOumEENipo31gC93LChA5VFRYqgv99LWlMwk7xU6b9g.OVUCBVeZiPHumq9_wNm_1Q.9VAv5SBHTZHqhTGeOU6Wj1rRUZ_QJG5zwGefg-Ya91X4JSKFBwpzU1S7WrDrpCI_zk-Mhq6VRFv8S3v1co7Eytq-VCUpNmIQuWX2sC9wpSY5s-IQWM4RgsJ0ZZjJOtxqXDT7ZHg212noifNHOiqXor6vtzmEO8XbX0qp0-AjP6CspzWYuf8oMbJ2mcK9RpW6R2p54_X0-7tet7iRpuKId90TXqMRGQiM6EzFR3evHomZ0eo_VNye3tE4rSNKZifLGqMNKk5ruVGxaUsXe5eWZxk_6q01jOxPyeMNykNaoWtpCb7dC6ZXwSgFHGtIwINPDwUIPmwoPmwp_EPkQuP9ANF3Af4EKwkpKpwfTlxc5WNol2V67N2TLENgTry5xiIPMwEw1w3rly6cLdkUVp6Ue74nB5kAYnsJEdjw_lkkfo2sz11sGyYC-cQ944jJgZPoV4Dypz9v1i4pK0CVdhJsN35WHTf6XgOhbmDcaST_XPcAo1jswUdCsSfoGw1jMOxZURRQhCp1k_fkV98eCvgIb7AQ5eSzBeiTm-BvWO9bHiB8c5zdh0Iw5HphBKX6WSaw9N7oDaPp4Zrcqg0_WLhNuoZPiBhp14MvCWkq6LO9wCBvBUY0vB_MoNDNLNBpvDE3I1NnfSDEOgvj-C_Pmdu2_GyK6hmLRbU77-A2otT7fzNe38d-GKuzfFIP3bPvMfRUzNR1hIMKA8472Lco7TdL5UXOzF6ftDznA46El5Po1atZRsR3Hqb3bzzj6L9aLkFjD3iDYRUrssb58-jjlO0fxDBG7dSP3jXjEqX0busooZ5uNdLUPsamNH2EYZ2yeAK4WJgOqUaJXFTDUEB1yi7XCgzIJ9vK2BSzmFEG8ybsHNZFmrM9w0cbP7IJOG7hN6U0DPySbafNYmedJVe5aV3Wqhbe20nwR2__ToW4hLY8ai5MPkcqdkBBfOm2aZj4BhHnfqoRguBloCIa-Ae8X73LJKV6Qj4ESFQt9v7dgsYBv-n75GwsD3dC0hNzC8JGSztSA4f6vFY3TmDPfXRO3391hSGfsTtx2tOK8_qhd81lzZSRtV-ADire5pZ6EnmW9TcFW5ldUgG3hR9f-DU8SwXQceOWpdAkUD3_YSLUNTMig6r_oXpJ7kxi8UZau7NPr3jMA1nCIDQocQjbxWPtSUI_f-vdcZdXpU97mXfsltG1mLziI0b6QlkVgR54z2A-lO--BxG_SECIh6kmsq656n0-f7IhJJdLlzZzQVNEYd9jFdI1lJoVJhliWXNOgNLGjf73WF-GX6PWhdOagSvuASvbMZOHmRj4ezAiTipVw2X-B_r4FnsR2nZuitGeiN9U26CBwsB2EqN8tB520kHXSlCHQmOEbC7jHSdbK7M1Nop8ZVP6hqfc-pnuC-A3HDm5P1OuANkPCitQCIswojkBIkISQxcLL0cTK6eQGWijUJjl8BjQY7GrDbZ8I_BlKptr_3l8csf17ZqHwZ25yLBQzCmaQ-Cmgr_2OzdWIe8fjHS10n6-xE6sm3NWBE76Z9wnzRyRnC4oIleydJ-XY4HcQ74IYv_ZxMkXH9DlxQ6BBn990DE12Y29j6LckDmdFuaZX2rn.GpOwQ_Kditfmc1-P39cz_g",
+            "XBL3.0 x=15468014319842099618;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.4N158f3WcZcWuKjO77lynKufq9xfvhbRFqUfYzJxAHbZXJ09jqSw_X9CAtvK78sWlknBHY8SuJBEBZklbjLXvsPVFNCEu62lN7BQSWlnNXHcXZ4FkGYjgHegWyttp3GpVawWHFOdqHgv5NfRb1yCfUUELylDoVRZYkprm1a1WpynvJ4va0WPSHuDAtIesqk6nOxINGzDcxPPVB_MAW7QQvwbXEq9rRv6nTM3OSmUxqCNq2WdSiNn5jCKoIhZZYRHD7KD9rQlyb4Vx6X8j7zns0o7wf_vCJe3wHT8TmiRRURLUBsTRo8ZDfLtg0YFaL4D2RqQkCLULjHWJGNb_j6OdA.AQcUMNybt3bL0FukzvZGwg.OG7r_Pg7t3i6V87NB8j8N0XtXgRn5Wk5oKeQ3pg9di0xxaJ0DKDKLaTVZD9Nwgf-rvma0FpqL-63ba7HcoQAR1emJ0T67Hs8lMxfrK6vbpq4Cf3_FbRBSjZ0h-zoM-8RdKcTgFCVhXGJ4BjzXsh3S_5KWxf7U53iUJx1exY7txrwOQdcJv_gIK8ZJB-LYxPuH9dM8nyza36-1YzoCdEjm8IKLXppI84jSCHV-8fqz1pBsoRqgaxn3qJbBUvs0ifeAfsbPgE34t1TkAgne-1LhdR2Jm9WoDvoPWNeBCKzX13Wd8pXilFKVj1FxDCTZtjtl7p5ql3dqZftPJhUpE8PlXc9OdAPNJdoTjTsgOSZH6V5KDy8rQasITO6Qr3nuo8oxoHiVMoSXI3bYyGe9EFEFNHZbiays-JoB9CtGBxmA_s7GjjMSJuwiENjkoIe3XB4-l0A1hH-eKba1LutpQPiJJKwNhkLWMpdycezoVVjm7QXBGLLJrLR2cvnm4AYUQQw0ORcOcUPXjriMiY7eKPfxK16PNDLPwYWqESlSdNxWKLEZonIGVyu5ANcF0qtigIvyJaozK1QmSyZ_e8tzGT6aLAi5DgAw61BNBXOR_roND_L--dxZ42DoUofSVaSKRbN-mPNvArp_XOvbGEBYhlqmK_WUmGs1_hbHxfTj2xn9L-cqabakWUkO1x-AC_JlTspLntGSe-8X4YWAGAr4ag0L4SgSm_jog0fwNsD5YrCozLQuakkHQDQVHACiJfSHG6_Mk8VLbwd_GqjidVao0rfEzSUi9EIHtbfJwQaDnGkrhBXKpkI1UvfbK_5WbTbpJWG4dpE_cP4BzfkT5u5V9YxDQUZ6CZVEq525XWUpQdIN0cdmw6ROZQZt9gj8oWXFSzTXWAxwf_mNiVUyuXhgzZPQiJFYa0ChQQwM-7Awh1mR8kHSrbs1wKopF9U5qfOWv8aDDq-NFGggFzS4z7gNXbZnjmMZTx-ZfSPKKEiepRJxunCR7ZtWF-8a8fDwX9gqLZioYX52yqkP1kiZ1OB28Eu4mLbqCnVM4u2PacdKx1QlgX8yRBFAR5bI5omHQfeZjG3cx4ZZkDoNAApAC3KLRNrapEmd-y0QQ5ueNZ8jDEkaUh1Xwd-zsF3XWVOqLliAPxp_qRMrkj8CkopGvMNAzMcHk-q9MdYDjmSsAf5hKW5OWwX2P7SLWK6yYKcANh6_bjOJLXB-_1EH1zNlwI1nY-6YGGF3wlC9EgWCnEffBvUQLV2FbGow8qb8U4OKndww1saesX7tEd_4GDkyxJrPQHUbPPTE4_UUFy3tb_kKW1pgmqQnhGmzREEKq7H8zr-8tVkeMEsrVZL0ymtKwJXHt9BbELPNjSv3wgqopqA6YGUa5Nj0_R2psjFYb2f-057JNzaYpzR_zxMiyUFMkXgV_Rx_TqxWcmeWsiPZvaUY5CqIWp1_9xSCUAf0vTNvySgkLtOV-FBaaHr_J4UvQRskBAsucGVt_6sZcXCZbZwxIwOIH2_5X760ERJmMl8fIEykasgUhth4rnvknaeLy2tbCqyXsB2GZgrDFbM7nbN396FtgRhlayGoXquA2bBHqrAIh6H.tv_Yn1UgZWasDU5b3JJfCA",
         };
 
         public static void Init()
@@ -35,7 +35,8 @@ namespace MCHexBOT
       \|
 ");
 
-            CreateBots();
+            CreateLaby();
+            //CreateBots();
             RunGUI();
         }
 
@@ -47,6 +48,22 @@ namespace MCHexBOT
                 if (await Client.Login(Token)) Clients.Add(new MinecraftClient(Client));
                 else Logger.LogError("Failed to Validate Token");
             }
+            Console.Title = $"HexBOT | {Clients.Count} Bots";
+        }
+
+        private static async void CreateLaby()
+        {
+            foreach (string Token in AccountTokens)
+            {
+                APIClient Client = new();
+                if (await Client.Login(Token))
+                {
+                    LabyClient LabySession = new(Client);
+                    LabySession.Connect("chat.labymod.net", 30336);
+                }
+                else Logger.LogError("Failed to Validate Token");
+            }
+            Console.Title = $"HexBOT | {Clients.Count} Bots";
         }
 
         private static void RunGUI()
@@ -60,7 +77,7 @@ namespace MCHexBOT
                 Logger.LogImportant("S [true / false] - Skinblinker");
                 Logger.LogImportant("T [true / false] - Teabagger");
                 Logger.LogImportant("K [true / false] - Sneak");
-                Logger.LogImportant("O [NAME] - Target on Killlist");
+                Logger.LogImportant("O [NAME] - Target the Player");
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("F [Name] - Follow a Player");
                 Logger.LogImportant("X [+,-,/] - Move the X Cordinate");

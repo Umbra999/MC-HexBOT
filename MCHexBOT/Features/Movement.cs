@@ -51,7 +51,7 @@ namespace MCHexBOT.Features
                                     if (Distance.X < 0) Positions.X += -WalkSpeed;
                                     else if (Distance.X > 0) Positions.X += WalkSpeed;
 
-                                    if (Distance.Y < 0) Positions.Y += -WalkSpeed;
+                                    if (Distance.Y < 0) Positions.Y += -JumpSpeed;
                                     else if (Distance.Y > 0) Positions.Y += JumpSpeed;
 
                                     if (Distance.Z < 0) Positions.Z += -WalkSpeed;
@@ -90,7 +90,7 @@ namespace MCHexBOT.Features
 
         private static void SendPositionAndRotation(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {
-            Bot.MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
+            Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerPositionAndRotationPacket()
             {
                 X = Position.X,
                 Y = Position.Y,
@@ -103,7 +103,7 @@ namespace MCHexBOT.Features
 
         private static void SendPosition(MinecraftClient Bot, Vector3 Position, bool IsGround)
         {
-            Bot.MCConnection.SendPaket(new Pakets.Server.Play.PlayerPositionPaket()
+            Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerPositionPacket()
             {
                 X = Position.X,
                 Y = Position.Y,
@@ -114,7 +114,7 @@ namespace MCHexBOT.Features
 
         private static void SendRotation(MinecraftClient Bot, Vector2 Rotation, bool IsGround)
         {
-            Bot.MCConnection.SendPaket(new Pakets.Server.Play.PlayerRotationPaket()
+            Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerRotationPacket()
             {
                 Pitch = Rotation.Y,
                 Yaw = Rotation.X,
@@ -124,10 +124,20 @@ namespace MCHexBOT.Features
 
         private static void SendOnGround(MinecraftClient Bot, bool IsGround)
         {
-            Bot.MCConnection.SendPaket(new Pakets.Server.Play.PlayerMovementPaket()
+            Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerMovementPacket()
             {
                 OnGround = IsGround,
             });
+        }
+
+        private static void LookAtPosition(MinecraftClient Bot, Vector3 position)
+        {
+            var pos = position + new Vector3(0.5f, 0.5f, 0.5f);
+            var r = pos - Bot.GetLocalPlayer().Position + new Vector3(0, 1, 0);
+            double yaw = -Math.Atan2(r.X, r.Z) / Math.PI * 180;
+            if (yaw < 0) yaw = 360 + yaw;
+            double pitch = -Math.Asin(r.Y / r.Length()) / Math.PI * 180;
+            Bot.GetLocalPlayer().Rotation = new Vector2((float)yaw, (float)pitch);
         }
     }
 }

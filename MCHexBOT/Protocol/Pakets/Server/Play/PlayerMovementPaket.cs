@@ -1,8 +1,8 @@
 using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class PlayerMovementPaket : IPaket
+    public class PlayerMovementPacket : IPacket
     {
         public bool OnGround { get; set; }
 

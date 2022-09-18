@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class PluginMessagePaket : IPaket
+    internal class PluginMessagePacket : IPacket
     {
         public string Channel { get; set; }
         public byte[] Data { get; set; }

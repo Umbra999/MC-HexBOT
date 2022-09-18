@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class KeepAlivePaket : IPaket
+    public class KeepAlivePacket : IPacket
     {
         public long Payload { get; set; }
 

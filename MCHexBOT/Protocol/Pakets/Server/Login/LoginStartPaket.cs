@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Login
+namespace MCHexBOT.Packets.Server.Login
 {
-    public class LoginStartPaket : IPaket
+    public class LoginStartPacket : IPacket
     {
         public string Username { get; set; }
 

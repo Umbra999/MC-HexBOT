@@ -1,4 +1,4 @@
-﻿using MCHexBOT.Pakets.Client.Play;
+﻿using MCHexBOT.Packets.Client.Play;
 using Org.BouncyCastle.Asn1.Mozilla;
 using System;
 using System.Collections;

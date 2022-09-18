@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Utils;
 using MCHexBOT.Network;
-using MCHexBOT.Pakets.Server.Handshake;
-using MCHexBOT.Pakets.Server.Login;
+using MCHexBOT.Packets.Server.Handshake;
+using MCHexBOT.Packets.Server.Login;
 using System.Net.Sockets;
-using MCHexBOT.Pakets.Server.Play;
+using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Features;
 
@@ -65,16 +65,16 @@ namespace MCHexBOT.Core
 
             MCConnection = new MinecraftConnection(cl);
 
-            PaketRegistry writer = new();
-            PaketRegistry.RegisterServerPakets(writer, ProtocolVersion);
+            PacketRegistry writer = new();
+            PacketRegistry.RegisterServerPackets(writer, ProtocolVersion);
 
-            PaketRegistry reader = new();
-            PaketRegistry.RegisterClientPakets(reader, ProtocolVersion);
+            PacketRegistry reader = new();
+            PacketRegistry.RegisterClientPackets(reader, ProtocolVersion);
 
             MCConnection.WriterRegistry = writer;
             MCConnection.ReaderRegistry = reader;
 
-            MCConnection.Handler = new PaketHandler(APIClient, this)
+            MCConnection.Handler = new PacketHandler(this)
             {
                 Connection = MCConnection
             };
@@ -84,7 +84,7 @@ namespace MCHexBOT.Core
 
             Logger.LogWarning("Sending Handshake");
 
-            MCConnection.SendPaket(new HandshakePaket()
+            MCConnection.SendPacket(new HandshakePacket()
             {
                 NextState = HandshakeType.Login,
                 ProtocolVersion = ProtocolVersion,
@@ -96,7 +96,7 @@ namespace MCHexBOT.Core
 
             Logger.LogWarning("Sending Login");
 
-            MCConnection.SendPaket(new LoginStartPaket()
+            MCConnection.SendPacket(new LoginStartPacket()
             {
                 Username = APIClient.CurrentUser.name
             });
@@ -107,7 +107,7 @@ namespace MCHexBOT.Core
 
         public void SendChat(string Message)
         {
-            MCConnection.SendPaket(new ChatMessagePaket()
+            MCConnection.SendPacket(new ChatMessagePacket()
             {
                 Message = Message
             });
@@ -115,7 +115,7 @@ namespace MCHexBOT.Core
 
         public void SendRespawn()
         {
-            MCConnection.SendPaket(new ClientStatusPaket()
+            MCConnection.SendPacket(new ClientStatusPacket()
             {
                 ActionID = 0
             });
@@ -123,7 +123,7 @@ namespace MCHexBOT.Core
 
         public void SendEntityAction(PlayerAction Action)
         {
-            MCConnection.SendPaket(new EntityActionPaket()
+            MCConnection.SendPacket(new EntityActionPacket()
             {
                 EntityId = GetLocalPlayer().EntityID,
                 ActionId = (int)Action,
@@ -133,7 +133,7 @@ namespace MCHexBOT.Core
 
         public void SendEntityInteraction(int EntityID, bool Sneaking, EntityInteractHandType Hand, EntityInteractType Interact)
         {
-            MCConnection.SendPaket(new InteractEntityPaket()
+            MCConnection.SendPacket(new InteractEntityPacket()
             {
                 EntityID = EntityID,
                 Sneaking = Sneaking,
@@ -147,7 +147,7 @@ namespace MCHexBOT.Core
 
         public void SendPlayerSetings(bool ServerListing, bool ChatColors, ChatMode Chatmode, byte Skinparts, MainHandType MainHand, bool TextFiltering, string LanguageTag, byte ViewDistance)
         {
-            MCConnection.SendPaket(new ClientSettingsPaket()
+            MCConnection.SendPacket(new ClientSettingsPacket()
             {
                 AllowServerListings = ServerListing,
                 ChatColors = ChatColors,
@@ -165,7 +165,7 @@ namespace MCHexBOT.Core
             if (Slot < 0) Slot = 0;
             else if (Slot > 8) Slot = 8;
 
-            MCConnection.SendPaket(new HeldItemChangePaket()
+            MCConnection.SendPacket(new HeldItemChangePacket()
             {
                 Slot = Slot
             });

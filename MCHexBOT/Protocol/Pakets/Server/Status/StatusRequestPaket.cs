@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Status
+namespace MCHexBOT.Packets.Server.Status
 {
-    public class StatusRequestPaket : IPaket
+    public class StatusRequestPacket : IPacket
     {
         public void Decode(MinecraftStream minecraftStream)
         {

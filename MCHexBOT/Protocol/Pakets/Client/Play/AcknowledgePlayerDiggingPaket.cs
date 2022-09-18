@@ -2,9 +2,9 @@
 using MCHexBOT.Protocol;
 using System.Numerics;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class AcknowledgePlayerDiggingPaket : IPaket
+    public class AcknowledgePlayerDiggingPacket : IPacket
     {
         public Vector3 Location { get; set; }
         public int Block { get; set; }

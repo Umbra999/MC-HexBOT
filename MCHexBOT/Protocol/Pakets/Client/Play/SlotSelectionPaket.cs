@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    internal class SlotSelectionPaket : IPaket
+    internal class SlotSelectionPacket : IPacket
     {
         public byte Slot { get; set; }
         public void Decode(MinecraftStream minecraftStream)

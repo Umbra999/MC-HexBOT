@@ -2,9 +2,9 @@
 
 using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Play
+namespace MCHexBOT.Packets.Client.Play
 {
-    public class JoinGamePaket : IPaket
+    public class JoinGamePacket : IPacket
     {
         public int EntityId { get; set; }
         public bool IsHardcore { get; set; }

@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class EntityActionPaket : IPaket
+    public class EntityActionPacket : IPacket
     {
         public int EntityId { get; set; }
         public int ActionId { get; set; }

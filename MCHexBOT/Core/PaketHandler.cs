@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Features;
 using MCHexBOT.Network;
-using MCHexBOT.Pakets;
-using MCHexBOT.Pakets.Client.Login;
-using MCHexBOT.Pakets.Client.Play;
+using MCHexBOT.Packets;
+using MCHexBOT.Packets.Client.Login;
+using MCHexBOT.Packets.Client.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Math;
@@ -12,93 +12,93 @@ using System.Text;
 
 namespace MCHexBOT.Core
 {
-    internal class PaketHandler : IPaketHandler
+    internal class PacketHandler : IPacketHandler
     {
         public MinecraftConnection Connection { get; set; }
         private MinecraftClient MinecraftClient { get; set; }
 
         private bool IsReady = false;
 
-        public PaketHandler(APIClient Client, MinecraftClient minecraft)
+        public PacketHandler(MinecraftClient minecraft)
         {
             MinecraftClient = minecraft;
         }
 
-        public void Handshake(IPaket paket)
+        public void Handshake(IPacket Packet)
         {
 
         }
 
-        public void Login(IPaket paket)
+        public void Login(IPacket Packet)
         {
-            if (paket is EncryptionRequestPaket encryptionPaket)
+            if (Packet is EncryptionRequestPacket encryptionPacket)
             {
                 Logger.LogDebug("Received Encryption");
-                HandleEncryptionAuth(encryptionPaket);
+                HandleEncryptionAuth(encryptionPacket);
             }
 
-            if (paket is SetCompressionPaket compressionPaket)
+            if (Packet is SetCompressionPacket compressionPacket)
             {
                 Logger.LogDebug("Enabled compression");
             }
 
-            if (paket is LoginSuccessPaket loginSuccessPaket)
+            if (Packet is LoginSuccessPacket loginSuccessPacket)
             {
                 Connection.State = ConnectionState.Play;
-                Logger.LogSuccess($"Authenticated as {loginSuccessPaket.Username} [{loginSuccessPaket.Uuid}]");
+                Logger.LogSuccess($"Authenticated as {loginSuccessPacket.Username} [{loginSuccessPacket.Uuid}]");
             }
 
-            if (paket is Pakets.Client.Login.DisconnectPaket disconnectPaket)
+            if (Packet is Packets.Client.Login.DisconnectPacket disconnectPacket)
             {
-                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPaket.Message}");
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPacket.Message}");
             }
         }
 
-        public void Play(IPaket paket)
+        public void Play(IPacket Packet)
         {
-            if (paket is JoinGamePaket joinGamePaket)
+            if (Packet is JoinGamePacket joinGamePacket)
             {
                 IsReady = false;
                 Logger.LogSuccess($"{MinecraftClient.APIClient.CurrentUser.name} joined the Server");
-                Logger.LogDebug("Gamemode: " + joinGamePaket.Gamemode);
-                Logger.LogDebug("Sim Dist: " + joinGamePaket.SimulationDistance);
-                Logger.LogDebug("EntityID: " + joinGamePaket.EntityId);
+                Logger.LogDebug("Gamemode: " + joinGamePacket.Gamemode);
+                Logger.LogDebug("Sim Dist: " + joinGamePacket.SimulationDistance);
+                Logger.LogDebug("EntityID: " + joinGamePacket.EntityId);
 
                 MinecraftClient.Players.Clear();
 
-                MinecraftClient.GetLocalPlayer().EntityID = joinGamePaket.EntityId;
+                MinecraftClient.GetLocalPlayer().EntityID = joinGamePacket.EntityId;
 
                 MinecraftClient.SendPlayerSetings(true, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
             }
 
-            if (paket is KeepAlivePaket keepAlivePaket)
+            if (Packet is KeepAlivePacket keepAlivePacket)
             {
-                Connection.SendPaket(new Pakets.Server.Play.KeepAlivePaket()
+                Connection.SendPacket(new Packets.Server.Play.KeepAlivePacket()
                 {
-                    Payload = keepAlivePaket.Payload
+                    Payload = keepAlivePacket.Payload
                 });
             }
 
-            if (paket is PingPaket pingPaket)
+            if (Packet is PingPacket pingPacket)
             {
-                Connection.SendPaket(new Pakets.Server.Play.PongPaket()
+                Connection.SendPacket(new Packets.Server.Play.PongPacket()
                 {
-                    ID = pingPaket.ID
+                    ID = pingPacket.ID
                 });
             }
 
-            if (paket is DeathCombatPaket deathPaket)
+            if (Packet is DeathCombatPacket deathPacket)
             {
-                Logger.LogDebug($"{deathPaket.KillerEntityID} killed {deathPaket.EntityID}: {deathPaket.Message}");
+                Logger.LogDebug($"{deathPacket.KillerEntityID} killed {deathPacket.EntityID}: {deathPacket.Message}");
                 MinecraftClient.SendRespawn();
             }
 
-            if (paket is PlayerInfoPaket playerInfoPaket)
+            if (Packet is PlayerInfoPacket playerInfoPacket)
             {
-                switch (playerInfoPaket.Action)
+                switch (playerInfoPacket.Action)
                 {
                     case 0:
-                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        foreach (PlayerInfo player in playerInfoPacket.Players)
                         {
                             if (player.Name == MinecraftClient.APIClient.CurrentUser.name)
                             {
@@ -132,7 +132,7 @@ namespace MCHexBOT.Core
                         break;
 
                     case 1:
-                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        foreach (PlayerInfo player in playerInfoPacket.Players)
                         {
                             foreach (Player Cache in MinecraftClient.Players.Where(x => x.PlayerInfo?.UUID.ToString() == player.UUID.ToString()))
                             {
@@ -142,7 +142,7 @@ namespace MCHexBOT.Core
                         break;
 
                     case 2:
-                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        foreach (PlayerInfo player in playerInfoPacket.Players)
                         {
                             foreach (Player Cache in MinecraftClient.Players.Where(x => x.PlayerInfo?.UUID.ToString() == player.UUID.ToString()))
                             {
@@ -152,7 +152,7 @@ namespace MCHexBOT.Core
                         break;
 
                     case 3:
-                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        foreach (PlayerInfo player in playerInfoPacket.Players)
                         {
                             foreach (Player Cache in MinecraftClient.Players.Where(x => x.PlayerInfo?.UUID.ToString() == player.UUID.ToString()))
                             {
@@ -163,7 +163,7 @@ namespace MCHexBOT.Core
                         break;
 
                     case 4:
-                        foreach (PlayerInfo player in playerInfoPaket.Players)
+                        foreach (PlayerInfo player in playerInfoPacket.Players)
                         {
                             var List = MinecraftClient.Players.Where(x => x.PlayerInfo?.UUID.ToString() == player.UUID.ToString()).ToList();
                             foreach (Player Cache in List)
@@ -176,193 +176,192 @@ namespace MCHexBOT.Core
                 }
             }
 
-            if (paket is UpdateHealthPaket updateHealthPaket)
+            if (Packet is UpdateHealthPacket updateHealthPacket)
             {
-                MinecraftClient.GetLocalPlayer().Food = updateHealthPaket.Food;
-                MinecraftClient.GetLocalPlayer().Health = updateHealthPaket.Health;
-                MinecraftClient.GetLocalPlayer().Saturation = updateHealthPaket.Saturation;
-                Logger.LogDebug($"Health update: Health: {updateHealthPaket.Health} Food: {updateHealthPaket.Food} Saturation: {updateHealthPaket.Saturation}");
+                MinecraftClient.GetLocalPlayer().Food = updateHealthPacket.Food;
+                MinecraftClient.GetLocalPlayer().Health = updateHealthPacket.Health;
+                MinecraftClient.GetLocalPlayer().Saturation = updateHealthPacket.Saturation;
+                Logger.LogDebug($"Health update: Health: {updateHealthPacket.Health} Food: {updateHealthPacket.Food} Saturation: {updateHealthPacket.Saturation}");
             }
 
-            if (paket is ChatMessagePaket messagePaket)
+            if (Packet is ChatMessagePacket messagePacket)
             {
-                //ChatCommands.HandleChat(MinecraftClient, messagePaket.JsonData);
+                //ChatCommands.HandleChat(MinecraftClient, messagePacket.JsonData);
             }
 
-            if (paket is SlotSelectionPaket slotPaket)
+            if (Packet is SlotSelectionPacket slotPacket)
             {
-                Logger.LogDebug($"Server changed Item slot to {slotPaket.Slot}");
-                MinecraftClient.SendHeldItemSlotSwitch(slotPaket.Slot);
+                Logger.LogDebug($"Server changed Item slot to {slotPacket.Slot}");
+                //MinecraftClient.SendHeldItemSlotSwitch(slotPacket.Slot);
             }
 
-            if (paket is PluginMessagePaket pluginPaket)
+            if (Packet is PluginMessagePacket pluginPacket)
             {
-                switch (pluginPaket.Channel)
+                switch (pluginPacket.Channel)
                 {
                     case "minecraft:brand":
-                        Connection.SendPaket(new Pakets.Server.Play.PluginMessagePaket()
+                        Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
                         {
-                            Channel = pluginPaket.Channel,
+                            Channel = pluginPacket.Channel,
                             Data = Encoding.UTF8.GetBytes("vanilla")
                         });
                         break;
 
                     case "minecraft:register":
-                        Connection.SendPaket(new Pakets.Server.Play.PluginMessagePaket()
+                        Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
                         {
-                            Channel = pluginPaket.Channel,
-                            Data = pluginPaket.Data
+                            Channel = pluginPacket.Channel,
+                            Data = pluginPacket.Data
                         });
                         break;
                 }
             }
 
-            if (paket is PlayerPositionAndLookPaket positionPaket)
+            if (Packet is PlayerPositionAndLookPacket positionPacket)
             {
-                Connection.SendPaket(new Pakets.Server.Play.TeleportConfirmPaket()
+                Connection.SendPacket(new Packets.Server.Play.TeleportConfirmPacket()
                 {
-                    TeleportID = positionPaket.TeleportID
+                    TeleportID = positionPacket.TeleportID
                 });
 
                 Vector3 NewPos = MinecraftClient.GetLocalPlayer().Position;
                 Vector2 NewRot = MinecraftClient.GetLocalPlayer().Rotation;
 
-                if ((positionPaket.Flags & 0x01) == 0x01) NewPos.X += (float)positionPaket.X;
-                else NewPos.X = (float)positionPaket.X;
+                if ((positionPacket.Flags & 0x01) == 0x01) NewPos.X += (float)positionPacket.X;
+                else NewPos.X = (float)positionPacket.X;
 
-                if ((positionPaket.Flags & 0x02) == 0x02) NewPos.Y += (float)positionPaket.Y!;
-                else NewPos.Y = (float)positionPaket.Y!;
+                if ((positionPacket.Flags & 0x02) == 0x02) NewPos.Y += (float)positionPacket.Y!;
+                else NewPos.Y = (float)positionPacket.Y!;
 
-                if ((positionPaket.Flags & 0x04) == 0x04) NewPos.Z += (float)positionPaket.Z!;
-                else NewPos.Z = (float)positionPaket.Z!;
+                if ((positionPacket.Flags & 0x04) == 0x04) NewPos.Z += (float)positionPacket.Z!;
+                else NewPos.Z = (float)positionPacket.Z!;
 
-                if ((positionPaket.Flags & 0x08) == 0x08) NewRot.Y += positionPaket.Pitch!;
-                else NewRot.Y = positionPaket.Pitch!;
+                if ((positionPacket.Flags & 0x08) == 0x08) NewRot.Y += positionPacket.Pitch!;
+                else NewRot.Y = positionPacket.Pitch!;
 
-                if ((positionPaket.Flags & 0x10) == 0x10) NewPos.X += positionPaket.Yaw!;
-                else NewRot.X = positionPaket.Yaw!;
+                if ((positionPacket.Flags & 0x10) == 0x10) NewPos.X += positionPacket.Yaw!;
+                else NewRot.X = positionPacket.Yaw!;
 
                 MinecraftClient.GetLocalPlayer().Position = NewPos;
-                MinecraftClient.GetLocalPlayer().Rotation = NewRot;;
+                MinecraftClient.GetLocalPlayer().Rotation = NewRot;
 
                 if (!IsReady)
                 {
                     IsReady = true;
-
-                    Connection.SendPaket(new Pakets.Server.Play.PlayerPositionAndRotationPaket()
+                    Connection.SendPacket(new Packets.Server.Play.PlayerPositionAndRotationPacket()
                     {
-                        X = positionPaket.X,
-                        Y = positionPaket.Y,
-                        Z = positionPaket.Z,
+                        X = positionPacket.X,
+                        Y = positionPacket.Y,
+                        Z = positionPacket.Z,
                         OnGround = MinecraftClient.GetLocalPlayer().IsOnGround,
-                        Pitch = positionPaket.Pitch,
-                        Yaw = positionPaket.Yaw
+                        Pitch = positionPacket.Pitch,
+                        Yaw = positionPacket.Yaw
                     });
                 }
             }
 
-            if (paket is Pakets.Client.Play.DisconnectPaket disconnectPaket)
+            if (Packet is Packets.Client.Play.DisconnectPacket disconnectPacket)
             {
-                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPaket.Message}");
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPacket.Message}");
             }
 
-            if (paket is SpawnPlayerPaket spawnPlayerPaket)
+            if (Packet is SpawnPlayerPacket spawnPlayerPacket)
             {
                 foreach (Player player in MinecraftClient.Players)
                 {
-                    if (player.PlayerInfo.UUID.ToString() == spawnPlayerPaket.UUID.ToString())
+                    if (player.PlayerInfo.UUID.ToString() == spawnPlayerPacket.UUID.ToString())
                     {
-                        player.Position = new Vector3((float)spawnPlayerPaket.X, (float)spawnPlayerPaket.Y, (float)spawnPlayerPaket.Z);
-                        player.Rotation = new Vector2(spawnPlayerPaket.Yaw, spawnPlayerPaket.Pitch);
-                        player.EntityID = spawnPlayerPaket.EntityId;
+                        player.Position = new Vector3((float)spawnPlayerPacket.X, (float)spawnPlayerPacket.Y, (float)spawnPlayerPacket.Z);
+                        player.Rotation = new Vector2(spawnPlayerPacket.Yaw, spawnPlayerPacket.Pitch);
+                        player.EntityID = spawnPlayerPacket.EntityId;
                     }
                 }
-                //Logger.LogDebug($"Spawning player at {spawnPlayerPaket.X} {spawnPlayerPaket.Y} {spawnPlayerPaket.Z} [{spawnPlayerPaket.Yaw} / {spawnPlayerPaket.Pitch}]");
+                //Logger.LogDebug($"Spawning player at {spawnPlayerPacket.X} {spawnPlayerPacket.Y} {spawnPlayerPacket.Z} [{spawnPlayerPacket.Yaw} / {spawnPlayerPacket.Pitch}]");
             }
 
             // Entity 
-            if (paket is SpawnLivingEntity entityAliveSpawnPaket)
+            if (Packet is SpawnLivingEntity entityAliveSpawnPacket)
             {
-                if (entityAliveSpawnPaket.Type == 116)
+                if (entityAliveSpawnPacket.Type == 116)
                 {
-                    foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityAliveSpawnPaket.EntityId || x.PlayerInfo.UUID.ToString() == entityAliveSpawnPaket.EntityUUID.ToString()))
+                    foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityAliveSpawnPacket.EntityId || x.PlayerInfo.UUID.ToString() == entityAliveSpawnPacket.EntityUUID.ToString()))
                     {
-                        player.EntityID = entityAliveSpawnPaket.EntityId;
-                        player.Position = new Vector3((float)entityAliveSpawnPaket.XPosition, (float)entityAliveSpawnPaket.YPosition, (float)entityAliveSpawnPaket.ZPosition);
-                        player.Rotation = new Vector2(entityAliveSpawnPaket.Yaw, entityAliveSpawnPaket.Pitch);
-                        player.Velocity = new Vector3(entityAliveSpawnPaket.XVelocity, entityAliveSpawnPaket.YVelocity, entityAliveSpawnPaket.ZVelocity);
+                        player.EntityID = entityAliveSpawnPacket.EntityId;
+                        player.Position = new Vector3((float)entityAliveSpawnPacket.XPosition, (float)entityAliveSpawnPacket.YPosition, (float)entityAliveSpawnPacket.ZPosition);
+                        player.Rotation = new Vector2(entityAliveSpawnPacket.Yaw, entityAliveSpawnPacket.Pitch);
+                        player.Velocity = new Vector3(entityAliveSpawnPacket.XVelocity, entityAliveSpawnPacket.YVelocity, entityAliveSpawnPacket.ZVelocity);
                     }
                 }
             }
 
-            if (paket is EntityPositionAndRotationPaket entityPosAndRotPaket)
+            if (Packet is EntityPositionAndRotationPacket entityPosAndRotPacket)
             {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosAndRotPaket.EntityId))
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosAndRotPacket.EntityId))
                 {
-                    player.Position += new Vector3(entityPosAndRotPaket.DeltaX / 4096, entityPosAndRotPaket.DeltaY / 4096, entityPosAndRotPaket.DeltaZ / 4096);
-                    player.Rotation = new Vector2(entityPosAndRotPaket.Yaw, entityPosAndRotPaket.Pitch);
-                    player.IsOnGround = entityPosAndRotPaket.OnGround;
+                    player.Position += new Vector3(entityPosAndRotPacket.DeltaX / 4096, entityPosAndRotPacket.DeltaY / 4096, entityPosAndRotPacket.DeltaZ / 4096);
+                    player.Rotation = new Vector2(entityPosAndRotPacket.Yaw, entityPosAndRotPacket.Pitch);
+                    player.IsOnGround = entityPosAndRotPacket.OnGround;
                 }
             }
 
-            if (paket is EntityPositionPaket entityPosPaket)
+            if (Packet is EntityPositionPacket entityPosPacket)
             {
   
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosPaket.EntityId))
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityPosPacket.EntityId))
                 {
-                    player.Position += new Vector3(entityPosPaket.DeltaX / 4096, entityPosPaket.DeltaY / 4096, entityPosPaket.DeltaZ / 4096);
-                    player.IsOnGround = entityPosPaket.OnGround;
+                    player.Position += new Vector3(entityPosPacket.DeltaX / 4096, entityPosPacket.DeltaY / 4096, entityPosPacket.DeltaZ / 4096);
+                    player.IsOnGround = entityPosPacket.OnGround;
                 }
             }
 
-            if (paket is EntityRotationPaket entityRotPaket)
+            if (Packet is EntityRotationPacket entityRotPacket)
             {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityRotPaket.EntityId))
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityRotPacket.EntityId))
                 {
-                    player.Rotation = new Vector2(entityRotPaket.Yaw, entityRotPaket.Pitch);
-                    player.IsOnGround = entityRotPaket.OnGround;
+                    player.Rotation = new Vector2(entityRotPacket.Yaw, entityRotPacket.Pitch);
+                    player.IsOnGround = entityRotPacket.OnGround;
                 }
             }
 
-            if (paket is EntityTeleportPaket entityTeleportPaket)
+            if (Packet is EntityTeleportPacket entityTeleportPacket)
             {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityTeleportPaket.EntityId))
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityTeleportPacket.EntityId))
                 {
-                    player.Position = new Vector3((float)entityTeleportPaket.X, (float)entityTeleportPaket.Y, (float)entityTeleportPaket.Z);
-                    player.Rotation = new Vector2(entityTeleportPaket.Yaw, entityTeleportPaket.Pitch);
-                    player.IsOnGround = entityTeleportPaket.OnGround;
+                    player.Position = new Vector3((float)entityTeleportPacket.X, (float)entityTeleportPacket.Y, (float)entityTeleportPacket.Z);
+                    player.Rotation = new Vector2(entityTeleportPacket.Yaw, entityTeleportPacket.Pitch);
+                    player.IsOnGround = entityTeleportPacket.OnGround;
                 }
             }
 
-            if (paket is EntityVelocityPaket entityVelocityPaket)
+            if (Packet is EntityVelocityPacket entityVelocityPacket)
             {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityVelocityPaket.EntityId))
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityVelocityPacket.EntityId))
                 {
-                    player.Velocity = new Vector3(entityVelocityPaket.XVelocity, entityVelocityPaket.YVelocity, entityVelocityPaket.ZVelocity);
+                    player.Velocity = new Vector3(entityVelocityPacket.XVelocity, entityVelocityPacket.YVelocity, entityVelocityPacket.ZVelocity);
                 }
             }
 
-            if (paket is EntityHeadLookPaket entityLookPaket)
+            if (Packet is EntityHeadLookPacket entityLookPacket)
             {
-                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityLookPaket.EntityId))
+                foreach (Player player in MinecraftClient.Players.Where(x => x.EntityID == entityLookPacket.EntityId))
                 {
-                    player.Rotation = new Vector2(entityLookPaket.HeadYaw, player.Rotation.Y);
+                    player.Rotation = new Vector2(entityLookPacket.HeadYaw, player.Rotation.Y);
                 }
             }
         }
 
-        public void Status(IPaket paket)
+        public void Status(IPacket Packet)
         {
 
         }
 
-        private async void HandleEncryptionAuth(EncryptionRequestPaket Paket)
+        private async void HandleEncryptionAuth(EncryptionRequestPacket Packet)
         {
             Aes aes = Aes.Create();
             aes.KeySize = 128;
             aes.GenerateKey();
 
-            byte[] hash = SHA1.Create().ComputeHash(Encoding.ASCII.GetBytes(Paket.ServerId).Concat(aes.Key).Concat(Paket.PublicKey!).ToArray());
+            byte[] hash = SHA1.Create().ComputeHash(Encoding.ASCII.GetBytes(Packet.ServerId).Concat(aes.Key).Concat(Packet.PublicKey!).ToArray());
             Array.Reverse(hash);
             BigInteger b = new(hash);
             string Hex;
@@ -371,15 +370,15 @@ namespace MCHexBOT.Core
 
             await MinecraftClient.APIClient.JoinServer(Hex);
 
-            RSA rsa = RsaHelper.DecodePublicKey(Paket.PublicKey!);
+            RSA rsa = RsaHelper.DecodePublicKey(Packet.PublicKey!);
             if (rsa == null)
             {
                 throw new Exception("Could not decode public key");
             }
             byte[] encrypted = rsa.Encrypt(aes.Key, RSAEncryptionPadding.Pkcs1);
-            byte[] encVerTok = rsa.Encrypt(Paket.VerifyToken!, RSAEncryptionPadding.Pkcs1);
+            byte[] encVerTok = rsa.Encrypt(Packet.VerifyToken!, RSAEncryptionPadding.Pkcs1);
 
-            Connection.SendPaket(new Pakets.Server.Login.EncryptionResponsePaket()
+            Connection.SendPacket(new Packets.Server.Login.EncryptionResponsePacket()
             {
                 SharedKey = encrypted,
                 VerifyToken = encVerTok,

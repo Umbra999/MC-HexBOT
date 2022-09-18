@@ -1,9 +1,9 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Protocol;
 
-namespace MCHexBOT.Pakets.Server.Handshake
+namespace MCHexBOT.Packets.Server.Handshake
 {
-    public class HandshakePaket : IPaket
+    public class HandshakePacket : IPacket
     {
         public int ProtocolVersion { get; set; }
         public string ServerAddress { get; set; }

@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    internal class HeldItemChangePaket : IPaket
+    internal class HeldItemChangePacket : IPacket
     {
         public short Slot;
         public void Decode(MinecraftStream minecraftStream)

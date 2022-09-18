@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Server.Play
+namespace MCHexBOT.Packets.Server.Play
 {
-    public class ChatMessagePaket : IPaket
+    public class ChatMessagePacket : IPacket
     {
         public string Message { get; set; }
 

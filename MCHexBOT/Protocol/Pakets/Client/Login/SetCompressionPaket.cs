@@ -1,8 +1,8 @@
 ﻿using MCHexBOT.Network;
 
-namespace MCHexBOT.Pakets.Client.Login
+namespace MCHexBOT.Packets.Client.Login
 {
-    public class SetCompressionPaket : IPaket
+    public class SetCompressionPacket : IPacket
     {
         public int Threshold { get; set; }
 
