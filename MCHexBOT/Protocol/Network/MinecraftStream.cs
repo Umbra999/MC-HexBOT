@@ -1,7 +1,6 @@
 ﻿using fNbt;
 using MCHexBOT.Utils;
 using MCHexBOT.Utils.Data;
-using MCHexBOT.Utils.Math;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
@@ -22,8 +21,9 @@ namespace MCHexBOT.Network
 
 		private CancellationTokenSource CancelationToken { get; }
 		private Stream BaseStream { get; set; }
+		private bool IsMinecraftStream { get; set; }
 
-		public bool DataAvailable
+        public bool DataAvailable
 		{
 			get
 			{
@@ -33,15 +33,17 @@ namespace MCHexBOT.Network
 			}
 		}
 
-		private Stream _originalBaseStream;
-		public MinecraftStream(Stream baseStream, CancellationToken cancellationToken = default)
+		private readonly Stream _originalBaseStream;
+		public MinecraftStream(Stream baseStream, bool MinecraftEncrypt, CancellationToken cancellationToken = default)
 		{
 			_originalBaseStream = baseStream;
 			BaseStream = baseStream;
-			CancelationToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			IsMinecraftStream = MinecraftEncrypt;
+
+            CancelationToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 		}
 
-		public MinecraftStream(CancellationToken cancellationToken = default) : this(new MemoryStream(), cancellationToken)
+		public MinecraftStream(bool MinecraftEncrypt, CancellationToken cancellationToken = default) : this(new MemoryStream(), MinecraftEncrypt, cancellationToken)
 		{
 
 		}
@@ -128,19 +130,15 @@ namespace MCHexBOT.Network
 				return dat;
 			}
 
-			//SpinWait s = new SpinWait();
 			int read = 0;
 
 			var buffer = new byte[length];
 			while (read < buffer.Length && !CancelationToken.IsCancellationRequested)
 			{
 				int r = this.Read(buffer, read, length - read);
-				if (r < 0) //No data read?
-				{
-					break;
-				}
+				if (r < 0) break;
 
-				read += r;
+                read += r;
 
 				if (CancelationToken.IsCancellationRequested) throw new ObjectDisposedException("");
 			}
@@ -203,11 +201,8 @@ namespace MCHexBOT.Network
 				result |= (value << (7 * numRead));
 
 				numRead++;
-				if (numRead > 5)
-				{
-					throw new Exception("VarInt is too big");
-				}
-			} while ((read & 0x80) != 0);
+				if (numRead > 5) throw new Exception("VarInt is too big");
+            } while ((read & 0x80) != 0);
 			bytesRead = numRead;
 			return result;
 		}
@@ -220,8 +215,8 @@ namespace MCHexBOT.Network
 			do
 			{
 				read = (byte)ReadByte();
-				int value = (read & 0x7f);
-				result |= (value << (7 * numRead));
+				int value = read & 0x7f;
+				result |= value << (7 * numRead);
 
 				numRead++;
 				if (numRead > 10)
@@ -284,7 +279,7 @@ namespace MCHexBOT.Network
 
 		public string ReadString()
 		{
-			var length = ReadVarInt();
+			var length = IsMinecraftStream ? ReadVarInt() : ReadInt();
 			var stringValue = Read(length);
 
 			return Encoding.UTF8.GetString(stringValue);
@@ -346,38 +341,34 @@ namespace MCHexBOT.Network
 			WriteNbtCompound(slot.Nbt);
 		}
 
-		private double NetworkToHostOrder(byte[] data)
+		private static double NetworkToHostOrder(byte[] data)
 		{
-			if (BitConverter.IsLittleEndian)
-			{
-				Array.Reverse(data);
-			}
-			return BitConverter.ToDouble(data, 0);
+			if (BitConverter.IsLittleEndian) Array.Reverse(data);
+            return BitConverter.ToDouble(data, 0);
 		}
 
-		private float NetworkToHostOrder(float network)
+		private static float NetworkToHostOrder(float network)
 		{
 			var bytes = BitConverter.GetBytes(network);
 
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(bytes);
+			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
 			return BitConverter.ToSingle(bytes, 0);
 		}
 
-		private ushort[] NetworkToHostOrder(ushort[] network)
+		private static ushort[] NetworkToHostOrder(ushort[] network)
 		{
 			if (BitConverter.IsLittleEndian) Array.Reverse(network);
 			return network;
 		}
 
-		private ushort NetworkToHostOrder(ushort network)
+		private static ushort NetworkToHostOrder(ushort network)
 		{
 			var net = BitConverter.GetBytes(network);
 			if (BitConverter.IsLittleEndian) Array.Reverse(net);
 			return BitConverter.ToUInt16(net, 0);
 		}
-		private ulong NetworkToHostOrder(ulong network)
+		private static ulong NetworkToHostOrder(ulong network)
 		{
 			var net = BitConverter.GetBytes(network);
 			if (BitConverter.IsLittleEndian) Array.Reverse(net);
@@ -429,11 +420,8 @@ namespace MCHexBOT.Network
 			{
 				byte temp = (byte)(value & 127);
 				value >>= 7;
-				if (value != 0)
-				{
-					temp |= 128;
-				}
-				WriteByte(temp);
+				if (value != 0) temp |= 128;
+                WriteByte(temp);
 				write++;
 			} while (value != 0);
 			return write;
@@ -448,8 +436,9 @@ namespace MCHexBOT.Network
 		public void WriteString(string data)
 		{
 			var stringData = Encoding.UTF8.GetBytes(data);
-			WriteVarInt(stringData.Length);
-			Write(stringData);
+			if (IsMinecraftStream) WriteVarInt(stringData.Length);
+			else WriteInt(stringData.Length);
+            Write(stringData);
 		}
 
 		public void WriteShort(short data)
@@ -514,31 +503,26 @@ namespace MCHexBOT.Network
 		}
 
 
-		private byte[] HostToNetworkOrder(double d)
+		private static byte[] HostToNetworkOrder(double d)
 		{
 			var data = BitConverter.GetBytes(d);
-
 			if (BitConverter.IsLittleEndian) Array.Reverse(data);
 
 			return data;
 		}
 
-		private byte[] HostToNetworkOrder(float host)
+		private static byte[] HostToNetworkOrder(float host)
 		{
 			var bytes = BitConverter.GetBytes(host);
-
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(bytes);
+			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
 			return bytes;
 		}
 
-		private byte[] HostToNetworkOrderLong(ulong host)
+		private static byte[] HostToNetworkOrderLong(ulong host)
 		{
 			var bytes = BitConverter.GetBytes(host);
-
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(bytes);
+			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
 			return bytes;
 		}

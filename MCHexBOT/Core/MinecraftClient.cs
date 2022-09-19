@@ -13,23 +13,27 @@ namespace MCHexBOT.Core
     {
         public readonly APIClient APIClient;
         public MinecraftConnection MCConnection;
+        public LabyClient LabyClient; 
+
         public List<Player> Players = new();
+        private Player LocalPlayer;
+
+        public string ServerAddress;
 
         public Player GetLocalPlayer()
         {
-            foreach (Player player in Players)
+            if (LocalPlayer == null)
             {
-                if (player.PlayerInfo?.Name == APIClient.CurrentUser.name) return player;
+                LocalPlayer = new() { IsLocal = true };
+                Players.Add(LocalPlayer);
             }
-
-            Player Local = new() { IsLocal = true };
-            Players.Add(Local);
-            return Local;
+            return LocalPlayer;
         }
 
-        public MinecraftClient(APIClient WebClient)
+        public MinecraftClient(APIClient WebClient, LabyClient LabySession)
         {
             APIClient = WebClient;
+            LabyClient = LabySession;
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
@@ -61,9 +65,11 @@ namespace MCHexBOT.Core
                 return;
             }
 
-            TcpClient cl = new(Host, Port);
+            ServerAddress = Host + ":" + Port;
 
-            MCConnection = new MinecraftConnection(cl);
+            TcpClient Client = new(Host, Port);
+
+            MCConnection = new MinecraftConnection(Client, true);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterServerPackets(writer, ProtocolVersion);
@@ -74,15 +80,13 @@ namespace MCHexBOT.Core
             MCConnection.WriterRegistry = writer;
             MCConnection.ReaderRegistry = reader;
 
-            MCConnection.Handler = new PacketHandler(this)
+            MCConnection.Handler = new MinecraftHandler(this)
             {
                 Connection = MCConnection
             };
 
             MCConnection.Start();
             MCConnection.State = ConnectionState.Handshaking;
-
-            Logger.LogWarning("Sending Handshake");
 
             MCConnection.SendPacket(new HandshakePacket()
             {
@@ -93,8 +97,6 @@ namespace MCHexBOT.Core
             });
 
             MCConnection.State = ConnectionState.Login;
-
-            Logger.LogWarning("Sending Login");
 
             MCConnection.SendPacket(new LoginStartPacket()
             {
@@ -119,6 +121,10 @@ namespace MCHexBOT.Core
             {
                 ActionID = 0
             });
+
+            GetLocalPlayer().Health = 20;
+            GetLocalPlayer().Saturation = 5;
+            GetLocalPlayer().Food = 20;
         }
 
         public void SendEntityAction(PlayerAction Action)
@@ -129,9 +135,28 @@ namespace MCHexBOT.Core
                 ActionId = (int)Action,
                 JumpBoost = Action == PlayerAction.StartHorseJump ? 100 : 0,
             });
+
+            switch (Action)
+            {
+                case PlayerAction.StartSneaking:
+                    GetLocalPlayer().IsSneaking = true;
+                    break;
+
+                case PlayerAction.StopSneaking:
+                    GetLocalPlayer().IsSneaking = false;
+                    break;
+
+                case PlayerAction.StartSprinting:
+                    GetLocalPlayer().IsSprinting = true;
+                    break;
+
+                case PlayerAction.StopSprinting:
+                    GetLocalPlayer().IsSprinting = false;
+                    break;
+            }
         }
 
-        public void SendEntityInteraction(int EntityID, bool Sneaking, EntityInteractHandType Hand, EntityInteractType Interact)
+        public void SendEntityInteraction(int EntityID, bool Sneaking, EntityInteractType Interact, EntityInteractHandType Hand)
         {
             MCConnection.SendPacket(new InteractEntityPacket()
             {
@@ -169,6 +194,8 @@ namespace MCHexBOT.Core
             {
                 Slot = Slot
             });
+
+            GetLocalPlayer().HeldItemSlot = Slot;
         }
     }
 }

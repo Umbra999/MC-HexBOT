@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Core;
+using MCHexBOT.HexServer;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
@@ -28,7 +29,7 @@ namespace MCHexBOT.Features
             switch (CommandArguments[0])
             {
                 case "dice":
-                    Bot.SendChat("Dice: " + Misc.RandomNumber(1, 6).ToString());
+                    Bot.SendChat("Dice: " + Encryption.RandomNumber(1, 6).ToString());
                     break;
 
                 case "health":

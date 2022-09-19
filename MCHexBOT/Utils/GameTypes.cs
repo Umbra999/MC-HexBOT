@@ -15,6 +15,9 @@ namespace MCHexBOT.Utils
         public int Food { get; set; }
         public float Health { get; set; }
         public float Saturation { get; set; }
+        public bool IsSprinting { get; set; }
+        public bool IsSneaking { get; set; }
+        public short HeldItemSlot { get; set; }
 
     }
 

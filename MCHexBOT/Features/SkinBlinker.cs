@@ -1,6 +1,6 @@
 ﻿using MCHexBOT.Core;
+using MCHexBOT.HexServer;
 using MCHexBOT.Protocol;
-using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
 {
@@ -20,7 +20,7 @@ namespace MCHexBOT.Features
 
             while (SkinBlinkToggle)
             {
-                byte Random = Misc.RandomByte();
+                byte Random = Encryption.RandomByte();
 
                 Bot.SendPlayerSetings(true, true, ChatMode.Enabled, Random, Random > 127 ? MainHandType.Left : MainHandType.Right, false, "en_us", 64);
 

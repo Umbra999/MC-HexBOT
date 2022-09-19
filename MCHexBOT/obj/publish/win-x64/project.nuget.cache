@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "sDZs6sw9zbUX0LVPRJkjrlIVwO10fn0JVetS5Db+HRgdhHWaCVFukn6xzdBpCt/K938iBZ3ke3VrQDfa/cyEZg==",
+  "dgSpecHash": "xOTPFz4cbq87s96aunDdeiPQr6bqyAwTP6CWHp6Aopd0kY/WgIvsLeac8T7Cv0CfFotj6AT+UlQRdYvj4ZZtJA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Umbra\\Documents\\GitHub\\HexbotMC\\MCHexBOT\\MCHexBOT.csproj",
   "expectedPackageFiles": [
@@ -97,7 +97,11 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\system.threading.tasks.extensions\\4.0.0\\system.threading.tasks.extensions.4.0.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.threading.timer\\4.0.1\\system.threading.timer.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.xml.readerwriter\\4.0.11\\system.xml.readerwriter.4.0.11.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\system.xml.xdocument\\4.0.11\\system.xml.xdocument.4.0.11.nupkg.sha512"
+    "C:\\Users\\Umbra\\.nuget\\packages\\system.xml.xdocument\\4.0.11\\system.xml.xdocument.4.0.11.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\6.0.8\\microsoft.netcore.app.runtime.win-x64.6.0.8.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\6.0.8\\microsoft.windowsdesktop.app.runtime.win-x64.6.0.8.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\6.0.8\\microsoft.aspnetcore.app.runtime.win-x64.6.0.8.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\6.0.8\\microsoft.netcore.app.crossgen2.win-x64.6.0.8.nupkg.sha512"
   ],
   "logs": []
 }

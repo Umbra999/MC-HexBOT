@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Packets.Client.Play;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Mozilla;
 using System;
 using System.Collections;
@@ -9,49 +10,6 @@ namespace MCHexBOT.Utils
 {
     public static class Misc
     {
-        public static string RandomString(int length)
-        {
-            char[] array = "abcdefghlijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToArray();
-            string text = string.Empty;
-            for (int i = 0; i < length; i++)
-            {
-                text += array[new Random(Environment.TickCount).Next(array.Length)].ToString();
-            }
-            return text;
-        }
-
-        public static string RandomNumberString(int length)
-        {
-            char[] array = "0123456789".ToArray();
-            string text = string.Empty;
-            for (int i = 0; i < length; i++)
-            {
-                text += array[new Random(Environment.TickCount).Next(array.Length)].ToString();
-            }
-            return text;
-        }
-
-        public static int RandomNumber(int Lowest, int Highest)
-        {
-            return new Random(Environment.TickCount).Next(Lowest, Highest);
-        }
-
-        public static byte RandomByte()
-        {
-            return (byte)new Random(Environment.TickCount).Next(0, 255);
-        }
-
-        public static string FromBase64(string Data)
-        {
-            var base64EncodedBytes = Convert.FromBase64String(Data);
-            return Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        public static string ToBase64(string Data)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(Data));
-        }
-
         public static double DistanceSquared(Vector3 From, Vector3 To)
         {
             var diff = new Vector3(From.X - To.X, From.Y - To.Y, From.Z - To.Z);
@@ -74,5 +32,23 @@ namespace MCHexBOT.Utils
             { "1.18", 757 },
             { "1.19", 760 },
         };
+
+        public static void SendEmbedWebHook(string URL, object[] MSG)
+        {
+            Task.Run(async delegate
+            {
+                var req = new
+                {
+                    embeds = MSG
+                };
+
+                HttpClient CurrentClient = new(new HttpClientHandler { UseCookies = false });
+                HttpRequestMessage Payload = new(HttpMethod.Post, URL);
+                string joinWorldBody = JsonConvert.SerializeObject(req);
+                Payload.Content = new StringContent(joinWorldBody, Encoding.UTF8, "application/json");
+                Payload.Headers.Add("User-Agent", "Hexed");
+                HttpResponseMessage Response = await CurrentClient.SendAsync(Payload);
+            });
+        }
     }
 }

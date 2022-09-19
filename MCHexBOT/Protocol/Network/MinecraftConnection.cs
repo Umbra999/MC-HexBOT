@@ -14,6 +14,8 @@ namespace MCHexBOT.Network
         public MinecraftStream WriteStream { get; private set; }
         public CancellationToken CancellationToken { get; set; }
 
+        private bool IsMinecraft { get; set; }
+
         public ConnectionState State { get; set; }
 
         public Queue<PacketQueueItem> PacketQueue { get; set; } = new Queue<PacketQueueItem>();
@@ -28,23 +30,21 @@ namespace MCHexBOT.Network
 
         public IPacketHandler Handler { get; set; }
 
-        public MinecraftConnection(TcpClient tcp)
+        public MinecraftConnection(TcpClient tcp, bool IsMinecraftClient)
         {
             Tcp = tcp;
 
             State = ConnectionState.Handshaking;
+            IsMinecraft = IsMinecraftClient;
 
-            ReadStream = new MinecraftStream(Tcp.GetStream(), CancellationToken.None);
-            WriteStream = new MinecraftStream(Tcp.GetStream(), CancellationToken.None);
+            ReadStream = new MinecraftStream(Tcp.GetStream(), IsMinecraft, CancellationToken.None);
+            WriteStream = new MinecraftStream(Tcp.GetStream(), IsMinecraft, CancellationToken.None);
         }
 
         public void Start()
         {
             ReadThread = new Thread(ProcessNetworkRead);
             WriteThread = new Thread(ProcessNetworkWrite);
-
-            ReadThread.Name = "MCHexBOT - Read";
-            WriteThread.Name = "MCHexBOT - Write";
 
             ReadThread.Start();
             WriteThread.Start();
@@ -146,7 +146,7 @@ namespace MCHexBOT.Network
 
             using (MemoryStream ms = new())
             {
-                using (MinecraftStream mc = new(ms, CancellationToken))
+                using (MinecraftStream mc = new(ms, IsMinecraft, CancellationToken))
                 {
                     int id = WriterRegistry.GetPacketId(Packet, state);
                     mc.WriteVarInt(id);
@@ -159,7 +159,7 @@ namespace MCHexBOT.Network
             if (CompressionEnabled)
             {
                 using MemoryStream ms = new();
-                using (MinecraftStream mc = new(ms, CancellationToken))
+                using (MinecraftStream mc = new(ms, IsMinecraft, CancellationToken))
                 {
 
                     if (encodedPacket.Length >= CompressionThreshold)
@@ -226,7 +226,7 @@ namespace MCHexBOT.Network
 
                     var cache = stream.Read(PacketLenght - dataLenghtLenght);
 
-                    using MinecraftStream a = new(CancellationToken);
+                    using MinecraftStream a = new(IsMinecraft, CancellationToken);
 
                     using (ZlibStream zstream = new(a, CompressionMode.Decompress, true))
                     {
@@ -235,8 +235,7 @@ namespace MCHexBOT.Network
 
                     a.Seek(0, SeekOrigin.Begin);
 
-                    int PacketIdLenght;
-                    PacketId = a.ReadVarInt(out PacketIdLenght);
+                    PacketId = a.ReadVarInt(out int PacketIdLenght);
 
                     int dataSize = PacketLenght - dataLenghtLenght - PacketIdLenght;
                     PacketData = a.Read(dataSize);
@@ -250,7 +249,7 @@ namespace MCHexBOT.Network
                 Packet = ReaderRegistry.Packets[State][(byte)PacketId];
             }
 
-            Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
+            //Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
 
             try
             {
@@ -258,7 +257,7 @@ namespace MCHexBOT.Network
 
                 using (var memoryStream = new MemoryStream(PacketData))
                 {
-                    using MinecraftStream minecraftStream = new(memoryStream, CancellationToken);
+                    using MinecraftStream minecraftStream = new(memoryStream, IsMinecraft, CancellationToken);
                     Packet.Decode(minecraftStream);
                 }
 
@@ -272,7 +271,7 @@ namespace MCHexBOT.Network
             }
             catch (Exception e)
             {
-                //Logger.LogError("EXCEPTION IN READ: " + e.Message);
+                Logger.LogError("EXCEPTION IN READ: " + e.Message);
                 return null;
             }
         }

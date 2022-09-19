@@ -115,16 +115,34 @@ namespace MCHexBOT.Network
 
         public static void RegisterLabyClientPackets(PacketRegistry registry)
         {
-            registry.AddPacket(0x01, new Protocol.Packets.LabyClient.HelloPacket(), ConnectionState.Handshaking);
+            // Handshake
+            registry.AddPacket(0x01, new Protocol.Packets.LabyClient.Handshake.HelloPacket(), ConnectionState.Handshaking);
+
+            // Login
+            registry.AddPacket(0x0A, new Protocol.Packets.LabyClient.Login.EncryptionRequestPacket(), ConnectionState.Login);
+            registry.AddPacket(0x07, new Protocol.Packets.LabyClient.Login.LoginCompletePacket(), ConnectionState.Login);
+            registry.AddPacket(0x3E, new Protocol.Packets.LabyClient.Login.PingPacket(), ConnectionState.Login);
+
+            // Play
+            registry.AddPacket(0x3E, new Protocol.Packets.LabyClient.Play.PingPacket(), ConnectionState.Play);
         }
 
         public static void RegisterLabyServerPackets(PacketRegistry registry)
         {
-            registry.AddPacket(0x00, new Protocol.Packets.LabyServer.HelloPacket(), ConnectionState.Handshaking);
-            registry.AddPacket(0x02, new Protocol.Packets.LabyServer.LoginStartPacket(), ConnectionState.Login);
-            registry.AddPacket(0x03, new Protocol.Packets.LabyServer.LoginDataPacket(), ConnectionState.Login);
-            registry.AddPacket(0x06, new Protocol.Packets.LabyServer.LoginOptionPacket(), ConnectionState.Login);
-            registry.AddPacket(0x09, new Protocol.Packets.LabyServer.LoginVersionPacket(), ConnectionState.Login);
+            // Handshake
+            registry.AddPacket(0x00, new Protocol.Packets.LabyServer.Handshake.HelloPacket(), ConnectionState.Handshaking);
+
+            // Login
+            registry.AddPacket(0x02, new Protocol.Packets.LabyServer.Login.LoginStartPacket(), ConnectionState.Login);
+            registry.AddPacket(0x03, new Protocol.Packets.LabyServer.Login.LoginDataPacket(), ConnectionState.Login);
+            registry.AddPacket(0x06, new Protocol.Packets.LabyServer.Login.LoginOptionPacket(), ConnectionState.Login);
+            registry.AddPacket(0x09, new Protocol.Packets.LabyServer.Login.LoginVersionPacket(), ConnectionState.Login);
+            registry.AddPacket(0xB,  new Protocol.Packets.LabyServer.Login.EncryptionResponsePacket(), ConnectionState.Login);
+            registry.AddPacket(0x3F, new Protocol.Packets.LabyServer.Login.PongPacket(), ConnectionState.Login);
+
+            // Play
+            registry.AddPacket(0x3F, new Protocol.Packets.LabyServer.Play.PongPacket(), ConnectionState.Play);
+            registry.AddPacket(0x44, new Protocol.Packets.LabyServer.Play.PlayServerPacket(), ConnectionState.Play);
         }
     }
 }

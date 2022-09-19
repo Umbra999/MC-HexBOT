@@ -28,54 +28,46 @@ namespace MCHexBOT.Features
 
         public static void MovementLoop(MinecraftClient Bot)
         {
-            new Thread(() =>
+            for (; ; )
             {
-                for (; ; )
+                if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
                 {
-                    if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
+                    Vector3 Positions = Bot.GetLocalPlayer().Position;
+                    Vector2 Rotations = Bot.GetLocalPlayer().Rotation;
+                    bool IsGround = Bot.GetLocalPlayer().IsOnGround;
+
+                    if (CopyMovementTarget != "")
                     {
-                        Vector3 Positions = Bot.GetLocalPlayer().Position;
-                        Vector2 Rotations = Bot.GetLocalPlayer().Rotation;
-                        bool IsGround = Bot.GetLocalPlayer().IsOnGround;
-
-                        if (CopyMovementTarget != "")
+                        Player[] Players = Bot.Players.Where(x => x.PlayerInfo?.Name == CopyMovementTarget).ToArray();
+                        if (Players.Length > 0)
                         {
-                            try
-                            {
-                                foreach (Player player in Bot.Players.Where(x => x.PlayerInfo?.Name == CopyMovementTarget))
-                                {
-                                    Vector3 Distance = player.Position - Bot.GetLocalPlayer().Position;
-                                    Rotations = player.Rotation;
-                                    IsGround = player.IsOnGround;
+                            Vector3 Distance = Players.First().Position - Bot.GetLocalPlayer().Position;
 
-                                    if (Distance.X < 0) Positions.X += -WalkSpeed;
-                                    else if (Distance.X > 0) Positions.X += WalkSpeed;
+                            if (Distance.X < 0) Positions.X += -WalkSpeed;
+                            else if (Distance.X > 0) Positions.X += WalkSpeed;
 
-                                    if (Distance.Y < 0) Positions.Y += -JumpSpeed;
-                                    else if (Distance.Y > 0) Positions.Y += JumpSpeed;
+                            if (Distance.Y < 0) Positions.Y += -JumpSpeed;
+                            else if (Distance.Y > 0) Positions.Y += JumpSpeed;
 
-                                    if (Distance.Z < 0) Positions.Z += -WalkSpeed;
-                                    else if (Distance.Z > 0) Positions.Z = WalkSpeed;
-                                }
-                            }
-                            catch { }
+                            if (Distance.Z < 0) Positions.Z += -WalkSpeed;
+                            else if (Distance.Z > 0) Positions.Z = WalkSpeed;
                         }
-                        else
-                        {
-                            if (WalkX != MovementPosition.None) Positions.X += WalkX == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
-                            if (WalkY != MovementPosition.None) Positions.Y += WalkY == MovementPosition.Forward ? JumpSpeed : -JumpSpeed;
-                            if (WalkZ != MovementPosition.None) Positions.Z += WalkZ == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
-                        }
-
-                        SendMovement(Bot, Positions, Rotations, IsGround);
+                    }
+                    else
+                    {
+                        if (WalkX != MovementPosition.None) Positions.X += WalkX == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
+                        if (WalkY != MovementPosition.None) Positions.Y += WalkY == MovementPosition.Forward ? JumpSpeed : -JumpSpeed;
+                        if (WalkZ != MovementPosition.None) Positions.Z += WalkZ == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
                     }
 
-                    Thread.Sleep(50);
+                    SendMovement(Bot, Positions, Rotations, IsGround);
                 }
-            }).Start();
+
+                Thread.Sleep(50);
+            }
         }
 
-        private static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
+        public static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {
             Player Local = Bot.GetLocalPlayer();
             if (Local.Position != Position && Local.Rotation != Rotation) SendPositionAndRotation(Bot, Position, Rotation, IsGround);

@@ -1,7 +1,7 @@
 ﻿using MCHexBOT.Utils;
+using MCHexBOT.Utils.Data;
 using Newtonsoft.Json;
 using System.Net;
-using System.Security.Authentication;
 using System.Text;
 
 namespace MCHexBOT.Core
@@ -9,12 +9,21 @@ namespace MCHexBOT.Core
     public class APIClient
     {
         private HttpClient Client;
+        private HttpClient LabyClient;
+        private IWebProxy Proxy;
+
         public SelfAuthUser AuthUser;
         public SelfAPIUser CurrentUser;
 
-        public async Task<bool> Login(string Identity, WebProxy proxy = null)
+        public APIClient(WebProxy proxy = null)
         {
-            Client = new HttpClient(new HttpClientHandler { UseCookies = false, Proxy = proxy, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }, true);
+            Proxy = proxy;
+            Client = new HttpClient(new HttpClientHandler { UseCookies = false, Proxy = Proxy, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }, true);
+            LabyClient = new HttpClient(new HttpClientHandler { UseCookies = true, Proxy = Proxy, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }, true);
+        }
+
+        public async Task<bool> LoginToMinecraft(string Token)
+        {
             Client.DefaultRequestHeaders.Add("Accept", "*/*");
             Client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
             Client.DefaultRequestHeaders.Add("Accept-Language", "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7");
@@ -23,7 +32,7 @@ namespace MCHexBOT.Core
             Client.DefaultRequestHeaders.Add("Referer", "https://www.minecraft.net/");
             Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36 OPR/90.0.4480.100");
 
-            string Body = JsonConvert.SerializeObject(new { ensureLegacyEnabled = true, identityToken = Identity });
+            string Body = JsonConvert.SerializeObject(new { ensureLegacyEnabled = true, identityToken = Token });
 
             HttpRequestMessage Payload = new(HttpMethod.Post, $"https://api.minecraftservices.com/authentication/login_with_xbox")
             {
@@ -60,7 +69,21 @@ namespace MCHexBOT.Core
         {
             string Body = JsonConvert.SerializeObject(new { url = URL, variant = Slim ? "slim" : "classic" });
 
-            HttpRequestMessage Payload = new HttpRequestMessage(HttpMethod.Post, $"https://api.minecraftservices.com/minecraft/profile/skins")
+            HttpRequestMessage Payload = new(HttpMethod.Post, $"https://api.minecraftservices.com/minecraft/profile/skins")
+            {
+                Content = new StringContent(Body, Encoding.UTF8, "application/json")
+            };
+            Payload.Content.Headers.ContentType.CharSet = "";
+
+            HttpResponseMessage Response = await Client.SendAsync(Payload);
+            return Response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> ChangeName(string Name)
+        {
+            string Body = JsonConvert.SerializeObject(new { url = Name });
+
+            HttpRequestMessage Payload = new(HttpMethod.Post, $"https://api.minecraftservices.com/minecraft/profile/namechange")
             {
                 Content = new StringContent(Body, Encoding.UTF8, "application/json")
             };
@@ -94,7 +117,7 @@ namespace MCHexBOT.Core
 
         public async Task<bool> JoinServer(string serverHash)
         {
-            string Body = JsonConvert.SerializeObject(new { serverId = serverHash, accessToken = AuthUser.access_token, selectedProfile = CurrentUser.id});
+            string Body = JsonConvert.SerializeObject(new { serverId = serverHash, accessToken = AuthUser.access_token, selectedProfile = CurrentUser.id });
 
             HttpRequestMessage Payload = new(HttpMethod.Post, $"https://sessionserver.mojang.com/session/minecraft/join")
             {
@@ -106,7 +129,7 @@ namespace MCHexBOT.Core
             return Response.IsSuccessStatusCode;
         }
 
-        public async Task<Serverstats> GetServerStats(string Host)
+        public static async Task<Serverstats> GetServerStats(string Host)
         {
             HttpClient Client = new();
             Client.DefaultRequestHeaders.Add("User-Agent", "HEXED");
@@ -117,6 +140,38 @@ namespace MCHexBOT.Core
 
             string content = await Response.Content.ReadAsStringAsync();
             if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<Serverstats>(content);
+            return null;
+        }
+
+        public async Task<bool> LoginToLaby(string Pin)
+        {
+            LabyClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            LabyClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
+            LabyClient.DefaultRequestHeaders.Add("Accept-Language", "de-DE,de;q=0.9");
+            LabyClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            LabyClient.DefaultRequestHeaders.Add("Host", "www.labymod.net");
+            LabyClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36 OPR/90.0.4480.100");
+
+            HttpRequestMessage Payload = new(HttpMethod.Get, $"https://www.labymod.net/key?id={new UUID(CurrentUser.id)}&pin={Pin}");
+
+            HttpResponseMessage Response = await LabyClient.SendAsync(Payload);
+
+            if (Response.IsSuccessStatusCode) return true;
+            return false;
+        }
+
+        public async Task<string> ClaimDailyCoins()
+        {
+            string Body = "------WebKitFormBoundaryheWrWGH62gjsqjdb\r\nContent-Disposition: form-data; name=\"streak\"\r\n\r\n0\r\n------WebKitFormBoundaryheWrWGH62gjsqjdb--";
+
+            HttpRequestMessage Payload = new(HttpMethod.Post, $"https://www.labymod.net/api/dashboard/claim-streak-reward")
+            {
+                Content = new StringContent(Body, Encoding.UTF8, "multipart/form-data")
+            };
+            Payload.Content.Headers.ContentType.CharSet = "";
+
+            HttpResponseMessage Response = await LabyClient.SendAsync(Payload);
+            if (Response.IsSuccessStatusCode) return await Response.Content.ReadAsStringAsync();
             return null;
         }
     }

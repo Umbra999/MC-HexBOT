@@ -16,29 +16,26 @@ namespace MCHexBOT.Features
 
         public static void CombatLoop(MinecraftClient Bot)
         {
-            new Thread(() =>
+            for (; ; )
             {
-                for (; ; )
+                if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
                 {
-                    if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
+                    try
                     {
-                        try
+                        foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
                         {
-                            foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
+                            if (RangeLimit)
                             {
-                                if (RangeLimit)
-                                {
-                                    //if (Misc.DistanceSquared(Bot.GetLocalPlayer().Position, player.Position) < 5) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractHandType.Main, Protocol.EntityInteractType.Attack);
-                                }
-                                else Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractHandType.Main, Protocol.EntityInteractType.Attack);
+                                //if (Misc.DistanceSquared(Bot.GetLocalPlayer().Position, player.Position) < 5) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractHandType.Main, Protocol.EntityInteractType.Attack);
                             }
+                            else Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
                         }
-                        catch { }
                     }
-
-                    Thread.Sleep(50);
+                    catch { }
                 }
-            }).Start();
+
+                Thread.Sleep(50);
+            }
         }
     }
 }

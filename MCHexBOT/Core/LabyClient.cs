@@ -1,31 +1,27 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Protocol;
-using MCHexBOT.Protocol.Packets.LabyServer;
-using MCHexBOT.Utils;
+using MCHexBOT.Protocol.Packets.LabyServer.Handshake;
 using System.Net.Sockets;
 
 namespace MCHexBOT.Core
 {
-    internal class LabyClient
+    public class LabyClient
     {
         public MinecraftConnection MCConnection;
         public APIClient APIClient;
+        public int ProtocolVersion = 27;
 
         public LabyClient(APIClient WebClient)
         {
             APIClient = WebClient;
-
-            Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
+            Connect("chat.labymod.net", 30336);
         }
 
-        public async void Connect(string Host, int Port)
+        public void Connect(string Host, int Port)
         {
-            TcpClient cl = new(Host, Port)
-            {
-                NoDelay = true,
-            };
+            TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(cl);
+            MCConnection = new MinecraftConnection(Client, false);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterLabyServerPackets(writer);
@@ -47,7 +43,7 @@ namespace MCHexBOT.Core
             MCConnection.SendPacket(new HelloPacket()
             {
                 TickTime = Environment.TickCount,
-                Type = 27,
+                Type = ProtocolVersion,
             });
         }
     }

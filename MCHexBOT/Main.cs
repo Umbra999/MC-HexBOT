@@ -1,5 +1,6 @@
 ﻿using MCHexBOT.Core;
 using MCHexBOT.Features;
+using MCHexBOT.HexServer;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 
@@ -10,7 +11,7 @@ namespace MCHexBOT
         public static List<MinecraftClient> Clients = new();
         public static List<string> AccountTokens = new()
         {
-            "XBL3.0 x=15468014319842099618;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.4N158f3WcZcWuKjO77lynKufq9xfvhbRFqUfYzJxAHbZXJ09jqSw_X9CAtvK78sWlknBHY8SuJBEBZklbjLXvsPVFNCEu62lN7BQSWlnNXHcXZ4FkGYjgHegWyttp3GpVawWHFOdqHgv5NfRb1yCfUUELylDoVRZYkprm1a1WpynvJ4va0WPSHuDAtIesqk6nOxINGzDcxPPVB_MAW7QQvwbXEq9rRv6nTM3OSmUxqCNq2WdSiNn5jCKoIhZZYRHD7KD9rQlyb4Vx6X8j7zns0o7wf_vCJe3wHT8TmiRRURLUBsTRo8ZDfLtg0YFaL4D2RqQkCLULjHWJGNb_j6OdA.AQcUMNybt3bL0FukzvZGwg.OG7r_Pg7t3i6V87NB8j8N0XtXgRn5Wk5oKeQ3pg9di0xxaJ0DKDKLaTVZD9Nwgf-rvma0FpqL-63ba7HcoQAR1emJ0T67Hs8lMxfrK6vbpq4Cf3_FbRBSjZ0h-zoM-8RdKcTgFCVhXGJ4BjzXsh3S_5KWxf7U53iUJx1exY7txrwOQdcJv_gIK8ZJB-LYxPuH9dM8nyza36-1YzoCdEjm8IKLXppI84jSCHV-8fqz1pBsoRqgaxn3qJbBUvs0ifeAfsbPgE34t1TkAgne-1LhdR2Jm9WoDvoPWNeBCKzX13Wd8pXilFKVj1FxDCTZtjtl7p5ql3dqZftPJhUpE8PlXc9OdAPNJdoTjTsgOSZH6V5KDy8rQasITO6Qr3nuo8oxoHiVMoSXI3bYyGe9EFEFNHZbiays-JoB9CtGBxmA_s7GjjMSJuwiENjkoIe3XB4-l0A1hH-eKba1LutpQPiJJKwNhkLWMpdycezoVVjm7QXBGLLJrLR2cvnm4AYUQQw0ORcOcUPXjriMiY7eKPfxK16PNDLPwYWqESlSdNxWKLEZonIGVyu5ANcF0qtigIvyJaozK1QmSyZ_e8tzGT6aLAi5DgAw61BNBXOR_roND_L--dxZ42DoUofSVaSKRbN-mPNvArp_XOvbGEBYhlqmK_WUmGs1_hbHxfTj2xn9L-cqabakWUkO1x-AC_JlTspLntGSe-8X4YWAGAr4ag0L4SgSm_jog0fwNsD5YrCozLQuakkHQDQVHACiJfSHG6_Mk8VLbwd_GqjidVao0rfEzSUi9EIHtbfJwQaDnGkrhBXKpkI1UvfbK_5WbTbpJWG4dpE_cP4BzfkT5u5V9YxDQUZ6CZVEq525XWUpQdIN0cdmw6ROZQZt9gj8oWXFSzTXWAxwf_mNiVUyuXhgzZPQiJFYa0ChQQwM-7Awh1mR8kHSrbs1wKopF9U5qfOWv8aDDq-NFGggFzS4z7gNXbZnjmMZTx-ZfSPKKEiepRJxunCR7ZtWF-8a8fDwX9gqLZioYX52yqkP1kiZ1OB28Eu4mLbqCnVM4u2PacdKx1QlgX8yRBFAR5bI5omHQfeZjG3cx4ZZkDoNAApAC3KLRNrapEmd-y0QQ5ueNZ8jDEkaUh1Xwd-zsF3XWVOqLliAPxp_qRMrkj8CkopGvMNAzMcHk-q9MdYDjmSsAf5hKW5OWwX2P7SLWK6yYKcANh6_bjOJLXB-_1EH1zNlwI1nY-6YGGF3wlC9EgWCnEffBvUQLV2FbGow8qb8U4OKndww1saesX7tEd_4GDkyxJrPQHUbPPTE4_UUFy3tb_kKW1pgmqQnhGmzREEKq7H8zr-8tVkeMEsrVZL0ymtKwJXHt9BbELPNjSv3wgqopqA6YGUa5Nj0_R2psjFYb2f-057JNzaYpzR_zxMiyUFMkXgV_Rx_TqxWcmeWsiPZvaUY5CqIWp1_9xSCUAf0vTNvySgkLtOV-FBaaHr_J4UvQRskBAsucGVt_6sZcXCZbZwxIwOIH2_5X760ERJmMl8fIEykasgUhth4rnvknaeLy2tbCqyXsB2GZgrDFbM7nbN396FtgRhlayGoXquA2bBHqrAIh6H.tv_Yn1UgZWasDU5b3JJfCA",
+            "XBL3.0 x=6453272288188589253;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.pyrqKLW9c_7cf10Lb4K5EkiRmTvu5qVU8ffR61I5-xU0-WFNCO3ojhlXEu1-nBr1JSXiPH-hxQAbYIH36uFNPXVh7g3TKzjdYAjvXBD0GbihgLZrbROP-GOOxBkiv9WJ5vOoOHnm0FGJZu5GqXs4G3CpA1tZueAjQ5MnmBmtu9m_paOvpM4tI_cpDVFgcmRIAfgro8GC9GdeL5xn5ZhyXeJ8PqXBxWT7y6EBQ4joQtZyWHPrQwJBwjZxIkht5kFd-JCvTRdaQkmPoRcVOXbEF-hR25uw1owr74tVsJrDEyX1KfTlXJzevVMcHObL6_gOQxQgGUBjL2ZNjwJBZ0CIpw.Nu65t1s7YC4SiZB4BJglOA.ufFf2sjmGNSse4ch2kA1NG69UDZCNN94erfyGMr_w95v-4NLILv27MzeNdEE8oLCkIyQKkosB9IEc9FrCBU3xGHVLDN2utdb0owQke8BsfKsZic42rOrarmbkqmsgkDJBbuyZ_2tqJz067CaUKmR3vmdfyiCq3gIQncBL2B0NQQtJcIJYjhgVAWORdwBF5QbLaPw7iIb-XbrJBJ0DkW5ZcaCaLU8ky6zJ5Et4lDXuY45piYsRNaIsujGPIheUqPVIdCXPgmo8FvS2teDI-jPEdWrVgZjm-lC9R7J1GLv_eyQMUFk1WftVVGQJcb7ARk3-ggTV4o_nw4lkv7Oj9HCKQPghVGk2dZp-mSZvl0snGyCrNyQtkf8HmZ70MshQ07ONR5HMwt5xwATnxddIRlcWMHlDaMqIGOtftoxJ1Va1JpXx8WVLRzhykFJZbD_Z_J62SN_yWibmFv5KnLr7pOSwBdQWOfWp0uuE7U_3HDREax6YkfjPTxOWNyrplfWo8q_5AsUCNC1y-IWuQZwuTAFGiBqqpQ98YJfUZCLZt7ckZxJ595-38HMx_fsEu5nC2b95g38iB-kVQRmoUUnB_8WgmFhxYb-2OO99S-LBksikCEdReZABv4b_jYwZC2Z9Vz7_QvWcS0bQmhHJjCJmpuSe72FGFnyFD98j3gsp00xGhFmv6jn2sYgdq-fNnDpQJkJJCFJy_GJ8WaQx_DPcCAzpRDEX9IJS1tz2pQ9JEXs0wqaH1HEwFnTJkXLv_QzsT4o0C_SojL1zGzAtfYwKXFvBRHvYWqHuuq8sku1rIIG9wVk6CojgqrdgwGrieuQ5WRbbhrPgzO3-PmNlACrD8lg27PzXGTEcnTBVNv6PPokkDRefyOozvHbokO26krWoBB2wfLDQg9gyxKG1YYYEsozCZ0k6UCEihVuWV41s5rPIuJwqGu5x6TncyiQfKZXeY8MzcbEUtZNaMawMasltE5rbw4VROx17h0v840mdH6exSspXHsfHdxNh4ZOq6T_yE9KvXZt-ZY-7uykQRobbAifUmlKm4-ftW8itvrfo8Urzw_4G-XPBBjg3-yn7WA1QHjKzp8QH3N0TKboHX6koplM0Yb_beB8yJ4DPYWAXm5OUFL0zIPEctjWLaBxkMCBGMYU70jSp8c5DLIWk6t0CTjp22dly_99oYrkyXwYwxeInlQgbWY7dajF5a3nqapZi0zvsLloSmMja0cNOd4RlwmX13TNM3sUrvT-BVwclp4mXPLH62dLZXIscNPlulXqM-gpiYJ5EWMxNDTUZVDY_TYK2OI5RpRKcTl9YwmgqRRmIzDzgpzVkos6GyD71USi5HagO4HqtP6dp0N-tvoVWE0sJtuwMmC3jKNo_gDU3qSOcP8UbEXULNNIHGuHGmqVRZiiCLQ9CaCHo2RJRI1ZgyZilOu3XdMw8Gk6dMRF1EPwtNImaMkqUwaPAPIpRw2v1mxBrD-VOaDGn9paLOx9AxzwSa8yws2Z6kAI8qA7jn-2vXbSyIuMSGUq7ihuYXY0SYE5paso6hpDw0YcHI90nzvCL2HSWyVP8O8cMGQ1yF2IOFeseflSCj2WvIVCBZ9aIrS-.BejSmusYquDN9kJp-pUWNw"
         };
 
         public static void Init()
@@ -35,8 +36,8 @@ namespace MCHexBOT
       \|
 ");
 
-            CreateLaby();
-            //CreateBots();
+            ServerHandler.Init();
+            CreateBots();
             RunGUI();
         }
 
@@ -45,21 +46,10 @@ namespace MCHexBOT
             foreach (string Token in AccountTokens)
             {
                 APIClient Client = new();
-                if (await Client.Login(Token)) Clients.Add(new MinecraftClient(Client));
-                else Logger.LogError("Failed to Validate Token");
-            }
-            Console.Title = $"HexBOT | {Clients.Count} Bots";
-        }
-
-        private static async void CreateLaby()
-        {
-            foreach (string Token in AccountTokens)
-            {
-                APIClient Client = new();
-                if (await Client.Login(Token))
+                if (await Client.LoginToMinecraft(Token))
                 {
-                    LabyClient LabySession = new(Client);
-                    LabySession.Connect("chat.labymod.net", 30336);
+                    //new LabyClient(Client);
+                    Clients.Add(new MinecraftClient(Client, null));
                 }
                 else Logger.LogError("Failed to Validate Token");
             }
@@ -72,17 +62,20 @@ namespace MCHexBOT
             {
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("J [IP:PORT] - Join a Server");
-                Logger.LogImportant("C [MESSAGE] - Send a Chat Message");
+                Logger.LogImportant("SAY [MESSAGE] - Send a Chat Message");
                 Logger.LogImportant("-----------------");
-                Logger.LogImportant("S [true / false] - Skinblinker");
-                Logger.LogImportant("T [true / false] - Teabagger");
-                Logger.LogImportant("K [true / false] - Sneak");
-                Logger.LogImportant("O [NAME] - Target the Player");
+                Logger.LogImportant("SB [true / false] - Skinblinker");
+                Logger.LogImportant("TB [true / false] - Teabagger");
+                Logger.LogImportant("KILL [NAME] - Target the Player");
                 Logger.LogImportant("-----------------");
                 Logger.LogImportant("F [Name] - Follow a Player");
                 Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
                 Logger.LogImportant("Y [+,-,/] - Move the Y Cordinate");
                 Logger.LogImportant("Z [+,-,/] - Move the Z Cordinate");
+                Logger.LogImportant("S [true / false] - Sneak");
+                Logger.LogImportant("-----------------");
+                Logger.LogImportant("CNAME [NAME] - Change the Name");
+                Logger.LogImportant("CSKIN [URL] - Change the Skin");
                 Logger.LogImportant("-----------------");
 
                 string input = Console.ReadLine();
@@ -103,47 +96,33 @@ namespace MCHexBOT
                     }
                     break;
 
-                case "c":
+                case "say":
                     foreach (MinecraftClient Client in Clients)
                     {
                         Client.SendChat(input.Substring(2));
                     }
                     break;
 
-                case "r":
-                    foreach (MinecraftClient Client in Clients)
-                    {
-                        Client.SendRespawn();
-                    }
-                    break;
-
-                case "k":
-                    foreach (MinecraftClient Client in Clients)
-                    {
-                        Client.SendEntityAction(input.Substring(2) == "true" ? PlayerAction.StartSneaking : PlayerAction.StopSneaking);
-                    }
-                    break;
-
-                case "t":
-                    foreach (MinecraftClient Client in Clients)
-                    {
-                        TeaBagger.ToggleTeaBagger(Client, input.Substring(2) == "true");
-                    }
-                    break;
-
-                case "s":
+                case "sb":
                     foreach (MinecraftClient Client in Clients)
                     {
                         SkinBlinker.ToggleSkinBlinker(Client, input.Substring(2) == "true");
                     }
                     break;
 
-                case "f":
-                    Movement.CopyMovementTarget = input.Substring(2);
+                case "tb":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        TeaBagger.ToggleTeaBagger(Client, input.Substring(2) == "true");
+                    }
                     break;
 
-                case "o":
+                case "kill":
                     Combat.ToggleAttack(input.Substring(2));
+                    break;
+
+                case "f":
+                    Movement.CopyMovementTarget = input.Substring(2);
                     break;
 
                 case "x":
@@ -200,6 +179,27 @@ namespace MCHexBOT
                                 Movement.WalkZ = Movement.MovementPosition.Backward;
                                 break;
                         }
+                    }
+                    break;
+
+                case "s":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.SendEntityAction(input.Substring(2) == "true" ? PlayerAction.StartSneaking : PlayerAction.StopSneaking);
+                    }
+                    break;
+
+                case "cname":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Task.Run(() => Client.APIClient.ChangeName(input.Substring(2)));
+                    }
+                    break;
+
+                case "cskin":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Task.Run(() => Client.APIClient.ChangeSkin(input.Substring(2), true));
                     }
                     break;
             }

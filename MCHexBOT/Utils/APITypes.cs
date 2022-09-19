@@ -59,4 +59,10 @@
         public string name { get; set; }
         public int protocol { get; set; }
     }
+
+    public class LabyPin
+    {
+        public string pin { get; set; }
+        public long expires_at { get; set; }
+    }
 }
