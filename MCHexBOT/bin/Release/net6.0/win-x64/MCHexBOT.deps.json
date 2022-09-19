@@ -9,13 +9,21 @@
     ".NETCoreApp,Version=v6.0/win-x64": {
       "MCHexBOT/1.0.0": {
         "dependencies": {
+          "BouncyCastle.Crypto.dll": "1.8.1",
           "Iconic.Zlib.Netstandard": "1.0.0",
           "MiNET.fnbt": "1.0.22",
-          "Newtonsoft.Json": "13.0.1",
-          "BouncyCastle.Crypto": "1.9.0.0"
+          "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
           "MCHexBOT.dll": {}
+        }
+      },
+      "BouncyCastle.Crypto.dll/1.8.1": {
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {
+            "assemblyVersion": "1.8.1.0",
+            "fileVersion": "1.8.15362.1"
+          }
         }
       },
       "Iconic.Zlib.Netstandard/1.0.0": {
@@ -882,14 +890,6 @@
           "System.Threading": "4.0.11",
           "System.Xml.ReaderWriter": "4.0.11"
         }
-      },
-      "BouncyCastle.Crypto/1.9.0.0": {
-        "runtime": {
-          "BouncyCastle.Crypto.dll": {
-            "assemblyVersion": "1.9.0.0",
-            "fileVersion": "1.9.21290.1"
-          }
-        }
       }
     }
   },
@@ -898,6 +898,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "BouncyCastle.Crypto.dll/1.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eT+ncIOBgR8qakQ2Oc3Le0gVAcfGNBQi0EGJlPXniRkNMpRSekWQOqUwWOMutk6g4DYu4mu4g3JYASb/50tquA==",
+      "path": "bouncycastle.crypto.dll/1.8.1",
+      "hashPath": "bouncycastle.crypto.dll.1.8.1.nupkg.sha512"
     },
     "Iconic.Zlib.Netstandard/1.0.0": {
       "type": "package",
@@ -1556,11 +1563,6 @@
       "sha512": "sha512-Mk2mKmPi0nWaoiYeotq1dgeNK1fqWh61+EK+w4Wu8SWuTYLzpUnschb59bJtGywaPq7SmTuPf44wrXRwbIrukg==",
       "path": "system.xml.xdocument/4.0.11",
       "hashPath": "system.xml.xdocument.4.0.11.nupkg.sha512"
-    },
-    "BouncyCastle.Crypto/1.9.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }

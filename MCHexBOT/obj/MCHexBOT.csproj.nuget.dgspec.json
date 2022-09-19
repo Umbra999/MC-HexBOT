@@ -45,6 +45,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "BouncyCastle.Crypto.dll": {
+              "target": "Package",
+              "version": "[1.8.1, )"
+            },
             "Iconic.Zlib.Netstandard": {
               "target": "Package",
               "version": "[1.0.0, )"

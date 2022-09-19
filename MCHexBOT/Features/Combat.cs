@@ -16,26 +16,29 @@ namespace MCHexBOT.Features
 
         public static void CombatLoop(MinecraftClient Bot)
         {
-            for (; ; )
+            new Thread(() =>
             {
-                if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
+                for (; ; )
                 {
-                    try
+                    if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
                     {
-                        foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
+                        try
                         {
-                            if (RangeLimit)
+                            foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
                             {
-                                //if (Misc.DistanceSquared(Bot.GetLocalPlayer().Position, player.Position) < 5) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractHandType.Main, Protocol.EntityInteractType.Attack);
+                                if (RangeLimit)
+                                {
+                                    //if (Misc.DistanceSquared(Bot.GetLocalPlayer().Position, player.Position) < 5) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractHandType.Main, Protocol.EntityInteractType.Attack);
+                                }
+                                else Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
                             }
-                            else Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
                         }
+                        catch { }
                     }
-                    catch { }
-                }
 
-                Thread.Sleep(50);
-            }
+                    Thread.Sleep(50);
+                }
+            }).Start();
         }
     }
 }

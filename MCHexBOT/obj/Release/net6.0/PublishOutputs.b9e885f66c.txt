@@ -3,7 +3,7 @@ C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\MCH
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\MCHexBOT.deps.json
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\MCHexBOT.runtimeconfig.json
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\MCHexBOT.pdb
+C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\BouncyCastle.Crypto.dll
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\Iconic.Zlib.Netstandard.dll
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\fNbt.dll
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\Newtonsoft.Json.dll
-C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\BouncyCastle.Crypto.dll

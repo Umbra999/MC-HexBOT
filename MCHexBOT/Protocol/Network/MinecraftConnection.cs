@@ -4,6 +4,7 @@ using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Utils;
 using Ionic.Zlib;
 using MCHexBOT.Protocol;
+using Org.BouncyCastle.Bcpg;
 
 namespace MCHexBOT.Network
 {
@@ -50,9 +51,13 @@ namespace MCHexBOT.Network
             WriteThread.Start();
         }
 
-        public void EnableEncryption(byte[] key)
+        public void EnableWriteEncryption(byte[] key)
         {
             WriteStream.InitEncryption(key);
+        }
+
+        public void EnableReadEncryption(byte[] key)
+        {
             ReadStream.InitEncryption(key);
         }
 

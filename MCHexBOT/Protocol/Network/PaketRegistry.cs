@@ -121,7 +121,6 @@ namespace MCHexBOT.Network
             // Login
             registry.AddPacket(0x0A, new Protocol.Packets.LabyClient.Login.EncryptionRequestPacket(), ConnectionState.Login);
             registry.AddPacket(0x07, new Protocol.Packets.LabyClient.Login.LoginCompletePacket(), ConnectionState.Login);
-            registry.AddPacket(0x3E, new Protocol.Packets.LabyClient.Login.PingPacket(), ConnectionState.Login);
 
             // Play
             registry.AddPacket(0x3E, new Protocol.Packets.LabyClient.Play.PingPacket(), ConnectionState.Play);
@@ -138,7 +137,6 @@ namespace MCHexBOT.Network
             registry.AddPacket(0x06, new Protocol.Packets.LabyServer.Login.LoginOptionPacket(), ConnectionState.Login);
             registry.AddPacket(0x09, new Protocol.Packets.LabyServer.Login.LoginVersionPacket(), ConnectionState.Login);
             registry.AddPacket(0xB,  new Protocol.Packets.LabyServer.Login.EncryptionResponsePacket(), ConnectionState.Login);
-            registry.AddPacket(0x3F, new Protocol.Packets.LabyServer.Login.PongPacket(), ConnectionState.Login);
 
             // Play
             registry.AddPacket(0x3F, new Protocol.Packets.LabyServer.Play.PongPacket(), ConnectionState.Play);

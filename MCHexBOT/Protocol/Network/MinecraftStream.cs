@@ -21,7 +21,7 @@ namespace MCHexBOT.Network
 
 		private CancellationTokenSource CancelationToken { get; }
 		private Stream BaseStream { get; set; }
-		private bool IsMinecraftStream { get; set; }
+        private bool IsMinecraftStream { get; set; }
 
         public bool DataAvailable
 		{
@@ -588,12 +588,6 @@ namespace MCHexBOT.Network
 			NbtFile f = new NbtFile(compound) { BigEndian = true };
 			f.SaveToStream(this, NbtCompression.None);
 			//WriteByte(0);
-		}
-
-		public ChatMessage ReadChatObject()
-		{
-			string raw = ReadString();
-			return JsonConvert.DeserializeObject<ChatMessage>(raw);
 		}
 	}
 }

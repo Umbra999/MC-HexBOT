@@ -2,6 +2,15 @@
   "version": 3,
   "targets": {
     "net6.0": {
+      "BouncyCastle.Crypto.dll/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
       "Iconic.Zlib.Netstandard/1.0.0": {
         "type": "package",
         "dependencies": {
@@ -1205,6 +1214,15 @@
       }
     },
     "net6.0/win-x64": {
+      "BouncyCastle.Crypto.dll/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
       "Iconic.Zlib.Netstandard/1.0.0": {
         "type": "package",
         "dependencies": {
@@ -2766,6 +2784,18 @@
     }
   },
   "libraries": {
+    "BouncyCastle.Crypto.dll/1.8.1": {
+      "sha512": "eT+ncIOBgR8qakQ2Oc3Le0gVAcfGNBQi0EGJlPXniRkNMpRSekWQOqUwWOMutk6g4DYu4mu4g3JYASb/50tquA==",
+      "type": "package",
+      "path": "bouncycastle.crypto.dll/1.8.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bouncycastle.crypto.dll.1.8.1.nupkg.sha512",
+        "bouncycastle.crypto.dll.nuspec",
+        "lib/BouncyCastle.Crypto.dll"
+      ]
+    },
     "Iconic.Zlib.Netstandard/1.0.0": {
       "sha512": "1CqyBU2WER/qDzatH4zRv25/YrUYn5dyJ0zMkk7J78yjQ9VSfwkLoF1VGn6kyXAtMVe2wxQp4AFjj7gbGeIDhg==",
       "type": "package",
@@ -6665,6 +6695,7 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
+      "BouncyCastle.Crypto.dll >= 1.8.1",
       "Iconic.Zlib.Netstandard >= 1.0.0",
       "MiNET.fnbt >= 1.0.22",
       "Newtonsoft.Json >= 13.0.1"
@@ -6715,6 +6746,10 @@
       "net6.0": {
         "targetAlias": "net6.0",
         "dependencies": {
+          "BouncyCastle.Crypto.dll": {
+            "target": "Package",
+            "version": "[1.8.1, )"
+          },
           "Iconic.Zlib.Netstandard": {
             "target": "Package",
             "version": "[1.0.0, )"
@@ -6770,5 +6805,17 @@
         "#import": []
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Das Paket \"BouncyCastle.Crypto.dll 1.8.1\" wurde nicht mit dem Projektzielframework \"net6.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "libraryId": "BouncyCastle.Crypto.dll",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
 }

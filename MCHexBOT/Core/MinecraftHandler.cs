@@ -4,9 +4,13 @@ using MCHexBOT.Packets;
 using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Packets.Client.Play;
 using MCHexBOT.Protocol;
+using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
-using MCHexBOT.Utils.Math;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Utilities.Encoders;
+using System;
 using System.Numerics;
+using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Text;
 using static MCHexBOT.Features.Movement;
@@ -32,12 +36,13 @@ namespace MCHexBOT.Core
         {
             if (Packet is EncryptionRequestPacket encryptionPacket)
             {
-                Logger.LogDebug("Handling Encryption Auth");
-                HandleEncryptionAuth(encryptionPacket);
+                Task.Run(() => HandleEncryptionAuth(encryptionPacket));
             }
 
             if (Packet is LoginSuccessPacket loginSuccessPacket)
             {
+                Connection.EnableWriteEncryption(PrivateKey);
+
                 Connection.State = ConnectionState.Play;
                 Logger.LogSuccess($"Authenticated as {loginSuccessPacket.Username} [{loginSuccessPacket.Uuid}]");
             }
@@ -352,28 +357,23 @@ namespace MCHexBOT.Core
 
         }
 
-        private async void HandleEncryptionAuth(EncryptionRequestPacket Packet)
+        private byte[] PrivateKey;
+        private async Task<bool> HandleEncryptionAuth(EncryptionRequestPacket Packet)
         {
-            Aes aes = Aes.Create();
-            aes.KeySize = 128;
-            aes.GenerateKey();
+            if (Packet.ServerId == "-") return false;
 
-            byte[] hash = SHA1.Create().ComputeHash(Encoding.ASCII.GetBytes(Packet.ServerId).Concat(aes.Key).Concat(Packet.PublicKey!).ToArray());
-            Array.Reverse(hash);
-            BigInteger b = new(hash);
-            string Hex;
-            if (b < 0) Hex = "-" + (-b).ToString("x").TrimStart('0');
-            else Hex = b.ToString("x").TrimStart('0');
+            PrivateKey = CryptoHandler.GenerateAESPrivateKey();
 
-            await MinecraftClient.APIClient.JoinServer(Hex);
+            string serverHash = CryptoHandler.getServerHash(Packet.ServerId, Packet.PublicKey, PrivateKey);
 
-            RSA rsa = RsaHelper.DecodePublicKey(Packet.PublicKey!);
-            if (rsa == null)
-            {
-                throw new Exception("Could not decode public key");
-            }
-            byte[] encrypted = rsa.Encrypt(aes.Key, RSAEncryptionPadding.Pkcs1);
+            RSA rsa = CryptoHandler.DecodeRSAPublicKey(Packet.PublicKey);
+
+            byte[] encrypted = rsa.Encrypt(PrivateKey, RSAEncryptionPadding.Pkcs1);
             byte[] encVerTok = rsa.Encrypt(Packet.VerifyToken!, RSAEncryptionPadding.Pkcs1);
+
+            await MinecraftClient.APIClient.JoinServer(serverHash);
+
+            Connection.EnableReadEncryption(PrivateKey);
 
             Connection.SendPacket(new Packets.Server.Login.EncryptionResponsePacket()
             {
@@ -383,7 +383,8 @@ namespace MCHexBOT.Core
                 VerifyTokenLenght = encVerTok.Length
             });
 
-            Connection.EnableEncryption(aes.Key);
+            Logger.LogDebug($"{MinecraftClient.APIClient.CurrentUser.name} Authenticated to Minecraft");
+            return true;
         }
     }
 }

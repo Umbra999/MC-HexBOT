@@ -9,12 +9,13 @@ namespace MCHexBOT.HexServer
         private static string Key = "";
         public static Dictionary<string, string> OverseeUsers = new();
 
-        public static async void Init()
+        public static async Task Init()
         {
             if (!File.Exists("Key.Hexed"))
             {
                 Logger.LogError("Failed to find Hex Key");
-                Thread.Sleep(-1);
+                Thread.Sleep(5000);
+                Environment.Exit(0);
             }
 
             Key = Encryption.FromBase64(File.ReadAllText("Key.Hexed"));
@@ -22,7 +23,8 @@ namespace MCHexBOT.HexServer
             if (!await IsValidKey())
             {
                 Logger.LogError("Key is not Valid");
-                Thread.Sleep(-1);
+                Thread.Sleep(5000);
+                Environment.Exit(0);
             }
 
             await FetchSearchList();

@@ -36,20 +36,21 @@ namespace MCHexBOT
       \|
 ");
 
-            ServerHandler.Init();
-            CreateBots();
+            Task.Run(() => CreateBots());
+
             RunGUI();
         }
 
-        private static async void CreateBots()
+        private static async Task CreateBots()
         {
+            await ServerHandler.Init();
+
             foreach (string Token in AccountTokens)
             {
                 APIClient Client = new();
                 if (await Client.LoginToMinecraft(Token))
                 {
-                    //new LabyClient(Client);
-                    Clients.Add(new MinecraftClient(Client, null));
+                    Clients.Add(new MinecraftClient(Client, new LabyClient(Client)));
                 }
                 else Logger.LogError("Failed to Validate Token");
             }
@@ -92,7 +93,7 @@ namespace MCHexBOT
                     string Server = input.Substring(2);
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.Connect("1.18", Server.Split(':')[0], Server.Split(':').Length > 1 ? Convert.ToInt32(Server.Split(':')[1]) : 25565);
+                        Task.Run(() => Client.Connect("1.18", Server.Split(':')[0], Server.Split(':').Length > 1 ? Convert.ToInt32(Server.Split(':')[1]) : 25565));
                     }
                     break;
 

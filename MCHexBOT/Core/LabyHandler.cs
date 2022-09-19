@@ -3,7 +3,6 @@ using MCHexBOT.Utils;
 using MCHexBOT.Packets;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils.Data;
-using MCHexBOT.Utils.Math;
 using System.Security.Cryptography;
 using System.Text;
 using System.Numerics;
@@ -11,6 +10,8 @@ using MCHexBOT.Protocol.Packets.LabyClient.Handshake;
 using MCHexBOT.Protocol.Packets.LabyClient.Login;
 using MCHexBOT.Protocol.Packets.LabyServer.Login;
 using MCHexBOT.Features;
+using System.Runtime.Versioning;
+using MCHexBOT.Protocol.Utils;
 
 namespace MCHexBOT.Core
 {
@@ -57,16 +58,12 @@ namespace MCHexBOT.Core
         {
             if (Packet is EncryptionRequestPacket encryptionRequestPacket)
             {
-                HandleEncryptionAuth(encryptionRequestPacket);
-            }
-
-            if (Packet is PingPacket pingPacket)
-            {
-                Connection.SendPacket(new PongPacket());
+                Task.Run(() => HandleEncryptionAuth(encryptionRequestPacket));
             }
 
             if (Packet is LoginCompletePacket loginSuccessPacket)
             {
+                Connection.EnableWriteEncryption(PrivateKey);
                 Connection.State = ConnectionState.Play;
 
                 Connection.SendPacket(new Protocol.Packets.LabyServer.Play.PlayServerPacket()
@@ -95,39 +92,34 @@ namespace MCHexBOT.Core
             
         }
 
-        private async void HandleEncryptionAuth(EncryptionRequestPacket Packet)
+        private byte[] PrivateKey;
+        private async Task<bool> HandleEncryptionAuth(EncryptionRequestPacket Packet)
         {
-            Aes aes = Aes.Create();
-            aes.KeySize = 128;
-            aes.GenerateKey();
+            if (Packet.ServerId == "-") return false;
 
-            byte[] hash = SHA1.Create().ComputeHash(Encoding.ASCII.GetBytes(Packet.ServerId).Concat(aes.Key).Concat(Packet.PublicKey!).ToArray());
-            Array.Reverse(hash);
-            BigInteger b = new(hash);
+            PrivateKey = CryptoHandler.GenerateAESPrivateKey();
 
-            string Hex;
-            if (b < 0) Hex = "-" + (-b).ToString("x").TrimStart('0');
-            else Hex = b.ToString("x").TrimStart('0');
+            string serverHash = CryptoHandler.getServerHash(Packet.ServerId, Packet.PublicKey, PrivateKey);
 
-            await LabyClient.APIClient.JoinServer(Hex);
+            RSA rsa = CryptoHandler.DecodeRSAPublicKey(Packet.PublicKey);
 
-            RSA rsa = RsaHelper.DecodePublicKey(Packet.PublicKey!);
-            if (rsa == null)
-            {
-                throw new Exception("Could not decode public key");
-            }
-            byte[] encrypted = rsa.Encrypt(aes.Key, RSAEncryptionPadding.Pkcs1);
+            byte[] encrypted = rsa.Encrypt(PrivateKey, RSAEncryptionPadding.Pkcs1);
             byte[] encVerTok = rsa.Encrypt(Packet.VerifyToken!, RSAEncryptionPadding.Pkcs1);
+
+            await LabyClient.APIClient.JoinServer(serverHash);
+
+            Connection.EnableReadEncryption(PrivateKey);
 
             Connection.SendPacket(new EncryptionResponsePacket()
             {
                 SharedKey = encrypted,
                 VerifyToken = encVerTok,
                 SharedKeyLenght = encrypted.Length,
-                VerifyTokenLenght = encVerTok.Length,
+                VerifyTokenLenght = encVerTok.Length
             });
 
-            Connection.EnableEncryption(aes.Key);
+            Logger.LogDebug($"{LabyClient.APIClient.CurrentUser.name} Authenticated to Labymod");
+            return true;
         }
     }
 }

@@ -38,7 +38,7 @@ namespace MCHexBOT.Core
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
 
-        public async void Connect(string Version, string Host, int Port)
+        public async Task Connect(string Version, string Host, int Port)
         {
             if (MCConnection != null)
             {

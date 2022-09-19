@@ -1,5 +1,4 @@
-﻿using MCHexBOT.Utils.Math;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace MCHexBOT.Utils.Data
 {
