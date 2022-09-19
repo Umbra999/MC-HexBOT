@@ -63,8 +63,10 @@ namespace MCHexBOT.HexServer
             return false;
         }
 
-        private static async Task FetchSearchList()
+        public static async Task FetchSearchList()
         {
+            OverseeUsers.Clear();
+
             string Timestamp = await FetchTime();
 
             HttpClient Client = new(new HttpClientHandler { UseCookies = false });

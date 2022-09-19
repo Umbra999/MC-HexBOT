@@ -1,8 +1,4 @@
-﻿using MCHexBOT.Packets.Client.Play;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Mozilla;
-using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
 using System.Numerics;
 using System.Text;
 
@@ -10,10 +6,12 @@ namespace MCHexBOT.Utils
 {
     public static class Misc
     {
-        public static double DistanceSquared(Vector3 From, Vector3 To)
+        public static double Distance(Vector3 location1, Vector3 location2)
         {
-            var diff = new Vector3(From.X - To.X, From.Y - To.Y, From.Z - To.Z);
-            return diff.X * diff.X + diff.Y * diff.Y + diff.Z * diff.Z;
+            return Math.Sqrt(
+                ((location1.X - location2.X) * (location1.X - location2.X)) +
+                ((location1.Y - location2.Y) * (location1.Y - location2.Y)) +
+                ((location1.Z - location2.Z) * (location1.Z - location2.Z)));
         }
 
         public static Dictionary<string, int> ProtocolVersions = new()

@@ -9,10 +9,6 @@ namespace MCHexBOT
     internal class Main
     {
         public static List<MinecraftClient> Clients = new();
-        public static List<string> AccountTokens = new()
-        {
-            "XBL3.0 x=6453272288188589253;eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAiLCJjdHkiOiJKV1QiLCJ6aXAiOiJERUYiLCJ4NXQiOiJzYVkzV1ZoQzdnMmsxRW9FU0Jncm9Ob2l3MVEifQ.pyrqKLW9c_7cf10Lb4K5EkiRmTvu5qVU8ffR61I5-xU0-WFNCO3ojhlXEu1-nBr1JSXiPH-hxQAbYIH36uFNPXVh7g3TKzjdYAjvXBD0GbihgLZrbROP-GOOxBkiv9WJ5vOoOHnm0FGJZu5GqXs4G3CpA1tZueAjQ5MnmBmtu9m_paOvpM4tI_cpDVFgcmRIAfgro8GC9GdeL5xn5ZhyXeJ8PqXBxWT7y6EBQ4joQtZyWHPrQwJBwjZxIkht5kFd-JCvTRdaQkmPoRcVOXbEF-hR25uw1owr74tVsJrDEyX1KfTlXJzevVMcHObL6_gOQxQgGUBjL2ZNjwJBZ0CIpw.Nu65t1s7YC4SiZB4BJglOA.ufFf2sjmGNSse4ch2kA1NG69UDZCNN94erfyGMr_w95v-4NLILv27MzeNdEE8oLCkIyQKkosB9IEc9FrCBU3xGHVLDN2utdb0owQke8BsfKsZic42rOrarmbkqmsgkDJBbuyZ_2tqJz067CaUKmR3vmdfyiCq3gIQncBL2B0NQQtJcIJYjhgVAWORdwBF5QbLaPw7iIb-XbrJBJ0DkW5ZcaCaLU8ky6zJ5Et4lDXuY45piYsRNaIsujGPIheUqPVIdCXPgmo8FvS2teDI-jPEdWrVgZjm-lC9R7J1GLv_eyQMUFk1WftVVGQJcb7ARk3-ggTV4o_nw4lkv7Oj9HCKQPghVGk2dZp-mSZvl0snGyCrNyQtkf8HmZ70MshQ07ONR5HMwt5xwATnxddIRlcWMHlDaMqIGOtftoxJ1Va1JpXx8WVLRzhykFJZbD_Z_J62SN_yWibmFv5KnLr7pOSwBdQWOfWp0uuE7U_3HDREax6YkfjPTxOWNyrplfWo8q_5AsUCNC1y-IWuQZwuTAFGiBqqpQ98YJfUZCLZt7ckZxJ595-38HMx_fsEu5nC2b95g38iB-kVQRmoUUnB_8WgmFhxYb-2OO99S-LBksikCEdReZABv4b_jYwZC2Z9Vz7_QvWcS0bQmhHJjCJmpuSe72FGFnyFD98j3gsp00xGhFmv6jn2sYgdq-fNnDpQJkJJCFJy_GJ8WaQx_DPcCAzpRDEX9IJS1tz2pQ9JEXs0wqaH1HEwFnTJkXLv_QzsT4o0C_SojL1zGzAtfYwKXFvBRHvYWqHuuq8sku1rIIG9wVk6CojgqrdgwGrieuQ5WRbbhrPgzO3-PmNlACrD8lg27PzXGTEcnTBVNv6PPokkDRefyOozvHbokO26krWoBB2wfLDQg9gyxKG1YYYEsozCZ0k6UCEihVuWV41s5rPIuJwqGu5x6TncyiQfKZXeY8MzcbEUtZNaMawMasltE5rbw4VROx17h0v840mdH6exSspXHsfHdxNh4ZOq6T_yE9KvXZt-ZY-7uykQRobbAifUmlKm4-ftW8itvrfo8Urzw_4G-XPBBjg3-yn7WA1QHjKzp8QH3N0TKboHX6koplM0Yb_beB8yJ4DPYWAXm5OUFL0zIPEctjWLaBxkMCBGMYU70jSp8c5DLIWk6t0CTjp22dly_99oYrkyXwYwxeInlQgbWY7dajF5a3nqapZi0zvsLloSmMja0cNOd4RlwmX13TNM3sUrvT-BVwclp4mXPLH62dLZXIscNPlulXqM-gpiYJ5EWMxNDTUZVDY_TYK2OI5RpRKcTl9YwmgqRRmIzDzgpzVkos6GyD71USi5HagO4HqtP6dp0N-tvoVWE0sJtuwMmC3jKNo_gDU3qSOcP8UbEXULNNIHGuHGmqVRZiiCLQ9CaCHo2RJRI1ZgyZilOu3XdMw8Gk6dMRF1EPwtNImaMkqUwaPAPIpRw2v1mxBrD-VOaDGn9paLOx9AxzwSa8yws2Z6kAI8qA7jn-2vXbSyIuMSGUq7ihuYXY0SYE5paso6hpDw0YcHI90nzvCL2HSWyVP8O8cMGQ1yF2IOFeseflSCj2WvIVCBZ9aIrS-.BejSmusYquDN9kJp-pUWNw"
-        };
 
         public static void Init()
         {
@@ -45,7 +41,14 @@ namespace MCHexBOT
         {
             await ServerHandler.Init();
 
-            foreach (string Token in AccountTokens)
+            if (!File.Exists("Tokens.txt"))
+            {
+                Logger.LogError("No Tokens found");
+                Thread.Sleep(5000);
+                return;
+            }
+
+            foreach (string Token in File.ReadAllLines("Tokens.txt"))
             {
                 APIClient Client = new();
                 if (await Client.LoginToMinecraft(Token))
@@ -62,29 +65,57 @@ namespace MCHexBOT
             for (; ; )
             {
                 Logger.LogImportant("-----------------");
-                Logger.LogImportant("J [IP:PORT] - Join a Server");
-                Logger.LogImportant("SAY [MESSAGE] - Send a Chat Message");
-                Logger.LogImportant("-----------------");
-                Logger.LogImportant("SB [true / false] - Skinblinker");
-                Logger.LogImportant("TB [true / false] - Teabagger");
-                Logger.LogImportant("KILL [NAME] - Target the Player");
-                Logger.LogImportant("-----------------");
-                Logger.LogImportant("F [Name] - Follow a Player");
-                Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
-                Logger.LogImportant("Y [+,-,/] - Move the Y Cordinate");
-                Logger.LogImportant("Z [+,-,/] - Move the Z Cordinate");
-                Logger.LogImportant("S [true / false] - Sneak");
-                Logger.LogImportant("-----------------");
-                Logger.LogImportant("CNAME [NAME] - Change the Name");
-                Logger.LogImportant("CSKIN [URL] - Change the Skin");
+                Logger.LogImportant("1 - CORE");
+                Logger.LogImportant("2 - EXPLOITS");
+                Logger.LogImportant("3 - PHYSICS");
+                Logger.LogImportant("4 - DEBUG");
                 Logger.LogImportant("-----------------");
 
                 string input = Console.ReadLine();
-                HandleInput(input);
+
+                switch (input)
+                {
+                    case "1":
+                        Logger.LogImportant("-----------------");
+                        Logger.LogImportant("J [IP:PORT] - Join a Server");
+                        Logger.LogImportant("C [MESSAGE] - Send a Chat Message");
+                        Logger.LogImportant("-----------------");
+                        HandleCoreInput(Console.ReadLine());
+                        break;
+
+                    case "2":
+                        Logger.LogImportant("-----------------");
+                        Logger.LogImportant("Z [true / false] - Skinblinker");
+                        Logger.LogImportant("T [true / false] - Teabagger");
+                        Logger.LogImportant("K [NAME] - Target the Player");
+                        Logger.LogImportant("-----------------");
+                        HandleExploitInput(Console.ReadLine());
+                        break;
+
+                    case "3":
+                        Logger.LogImportant("-----------------");
+                        Logger.LogImportant("F [Name] - Follow a Player");
+                        Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
+                        Logger.LogImportant("Y [+,-,/] - Move the Y Cordinate");
+                        Logger.LogImportant("Z [+,-,/] - Move the Z Cordinate");
+                        Logger.LogImportant("S [true / false] - Sneak");
+                        Logger.LogImportant("-----------------");
+                        HandlePhysicInput(Console.ReadLine());
+                        break;
+
+                    case "4":
+                        Logger.LogImportant("-----------------");
+                        Logger.LogImportant("N [NAME] - Change the Name");
+                        Logger.LogImportant("S [URL] - Change the Skin");
+                        Logger.LogImportant("O - Refresh the Oversee");
+                        Logger.LogImportant("-----------------");
+                        HandleDebugInput(Console.ReadLine());
+                        break;
+                }
             }
         }
 
-        private static void HandleInput(string input)
+        private static void HandleCoreInput(string input)
         {
             string InputStart = input.Split(' ')[0];
             switch (InputStart.ToLower())
@@ -97,31 +128,45 @@ namespace MCHexBOT
                     }
                     break;
 
-                case "say":
+                case "c":
                     foreach (MinecraftClient Client in Clients)
                     {
                         Client.SendChat(input.Substring(2));
                     }
                     break;
+            }
+        }
 
-                case "sb":
+        private static void HandleExploitInput(string input)
+        {
+            string InputStart = input.Split(' ')[0];
+            switch (InputStart.ToLower())
+            {
+                case "z":
                     foreach (MinecraftClient Client in Clients)
                     {
                         SkinBlinker.ToggleSkinBlinker(Client, input.Substring(2) == "true");
                     }
                     break;
 
-                case "tb":
+                case "t":
                     foreach (MinecraftClient Client in Clients)
                     {
                         TeaBagger.ToggleTeaBagger(Client, input.Substring(2) == "true");
                     }
                     break;
 
-                case "kill":
+                case "k":
                     Combat.ToggleAttack(input.Substring(2));
                     break;
+            }
+        }
 
+        private static void HandlePhysicInput(string input)
+        {
+            string InputStart = input.Split(' ')[0];
+            switch (InputStart.ToLower())
+            {
                 case "f":
                     Movement.CopyMovementTarget = input.Substring(2);
                     break;
@@ -189,19 +234,30 @@ namespace MCHexBOT
                         Client.SendEntityAction(input.Substring(2) == "true" ? PlayerAction.StartSneaking : PlayerAction.StopSneaking);
                     }
                     break;
+            }
+        }
 
-                case "cname":
+        private static void HandleDebugInput(string input)
+        {
+            string InputStart = input.Split(' ')[0];
+            switch (InputStart.ToLower())
+            {
+                case "n":
                     foreach (MinecraftClient Client in Clients)
                     {
                         Task.Run(() => Client.APIClient.ChangeName(input.Substring(2)));
                     }
                     break;
 
-                case "cskin":
+                case "s":
                     foreach (MinecraftClient Client in Clients)
                     {
                         Task.Run(() => Client.APIClient.ChangeSkin(input.Substring(2), true));
                     }
+                    break;
+
+                case "o":
+                    Task.Run(() => ServerHandler.FetchSearchList());
                     break;
             }
         }

@@ -53,6 +53,8 @@ namespace MCHexBOT.Features
 
                                 if (Distance.Z < 0) Positions.Z += -WalkSpeed;
                                 else if (Distance.Z > 0) Positions.Z = WalkSpeed;
+
+                                Rotations = Players.First().Rotation;
                             }
                         }
                         else

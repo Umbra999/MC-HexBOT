@@ -263,6 +263,7 @@ namespace MCHexBOT.Core
                 Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} Disconnected: {disconnectPacket.Message}");
             }
 
+            // Entity 
             if (Packet is SpawnPlayerPacket spawnPlayerPacket)
             {
                 Player[] Players = MinecraftClient.Players.Where(x => x.PlayerInfo.UUID.ToString() == spawnPlayerPacket.UUID.ToString()).ToArray();
@@ -274,7 +275,6 @@ namespace MCHexBOT.Core
                 }
             }
 
-            // Entity 
             if (Packet is SpawnLivingEntity entityAliveSpawnPacket)
             {
                 if (entityAliveSpawnPacket.Type == 116)

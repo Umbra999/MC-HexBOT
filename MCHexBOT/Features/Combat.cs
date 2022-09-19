@@ -5,8 +5,9 @@ namespace MCHexBOT.Features
 {
     internal class Combat
     {
-        private static List<string> TargetNames = new();
-        public static bool RangeLimit = false;
+        private static readonly List<string> TargetNames = new();
+        private static readonly bool RangeLimit = true;
+        private static readonly float Range = 4; 
 
         public static void ToggleAttack(string Name)
         {
@@ -28,7 +29,7 @@ namespace MCHexBOT.Features
                             {
                                 if (RangeLimit)
                                 {
-                                    //if (Misc.DistanceSquared(Bot.GetLocalPlayer().Position, player.Position) < 5) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractHandType.Main, Protocol.EntityInteractType.Attack);
+                                    if (Misc.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
                                 }
                                 else Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
                             }

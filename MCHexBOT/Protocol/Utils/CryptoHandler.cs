@@ -1,78 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Security.Cryptography;
-using System.IO;
 
 namespace MCHexBOT.Protocol.Utils
 {
-    /// <summary>
-    /// Methods for handling all the crypto stuff: RSA (Encryption Key Request), AES (Encrypted Stream), SHA-1 (Server Hash).
-    /// </summary>
-
     public static class CryptoHandler
     {
-        public static byte[] ClientAESPrivateKey = null;
-
-        /// <summary>
-        /// Get a cryptographic service for encrypting data using the server's RSA public key
-        /// </summary>
-        /// <param name="x509key">Byte array containing the encoded key</param>
-        /// <returns>Returns the corresponding RSA Crypto Service</returns>
-
         public static RSACryptoServiceProvider DecodeRSAPublicKey(byte[] x509key)
         {
-            /* Code from StackOverflow no. 18091460 */
-
             byte[] SeqOID = { 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01 };
 
-            MemoryStream ms = new MemoryStream(x509key);
-            BinaryReader reader = new BinaryReader(ms);
+            MemoryStream ms = new(x509key);
+            BinaryReader reader = new(ms);
 
-            if (reader.ReadByte() == 0x30)
-                ReadASNLength(reader); //skip the size
-            else
-                return null;
+            if (reader.ReadByte() == 0x30) ReadASNLength(reader); 
+            else return null;
 
-            int identifierSize = 0; //total length of Object Identifier section
-            if (reader.ReadByte() == 0x30)
-                identifierSize = ReadASNLength(reader);
-            else
-                return null;
+            int identifierSize;
+            if (reader.ReadByte() == 0x30) identifierSize = ReadASNLength(reader);
+            else return null;
 
-            if (reader.ReadByte() == 0x06) //is the next element an object identifier?
+            if (reader.ReadByte() == 0x06)
             {
                 int oidLength = ReadASNLength(reader);
                 byte[] oidBytes = new byte[oidLength];
                 reader.Read(oidBytes, 0, oidBytes.Length);
-                if (oidBytes.SequenceEqual(SeqOID) == false) //is the object identifier rsaEncryption PKCS#1?
-                    return null;
+                if (oidBytes.SequenceEqual(SeqOID) == false) return null;
 
                 int remainingBytes = identifierSize - 2 - oidBytes.Length;
                 reader.ReadBytes(remainingBytes);
             }
 
-            if (reader.ReadByte() == 0x03) //is the next element a bit string?
+            if (reader.ReadByte() == 0x03) 
             {
-                ReadASNLength(reader); //skip the size
-                reader.ReadByte(); //skip unused bits indicator
+                ReadASNLength(reader);
+                reader.ReadByte(); 
                 if (reader.ReadByte() == 0x30)
                 {
-                    ReadASNLength(reader); //skip the size
-                    if (reader.ReadByte() == 0x02) //is it an integer?
+                    ReadASNLength(reader); 
+                    if (reader.ReadByte() == 0x02) 
                     {
                         int modulusSize = ReadASNLength(reader);
                         byte[] modulus = new byte[modulusSize];
                         reader.Read(modulus, 0, modulus.Length);
-                        if (modulus[0] == 0x00) //strip off the first byte if it's 0
+                        if (modulus[0] == 0x00)
                         {
                             byte[] tempModulus = new byte[modulus.Length - 1];
                             Array.Copy(modulus, 1, tempModulus, 0, modulus.Length - 1);
                             modulus = tempModulus;
                         }
 
-                        if (reader.ReadByte() == 0x02) //is it an integer?
+                        if (reader.ReadByte() == 0x02) 
                         {
                             int exponentSize = ReadASNLength(reader);
                             byte[] exponent = new byte[exponentSize];
@@ -91,47 +68,29 @@ namespace MCHexBOT.Protocol.Utils
             return null;
         }
 
-        /// <summary>
-        /// Subfunction for decrypting ASN.1 (x509) RSA certificate data fields lengths
-        /// </summary>
-        /// <param name="reader">StreamReader containing the stream to decode</param>
-        /// <returns>Return the read length</returns>
-
         private static int ReadASNLength(BinaryReader reader)
         {
-            //Note: this method only reads lengths up to 4 bytes long as
-            //this is satisfactory for the majority of situations.
             int length = reader.ReadByte();
-            if ((length & 0x00000080) == 0x00000080) //is the length greater than 1 byte
+            if ((length & 0x00000080) == 0x00000080)
             {
                 int count = length & 0x0000000f;
                 byte[] lengthBytes = new byte[4];
                 reader.Read(lengthBytes, 4 - count, count);
-                Array.Reverse(lengthBytes); //
+                Array.Reverse(lengthBytes); 
                 length = BitConverter.ToInt32(lengthBytes, 0);
             }
             return length;
         }
 
-        /// <summary>
-        /// Generate a new random AES key for symmetric encryption
-        /// </summary>
-        /// <returns>Returns a byte array containing the key</returns>
-
         public static byte[] GenerateAESPrivateKey()
         {
-            AesManaged AES = new AesManaged();
-            AES.KeySize = 128; AES.GenerateKey();
+            AesManaged AES = new()
+            {
+                KeySize = 128
+            };
+            AES.GenerateKey();
             return AES.Key;
         }
-
-        /// <summary>
-        /// Get a SHA-1 hash for online-mode session checking
-        /// </summary>
-        /// <param name="serverID">Server ID hash</param>
-        /// <param name="PublicKey">Server's RSA key</param>
-        /// <param name="SecretKey">Secret key chosen by the client</param>
-        /// <returns>Returns the corresponding SHA-1 hex hash</returns>
 
         public static string getServerHash(string serverID, byte[] PublicKey, byte[] SecretKey)
         {
@@ -143,26 +102,14 @@ namespace MCHexBOT.Protocol.Utils
             return result;
         }
 
-        /// <summary>
-        /// Generate a SHA-1 hash using several byte arrays
-        /// </summary>
-        /// <param name="tohash">array of byte arrays to hash</param>
-        /// <returns>Returns the hashed data</returns>
-
         private static byte[] digest(byte[][] tohash)
         {
-            SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider();
+            SHA1CryptoServiceProvider sha1 = new();
             for (int i = 0; i < tohash.Length; i++)
                 sha1.TransformBlock(tohash[i], 0, tohash[i].Length, tohash[i], 0);
             sha1.TransformFinalBlock(new byte[] { }, 0, 0);
             return sha1.Hash;
         }
-
-        /// <summary>
-        /// Converts a byte array to its hex string representation
-        /// </summary>
-        /// <param name="p">Byte array to convert</param>
-        /// <returns>Returns the string representation</returns>
 
         private static string GetHexString(byte[] p)
         {
@@ -171,12 +118,6 @@ namespace MCHexBOT.Protocol.Utils
                 result += p[i].ToString("x2");
             return result;
         }
-
-        /// <summary>
-        /// Compute the two's complement of a little endian byte array
-        /// </summary>
-        /// <param name="p">Byte array to compute</param>
-        /// <returns>Returns the corresponding two's complement</returns>
 
         private static byte[] TwosComplementLittleEndian(byte[] p)
         {
