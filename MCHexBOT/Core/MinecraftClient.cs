@@ -13,7 +13,7 @@ namespace MCHexBOT.Core
     {
         public readonly APIClient APIClient;
         public MinecraftConnection MCConnection;
-        public LabyClient LabyClient; 
+        public LabyClient LabyClient;
 
         public List<Player> Players = new();
         private Player LocalPlayer;
@@ -30,39 +30,39 @@ namespace MCHexBOT.Core
             return LocalPlayer;
         }
 
-        public MinecraftClient(APIClient WebClient, LabyClient LabySession)
+        public MinecraftClient(APIClient WebClient)
         {
             APIClient = WebClient;
-            LabyClient = LabySession;
+            LabyClient = new LabyClient(this);
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
 
-        public async Task Connect(string Version, string Host, int Port)
+        public async Task<bool> Connect(string Version, string Host, int Port)
         {
             if (MCConnection != null)
             {
                 Logger.LogError($"Bot is already connected");
-                return;
+                return false;
             }
 
             if (!Misc.ProtocolVersions.TryGetValue(Version, out int ProtocolVersion))
             {
                 Logger.LogError($"{Version} is not Supported"); // replace by Server stats protocol once done
-                return; 
+                return false; 
             }
 
             Serverstats Stats = await APIClient.GetServerStats($"{Host}:{Port}");
             if (Stats == null)
             {
                 Logger.LogError($"Failed to fetch Server");
-                return;
+                return false;
             }
 
             if (Stats.status != "success")
             {
                 Logger.LogError($"Server was unable to Ping");
-                return;
+                return false;
             }
 
             ServerAddress = Host + ":" + Port;
@@ -86,11 +86,10 @@ namespace MCHexBOT.Core
             };
 
             MCConnection.Start();
-            MCConnection.State = ConnectionState.Handshaking;
 
             MCConnection.SendPacket(new HandshakePacket()
             {
-                NextState = HandshakeType.Login,
+                NextState = HandshakePacket.HandshakeType.Login,
                 ProtocolVersion = ProtocolVersion,
                 ServerAddress = Host,
                 ServerPort = (ushort)Port
@@ -103,8 +102,15 @@ namespace MCHexBOT.Core
                 Username = APIClient.CurrentUser.name
             });
 
-            Movement.MovementLoop(this);
-            Combat.CombatLoop(this);
+            StartLoop();
+
+            return true;
+        }
+
+        private void StartLoop()
+        {
+            Task.Run(() => Movement.MovementLoop(this));
+            Task.Run(() => Combat.CombatLoop(this));
         }
 
         public void SendChat(string Message)
@@ -127,36 +133,36 @@ namespace MCHexBOT.Core
             GetLocalPlayer().Food = 20;
         }
 
-        public void SendEntityAction(PlayerAction Action)
+        public void SendEntityAction(EntityActionPacket.Action Action)
         {
             MCConnection.SendPacket(new EntityActionPacket()
             {
                 EntityId = GetLocalPlayer().EntityID,
-                ActionId = (int)Action,
-                JumpBoost = Action == PlayerAction.StartHorseJump ? 100 : 0,
+                ActionId = Action,
+                JumpBoost = Action == EntityActionPacket.Action.StartHorseJump ? 100 : 0,
             });
 
             switch (Action)
             {
-                case PlayerAction.StartSneaking:
+                case EntityActionPacket.Action.StartSneaking:
                     GetLocalPlayer().IsSneaking = true;
                     break;
 
-                case PlayerAction.StopSneaking:
+                case EntityActionPacket.Action.StopSneaking:
                     GetLocalPlayer().IsSneaking = false;
                     break;
 
-                case PlayerAction.StartSprinting:
+                case EntityActionPacket.Action.StartSprinting:
                     GetLocalPlayer().IsSprinting = true;
                     break;
 
-                case PlayerAction.StopSprinting:
+                case EntityActionPacket.Action.StopSprinting:
                     GetLocalPlayer().IsSprinting = false;
                     break;
             }
         }
 
-        public void SendEntityInteraction(int EntityID, bool Sneaking, EntityInteractType Interact, EntityInteractHandType Hand)
+        public void SendEntityInteraction(int EntityID, bool Sneaking, InteractEntityPacket.EntityInteractType Interact, InteractEntityPacket.EntityInteractHandType Hand)
         {
             MCConnection.SendPacket(new InteractEntityPacket()
             {

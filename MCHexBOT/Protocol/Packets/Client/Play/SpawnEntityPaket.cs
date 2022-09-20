@@ -11,8 +11,8 @@ namespace MCHexBOT.Packets.Client.Play
         public double XPosition { get; set; }
         public double YPosition { get; set; }
         public double ZPosition { get; set; }
-        public byte Pitch { get; set; }
-        public byte Yaw { get; set; }
+        public float Pitch { get; set; }
+        public float Yaw { get; set; }
         public int Data { get; set; }
         public short XVelocity { get; set; }
         public short YVelocity { get; set; }
@@ -26,8 +26,8 @@ namespace MCHexBOT.Packets.Client.Play
             XPosition = minecraftStream.ReadDouble();
             YPosition = minecraftStream.ReadDouble();
             ZPosition = minecraftStream.ReadDouble();
-            Yaw = (byte)minecraftStream.ReadByte();
-            Pitch = (byte)minecraftStream.ReadByte();
+            Yaw = minecraftStream.ReadByte() / (256.0f / 360.0f);
+            Pitch = minecraftStream.ReadByte() / (256.0f / 360.0f); // maybe put this into handler
             Data = minecraftStream.ReadInt();
             XVelocity = minecraftStream.ReadShort();
             YVelocity = minecraftStream.ReadShort();

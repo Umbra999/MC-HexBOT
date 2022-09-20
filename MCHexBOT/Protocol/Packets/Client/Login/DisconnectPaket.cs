@@ -1,11 +1,10 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Utils;
 
 namespace MCHexBOT.Packets.Client.Login
 {
     public class DisconnectPacket : IPacket
     {
-        public string Message { get; set; } // should be chat object
+        public string Message { get; set; } // Chat Object
 
         public void Decode(MinecraftStream minecraftStream)
         {

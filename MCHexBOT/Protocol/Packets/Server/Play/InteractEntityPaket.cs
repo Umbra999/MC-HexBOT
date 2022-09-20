@@ -1,9 +1,8 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Packets.Server.Play
 {
-    internal class InteractEntityPacket : IPacket
+    public class InteractEntityPacket : IPacket
     {
         public int EntityID { get; set; }
         public EntityInteractType InteractType { get; set; }
@@ -30,6 +29,19 @@ namespace MCHexBOT.Packets.Server.Play
                 minecraftStream.WriteVarInt((int)HandType);
             }
             minecraftStream.WriteBool(Sneaking);
+        }
+
+        public enum EntityInteractType
+        {
+            Interact = 0,
+            Attack = 1,
+            InteractAt = 2,
+        }
+
+        public enum EntityInteractHandType
+        {
+            Main = 0,
+            Second = 1
         }
     }
 }

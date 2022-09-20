@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Core;
+using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
@@ -15,31 +16,28 @@ namespace MCHexBOT.Features
             else TargetNames.Add(Name);
         }
 
-        public static void CombatLoop(MinecraftClient Bot)
+        public static async Task CombatLoop(MinecraftClient Bot)
         {
-            new Thread(() =>
+            for (; ; )
             {
-                for (; ; )
+                if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
                 {
-                    if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
+                    try
                     {
-                        try
+                        foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
                         {
-                            foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
+                            if (RangeLimit)
                             {
-                                if (RangeLimit)
-                                {
-                                    if (Misc.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range) Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
-                                }
-                                else Bot.SendEntityInteraction(player.EntityID, false, Protocol.EntityInteractType.Attack, Protocol.EntityInteractHandType.Main);
+                                if (Misc.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range) Bot.SendEntityInteraction(player.EntityID, false, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
                             }
+                            else Bot.SendEntityInteraction(player.EntityID, false, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
                         }
-                        catch { }
                     }
-
-                    Thread.Sleep(50);
+                    catch { }
                 }
-            }).Start();
+
+                await Task.Delay(50);
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ namespace MCHexBOT.Packets.Server.Status
 {
     public class PingPacket : IPacket
     {
-        public long Payload{ get; set; }
+        public long Payload { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {

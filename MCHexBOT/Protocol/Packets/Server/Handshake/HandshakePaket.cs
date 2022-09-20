@@ -1,5 +1,4 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Protocol;
 
 namespace MCHexBOT.Packets.Server.Handshake
 {
@@ -21,6 +20,12 @@ namespace MCHexBOT.Packets.Server.Handshake
             minecraftStream.WriteString(ServerAddress);
             minecraftStream.WriteUShort(ServerPort);
             minecraftStream.WriteVarInt((int)NextState);
+        }
+
+        public enum HandshakeType
+        {
+            Status = 1,
+            Login = 2
         }
     }
 }

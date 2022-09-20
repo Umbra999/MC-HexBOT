@@ -1,5 +1,4 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Protocol;
 using System.Numerics;
 
 namespace MCHexBOT.Packets.Client.Play
@@ -7,18 +6,14 @@ namespace MCHexBOT.Packets.Client.Play
     public class AcknowledgePlayerDiggingPacket : IPacket
     {
         public Vector3 Location { get; set; }
-        public int Block { get; set; }
-        public PlayerDiggingType Status { get; set; } // Same as Player Digging. Only Started digging (0), Cancelled digging (1), and Finished digging (2) are used.
+        public int BlockID { get; set; }
+        public PlayerDiggingType Status { get; set; }
         public bool Successful { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
-            ulong ll = minecraftStream.ReadULong();
-            var x = ll >> 38;
-            var y = ll & 0xFFF;
-            var z = (ll >> 12) & 0x3FFFFFF;
-            Location = new Vector3((int)x, (int)y, (int)z);
-            Block = minecraftStream.ReadVarInt();
+            Location = minecraftStream.ReadPosition();
+            BlockID = minecraftStream.ReadVarInt();
             Status = (PlayerDiggingType)minecraftStream.ReadVarInt();
             Successful = minecraftStream.ReadBool();
         }
@@ -26,6 +21,13 @@ namespace MCHexBOT.Packets.Client.Play
         public void Encode(MinecraftStream minecraftStream)
         {
             throw new NotImplementedException();
+        }
+
+        public enum PlayerDiggingType
+        {
+            Start = 0,
+            Cancel = 1,
+            Finish = 2
         }
     }
 }

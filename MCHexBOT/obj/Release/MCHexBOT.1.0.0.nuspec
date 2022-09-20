@@ -7,6 +7,7 @@
     <description>Package Description</description>
     <dependencies>
       <group targetFramework="net6.0">
+        <dependency id="BouncyCastle.Crypto.dll" version="1.8.1" exclude="Build,Analyzers" />
         <dependency id="Iconic.Zlib.Netstandard" version="1.0.0" exclude="Build,Analyzers" />
         <dependency id="MiNET.fnbt" version="1.0.22" exclude="Build,Analyzers" />
         <dependency id="Newtonsoft.Json" version="13.0.1" exclude="Build,Analyzers" />

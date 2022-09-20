@@ -4,7 +4,7 @@ namespace MCHexBOT.Packets.Server.Play
 {
     public class ClientStatusPacket : IPacket
     {
-        public int ActionID { get; set; }
+        public Action ActionID { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
@@ -13,7 +13,13 @@ namespace MCHexBOT.Packets.Server.Play
 
         public void Encode(MinecraftStream minecraftStream)
         {
-            minecraftStream.WriteVarInt(ActionID);
+            minecraftStream.WriteVarInt((int)ActionID);
+        }
+
+        public enum Action
+        {
+            Respawn = 0,
+            Statistics = 1,
         }
     }
 }

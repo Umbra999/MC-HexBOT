@@ -7,18 +7,25 @@ namespace MCHexBOT.Features
     {
         public static async Task CollectCoinLoop(LabyClient client, string Pin)
         {
-            if (!await client.APIClient.LoginToLaby(Pin))
+            for (; ; )
             {
-                Logger.LogError($"{client.APIClient.CurrentUser.name} failed to Login into Laby Dashboard");
+                await CollectCoins(client, Pin);
+
+                await Task.Delay(21600000);
+            }
+        }
+
+        public static async Task CollectCoins(LabyClient client, string Pin)
+        {
+            if (!await client.MinecraftClient.APIClient.LoginToLaby(Pin))
+            {
+                Logger.LogError($"{client.MinecraftClient.APIClient.CurrentUser.name} failed to Login into Laby Dashboard");
                 return;
             }
 
-            for (; ; )
-            {
-                string Coins = await client.APIClient.ClaimDailyCoins();
-                if (Coins != null) Logger.LogSuccess($"{client.APIClient.CurrentUser.name} claimed {Coins} Labycoins");
-                await Task.Delay(21600000);
-            }
+            string Coins = await client.MinecraftClient.APIClient.ClaimDailyCoins();
+            if (Coins != null) Logger.LogSuccess($"{client.MinecraftClient.APIClient.CurrentUser.name} claimed {Coins} Labycoins");
+            await Task.Delay(21600000);
         }
     }
 }

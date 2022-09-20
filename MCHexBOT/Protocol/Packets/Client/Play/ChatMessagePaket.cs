@@ -7,7 +7,7 @@ namespace MCHexBOT.Packets.Client.Play
 {
     public class ChatMessagePacket : IPacket
     {
-        public string JsonData { get; set; }
+        public string JsonData { get; set; } // ChatObject
         public ChatMessagePosition Position { get; set; }
         public UUID Sender { get; set; }
 

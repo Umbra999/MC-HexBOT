@@ -1,5 +1,5 @@
 ﻿using MCHexBOT.Core;
-using MCHexBOT.Protocol;
+using MCHexBOT.Packets.Server.Play;
 
 namespace MCHexBOT.Features
 {
@@ -19,9 +19,9 @@ namespace MCHexBOT.Features
 
             while (TeaBaggerToggle)
             {
-                Bot.SendEntityAction(PlayerAction.StartSneaking);
+                Bot.SendEntityAction(EntityActionPacket.Action.StartSneaking);
                 Thread.Sleep(50);
-                Bot.SendEntityAction(PlayerAction.StopSneaking);
+                Bot.SendEntityAction(EntityActionPacket.Action.StopSneaking);
                 Thread.Sleep(50);
             }
 

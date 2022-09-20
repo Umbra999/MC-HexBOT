@@ -299,46 +299,11 @@ namespace MCHexBOT.Network
 
 		public Vector3 ReadPosition()
 		{
-			var val = ReadLong();
-			var x = Convert.ToSingle(val >> 38);
-			var y = Convert.ToSingle(val & 0xFFF);
-			var z = Convert.ToSingle((val << 38 >> 38) >> 12);
-
-			return new Vector3(x, y, z);
-		}
-
-		public SlotData ReadSlot()
-		{
-			bool present = ReadBool();
-			if (!present) return null;
-
-			int id = ReadVarInt();
-			short damage = 0;
-			NbtCompound nbt = null;
-
-
-			byte count = (byte)ReadByte();
-			//	damage = ReadShort();
-			nbt = ReadNbtCompound();
-
-
-			SlotData slot = new();
-			slot.Count = count;
-			slot.Nbt = nbt;
-			slot.ItemID = id;
-			slot.ItemDamage = damage;
-
-			return slot;
-		}
-
-		public void WriteSlot(SlotData slot)
-		{
-			WriteBool(slot != null && slot.ItemID != -1);
-			if (slot == null) return;
-
-			WriteVarInt(slot.ItemID);
-			WriteByte(slot.Count);
-			WriteNbtCompound(slot.Nbt);
+            long val = ReadLong();
+            long x = val >> 38;
+            long y = val << 52 >> 52;
+            long z = val << 26 >> 38;
+            return new Vector3(x, y, z);
 		}
 
 		private static double NetworkToHostOrder(byte[] data)

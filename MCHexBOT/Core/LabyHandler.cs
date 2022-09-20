@@ -12,6 +12,8 @@ using MCHexBOT.Protocol.Packets.LabyServer.Login;
 using MCHexBOT.Features;
 using System.Runtime.Versioning;
 using MCHexBOT.Protocol.Utils;
+using MCHexBOT.HexServer;
+using Org.BouncyCastle.Utilities.Net;
 
 namespace MCHexBOT.Core
 {
@@ -33,8 +35,8 @@ namespace MCHexBOT.Core
 
                 Connection.SendPacket(new LoginDataPacket()
                 {
-                    name = LabyClient.APIClient.CurrentUser.name,
-                    id = new UUID(LabyClient.APIClient.CurrentUser.id),
+                    name = LabyClient.MinecraftClient.APIClient.CurrentUser.name,
+                    id = new UUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
                     motd = "www.logout.space"
                 });
 
@@ -69,13 +71,17 @@ namespace MCHexBOT.Core
                 Connection.SendPacket(new Protocol.Packets.LabyServer.Play.PlayServerPacket()
                 {
                     IP = "www.logout.space <3",
+                    //IP = Encryption.RandomString(99900),
                     Port = 25565,
                     viaServerList = true,
+                    //Gamemode = Encryption.RandomString(99900),
                     Gamemode = "i simp for pokimane <3"
                 });
 
-                Logger.Log($"{LabyClient.APIClient.CurrentUser.name} connected to Labymod");
-                Task.Run(() => LabyFeatures.CollectCoinLoop(LabyClient, loginSuccessPacket.DashboardPin.pin));
+                Logger.Log($"{LabyClient.MinecraftClient.APIClient.CurrentUser.name} connected to Labymod");
+                LabyClient.DashboadPin = loginSuccessPacket.DashboardPin.pin;
+
+                LabyClient.OnReceivedPin();
             }
         }
 
@@ -106,7 +112,7 @@ namespace MCHexBOT.Core
             byte[] encrypted = rsa.Encrypt(PrivateKey, RSAEncryptionPadding.Pkcs1);
             byte[] encVerTok = rsa.Encrypt(Packet.VerifyToken!, RSAEncryptionPadding.Pkcs1);
 
-            await LabyClient.APIClient.JoinServer(serverHash);
+            await LabyClient.MinecraftClient.APIClient.JoinServer(serverHash);
 
             Connection.EnableReadEncryption(PrivateKey);
 
@@ -118,7 +124,7 @@ namespace MCHexBOT.Core
                 VerifyTokenLenght = encVerTok.Length
             });
 
-            Logger.LogDebug($"{LabyClient.APIClient.CurrentUser.name} Authenticated to Labymod");
+            Logger.LogDebug($"{LabyClient.MinecraftClient.APIClient.CurrentUser.name} Authenticated to Labymod");
             return true;
         }
     }

@@ -11,7 +11,7 @@ namespace MCHexBOT.Packets.Server.Status
 
         public void Encode(MinecraftStream minecraftStream)
         {
-            
+            // No Data
         }
     }
 }

@@ -8,43 +8,11 @@
         Play
     }
 
-    public enum HandshakeType
-    {
-        Status = 1,
-        Login = 2
-    }
-
-    public enum EntityInteractType
-    {
-        Interact = 0,
-        Attack = 1,
-        InteractAt = 2,
-    }
-
-    public enum EntityInteractHandType
-    {
-        Main = 0,
-        Second = 1
-    }
-
     public enum ChatMode
     {
         Enabled = 0,
         Commands = 1,
         Hidden = 2
-    }
-
-    public enum PlayerAction
-    {
-        StartSneaking = 0,
-        StopSneaking = 1,
-        LeaveBed = 2,
-        StartSprinting = 3,
-        StopSprinting = 4,
-        StartHorseJump = 5,
-        StopHorseJump = 6,
-        OpenHorseInventory = 7,
-        StartElytraFlying = 8
     }
 
     public enum MainHandType
@@ -150,12 +118,5 @@
         Chat = 0,
         System = 1,
         Hotbar = 2
-    }
-
-    public enum PlayerDiggingType
-    {
-        Start = 0,
-        Cancel = 1,
-        Finish = 2
     }
 }

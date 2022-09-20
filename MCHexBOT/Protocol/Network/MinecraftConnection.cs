@@ -4,13 +4,13 @@ using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Utils;
 using Ionic.Zlib;
 using MCHexBOT.Protocol;
-using Org.BouncyCastle.Bcpg;
 
 namespace MCHexBOT.Network
 {
     public class MinecraftConnection
     {
         private TcpClient Tcp { get; set; }
+        private UdpClient Udp { get; set; }
         public MinecraftStream ReadStream { get; private set; }
         public MinecraftStream WriteStream { get; private set; }
         public CancellationToken CancellationToken { get; set; }
@@ -254,7 +254,7 @@ namespace MCHexBOT.Network
                 Packet = ReaderRegistry.Packets[State][(byte)PacketId];
             }
 
-            //Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
+            Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
 
             try
             {

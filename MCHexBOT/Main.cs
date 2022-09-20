@@ -1,7 +1,7 @@
 ﻿using MCHexBOT.Core;
 using MCHexBOT.Features;
 using MCHexBOT.HexServer;
-using MCHexBOT.Protocol;
+using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT
@@ -53,7 +53,7 @@ namespace MCHexBOT
                 APIClient Client = new();
                 if (await Client.LoginToMinecraft(Token))
                 {
-                    Clients.Add(new MinecraftClient(Client, new LabyClient(Client)));
+                    Clients.Add(new MinecraftClient(Client));
                 }
                 else Logger.LogError("Failed to Validate Token");
             }
@@ -98,7 +98,7 @@ namespace MCHexBOT
                         Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
                         Logger.LogImportant("Y [+,-,/] - Move the Y Cordinate");
                         Logger.LogImportant("Z [+,-,/] - Move the Z Cordinate");
-                        Logger.LogImportant("S [true / false] - Sneak");
+                        Logger.LogImportant("S - Toggle Sneak");
                         Logger.LogImportant("-----------------");
                         HandlePhysicInput(Console.ReadLine());
                         break;
@@ -231,7 +231,7 @@ namespace MCHexBOT
                 case "s":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.SendEntityAction(input.Substring(2) == "true" ? PlayerAction.StartSneaking : PlayerAction.StopSneaking);
+                        Client.SendEntityAction(Client.GetLocalPlayer().IsSneaking ? EntityActionPacket.Action.StopSneaking : EntityActionPacket.Action.StartSneaking);
                     }
                     break;
             }

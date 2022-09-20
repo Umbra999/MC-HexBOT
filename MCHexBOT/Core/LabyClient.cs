@@ -1,4 +1,5 @@
-﻿using MCHexBOT.Network;
+﻿using MCHexBOT.Features;
+using MCHexBOT.Network;
 using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Packets.LabyServer.Handshake;
 using System.Net.Sockets;
@@ -8,12 +9,14 @@ namespace MCHexBOT.Core
     public class LabyClient
     {
         public MinecraftConnection MCConnection;
-        public APIClient APIClient;
+        public MinecraftClient MinecraftClient;
+        public VoiceClient VoiceClient;
         public int ProtocolVersion = 27;
+        public string DashboadPin;
 
-        public LabyClient(APIClient WebClient)
+        public LabyClient(MinecraftClient Client)
         {
-            APIClient = WebClient;
+            MinecraftClient = Client;
             Connect("chat.labymod.net", 30336);
         }
 
@@ -38,13 +41,18 @@ namespace MCHexBOT.Core
             };
 
             MCConnection.Start();
-            MCConnection.State = ConnectionState.Handshaking;
 
             MCConnection.SendPacket(new HelloPacket()
             {
                 TickTime = Environment.TickCount,
                 Type = ProtocolVersion,
             });
+        }
+
+        public void OnReceivedPin()
+        {
+            VoiceClient = new VoiceClient(this);
+            Task.Run(() => LabyFeatures.CollectCoinLoop(this, DashboadPin));
         }
     }
 }

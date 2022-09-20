@@ -1,5 +1,4 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Packets;
 using MCHexBOT.Utils.Data;
 
 namespace MCHexBOT.Packets.Client.Play
