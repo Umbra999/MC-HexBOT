@@ -1,6 +1,8 @@
 ﻿using MCHexBOT.Core;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Asn1.X509;
 using System.Numerics;
 
 namespace MCHexBOT.Features
@@ -169,6 +171,58 @@ namespace MCHexBOT.Features
                 await Task.Delay(Timing);
             }
             Logger.LogSuccess($"Reached Destination");
+        }
+        public static async Task Jump(MinecraftClient Bot)
+        {
+            Vector3 Pos1 = Bot.GetLocalPlayer().Position;
+            Vector3 Pos2 = Pos1 + new Vector3(0, 1, 0);
+            float JumpSpeed = 2f;
+            float CurrentSpeed = JumpSpeed;
+            int Timing = 50; // MS Between events.
+            int TPS = 1000 / Timing;
+            Vector3 DistanceVector = Pos2 - Pos1;
+            float distance = 1;
+            float distancePerTiming = (float)CurrentSpeed / TPS;
+            int Events = (int)(distance / (float)distancePerTiming);
+            int RequiredTime = Events * Timing;
+            Vector3 CurrentPosition = Pos1;
+            for (int i = 0; i < Events; i++)
+            {
+                CurrentPosition += new Vector3(
+                    DistanceVector.X / Events,
+                    DistanceVector.Y / Events,
+                    DistanceVector.Z / Events);
+                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
+                await Task.Delay(Timing);
+            }
+            Logger.LogSuccess($"Reached Jump Destination");
+            Fall(Bot, 1);
+        }
+        public static async Task Fall(MinecraftClient Bot, int Height = 1)
+        {
+            Vector3 Pos1 = Bot.GetLocalPlayer().Position;
+            Vector3 Pos2 = Pos1 + new Vector3(0, -Height, 0);
+            float FallingSpeed = 5f;
+            float CurrentSpeed = FallingSpeed;
+            int Timing = 50; // MS Between events.
+            int TPS = 1000 / Timing;
+            Vector3 DistanceVector = Pos2 - Pos1;
+            float distance = 1;
+            float distancePerTiming = (float)CurrentSpeed / TPS;
+            int Events = (int)(distance / (float)distancePerTiming);
+            int RequiredTime = Events * Timing;
+            Vector3 CurrentPosition = Pos1;
+            for (int i = 0; i < Events; i++)
+            {
+                CurrentPosition += new Vector3(
+                    DistanceVector.X / Events,
+                    DistanceVector.Y / Events,
+                    DistanceVector.Z / Events);
+                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
+                await Task.Delay(Timing);
+            }
+            SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, true);
+            Logger.LogSuccess($"Reached Fall Destination");
         }
 
         public static string FollowTarget = "";
