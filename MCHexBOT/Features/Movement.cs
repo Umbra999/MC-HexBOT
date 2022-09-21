@@ -116,13 +116,12 @@ namespace MCHexBOT.Features
 
         public static async Task MoveToPosition(MinecraftClient Bot, Vector3 Target, bool ShouldLook = true, CancellationTokenSource token = null)
         {
-            Vector3 Pos1 = Bot.GetLocalPlayer().Position;
-            Vector3 Pos2 = Target;
+            Vector3 CurrentPosition = Bot.GetLocalPlayer().Position;
 
             float SneakSpeed = 1.3f;
-            float WalkSpeed = 4.3f; // 4 Units/Time (Blocks/Second) 
+            float WalkSpeed = 4.3f;
             float SprintSpeed = 5.6f;
-            float FallingSpeed = 0; // Gravity 28 m/s^2
+            float FallingSpeed = 28; // Gravity 28 m/s^2
             float JumpSpeed = 5f; // Unknown
 
             float CurrentSpeed = WalkSpeed;
@@ -132,45 +131,23 @@ namespace MCHexBOT.Features
             int Timing = 50; // MS Between events.
             int TPS = 1000 / Timing;
 
-            Vector3 DistanceVector = Pos2 - Pos1;
-            float distance = Vector3.Distance(Pos2, Pos1);
+            Vector3 DistanceVector = Target - CurrentPosition;
+            float distance = Vector3.Distance(Target, CurrentPosition);
             float distancePerTiming = (float)CurrentSpeed / TPS;
 
-            //Console.WriteLine($" Start -> {Pos1}");
-            //Console.WriteLine($" End -> {Pos2}");
-            //Console.WriteLine($" Distance -> {distance} units | {DistanceVector}");
-            //Console.WriteLine($" [B/T] Sneek -> {SneakSpeed}, Walk -> {WalkSpeed}, Sprint -> {SprintSpeed}");
-            //Console.WriteLine($" Time Unit -> {Timing} (TPS -> {TPS})");
-            //Console.WriteLine($" DistancePerTiming -> {distancePerTiming}");
-
             int Events = (int)(distance / (float)distancePerTiming);
-            int RequiredTime = Events * Timing;
 
-            //Console.WriteLine($" Number of Events -> {Events}");
-            //Console.WriteLine($" Takes -> {RequiredTime} MS");
-
-            Vector3 CurrentPosition = Pos1;
-            Vector3 CurrentDistance = DistanceVector;
-
-            if (ShouldLook) LookAtPosition(Bot, Pos2);
+            if (ShouldLook) LookAtPosition(Bot, Target);
 
             for (int i = 0; i < Events; i++)
             {
                 if (token != null && token.IsCancellationRequested) return;
 
-                CurrentPosition += new Vector3(
-                    DistanceVector.X / Events,
-                    DistanceVector.Y / Events,
-                    DistanceVector.Z / Events);
-                CurrentDistance = Pos2 - CurrentPosition;
-
-                //Console.WriteLine($" [{i}] Moving -> {CurrentPosition} | Distance -> {CurrentDistance}");
-
+                CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
                 SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
 
                 await Task.Delay(Timing);
             }
-            Logger.LogSuccess($"Reached Destination");
         }
 
         public static async Task Jump(MinecraftClient Bot)
@@ -190,10 +167,7 @@ namespace MCHexBOT.Features
             Vector3 CurrentPosition = Pos1;
             for (int i = 0; i < Events; i++)
             {
-                CurrentPosition += new Vector3(
-                    DistanceVector.X / Events,
-                    DistanceVector.Y / Events,
-                    DistanceVector.Z / Events);
+                CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
                 SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
                 await Task.Delay(Timing);
             }
@@ -220,11 +194,11 @@ namespace MCHexBOT.Features
                     DistanceVector.X / Events,
                     DistanceVector.Y / Events,
                     DistanceVector.Z / Events);
-                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
+                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
                 await Task.Delay(Timing);
             }
             CurrentPosition = new Vector3(CurrentPosition.X, MathF.Floor(CurrentPosition.Y), CurrentPosition.Z);
-            SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
+            SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, true);
             Logger.LogSuccess($"Reached Fall Destination");
         }
 
@@ -238,7 +212,7 @@ namespace MCHexBOT.Features
             Vector3 CurrentTargetPos = Target.Position;
             Vector3 LastTargetPos = Target.Position;
 
-            CancellationTokenSource tokenSource = new CancellationTokenSource();
+            CancellationTokenSource tokenSource = new();
 
             while (Target != null && FollowTarget == Target.PlayerInfo.Name)
             {

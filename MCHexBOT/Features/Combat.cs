@@ -1,6 +1,7 @@
 ﻿using MCHexBOT.Core;
 using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Utils;
+using System.Numerics;
 
 namespace MCHexBOT.Features
 {
@@ -8,32 +9,54 @@ namespace MCHexBOT.Features
     {
         private static readonly List<string> TargetNames = new();
         private static readonly bool RangeLimit = true;
-        private static readonly float Range = 4; 
+        private static readonly float Range = 3.5f; 
 
         public static void ToggleAttack(string Name)
         {
-            if (TargetNames.Contains(Name)) TargetNames.Remove(Name);
-            else TargetNames.Add(Name);
+            if (TargetNames.Contains(Name))
+            {
+                TargetNames.Remove(Name);
+                Logger.Log($"Removed {Name} from Target List");
+            }
+            else
+            {
+                int count = TargetNames.Count;
+                TargetNames.Add(Name);
+                Logger.Log($"Added {Name} to Target List");
+                if (count < 1)
+                {
+                    foreach (MinecraftClient Bot in Main.Clients)
+                    {
+                        Task.Run(() => CombatLoop(Bot));
+                    }
+                }
+            }
         }
 
         public static async Task CombatLoop(MinecraftClient Bot)
         {
-            for (; ; )
+            while (TargetNames.Count > 0)
             {
-                if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
+                Player[] Founds = Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)).ToArray();
+                if (Founds.Length == 0) return;
+
+                foreach (Player player in Founds)
                 {
-                    try
+                    if (RangeLimit)
                     {
-                        foreach (Player player in Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)))
+                        if (Vector3.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range)
                         {
-                            if (RangeLimit)
-                            {
-                                if (Misc.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range) Bot.SendEntityInteraction(player.EntityID, false, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
-                            }
-                            else Bot.SendEntityInteraction(player.EntityID, false, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
+                            Movement.LookAtPosition(Bot, player.Position);
+                            Bot.SendAnimation(AnimationPacket.HandType.Main);
+                            Bot.SendEntityInteraction(player.EntityID, Bot.GetLocalPlayer().IsSneaking, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
                         }
                     }
-                    catch { }
+                    else
+                    {
+                        Movement.LookAtPosition(Bot, player.Position);
+                        Bot.SendAnimation(AnimationPacket.HandType.Main);
+                        Bot.SendEntityInteraction(player.EntityID, Bot.GetLocalPlayer().IsSneaking, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
+                    }
                 }
 
                 await Task.Delay(50);

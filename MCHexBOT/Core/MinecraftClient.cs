@@ -99,15 +99,7 @@ namespace MCHexBOT.Core
                 Username = APIClient.CurrentUser.name
             });
 
-            StartLoop();
-
             return true;
-        }
-
-        private void StartLoop()
-        {
-            //Task.Run(() => Movement.MovementLoop(this));
-            Task.Run(() => Combat.CombatLoop(this));
         }
 
         public void SendChat(string Message)
