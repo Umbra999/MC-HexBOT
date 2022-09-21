@@ -5,6 +5,7 @@ using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Asn1.X509;
 using System.Numerics;
 
 namespace MCHexBOT
@@ -41,7 +42,7 @@ namespace MCHexBOT
 
         private static async Task CreateBots()
         {
-            await ServerHandler.Init();
+            //await ServerHandler.Init();
 
             if (!File.Exists("Accounts.txt"))
             {
@@ -179,7 +180,12 @@ namespace MCHexBOT
                         Task.Run(() => Movement.LoopPlayerMovement(Client));
                     }
                     break;
-
+                case "j":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Task.Run(() => Movement.Jump(Client));
+                    }
+                    break;
                 case "w":
                     foreach (MinecraftClient Client in Clients)
                     {

@@ -122,8 +122,8 @@ namespace MCHexBOT.Features
             float SneakSpeed = 1.3f;
             float WalkSpeed = 4.3f; // 4 Units/Time (Blocks/Second) 
             float SprintSpeed = 5.6f;
-            float FallingSpeed = 0;
-            float JumpSpeed = 2f;
+            float FallingSpeed = 0; // Gravity 28 m/s^2
+            float JumpSpeed = 5f; // Unknown
 
             float CurrentSpeed = WalkSpeed;
             if (Bot.GetLocalPlayer().IsSneaking) CurrentSpeed = SneakSpeed;
@@ -172,11 +172,13 @@ namespace MCHexBOT.Features
             }
             Logger.LogSuccess($"Reached Destination");
         }
+
         public static async Task Jump(MinecraftClient Bot)
         {
+            float JumpHeight = 1.25f;
             Vector3 Pos1 = Bot.GetLocalPlayer().Position;
-            Vector3 Pos2 = Pos1 + new Vector3(0, 1, 0);
-            float JumpSpeed = 2f;
+            Vector3 Pos2 = Pos1 + new Vector3(0, JumpHeight, 0);
+            float JumpSpeed = 3.5f;
             float CurrentSpeed = JumpSpeed;
             int Timing = 50; // MS Between events.
             int TPS = 1000 / Timing;
@@ -196,13 +198,13 @@ namespace MCHexBOT.Features
                 await Task.Delay(Timing);
             }
             Logger.LogSuccess($"Reached Jump Destination");
-            Fall(Bot, 1);
+            await Fall(Bot, CurrentPosition, JumpHeight);
         }
-        public static async Task Fall(MinecraftClient Bot, int Height = 1)
+        public static async Task Fall(MinecraftClient Bot, Vector3 Pos, float Height = 1f)
         {
-            Vector3 Pos1 = Bot.GetLocalPlayer().Position;
+            Vector3 Pos1 = Pos;
             Vector3 Pos2 = Pos1 + new Vector3(0, -Height, 0);
-            float FallingSpeed = 5f;
+            float FallingSpeed = 4f;
             float CurrentSpeed = FallingSpeed;
             int Timing = 50; // MS Between events.
             int TPS = 1000 / Timing;
@@ -218,10 +220,11 @@ namespace MCHexBOT.Features
                     DistanceVector.X / Events,
                     DistanceVector.Y / Events,
                     DistanceVector.Z / Events);
-                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
+                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
                 await Task.Delay(Timing);
             }
-            SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, true);
+            CurrentPosition = new Vector3(CurrentPosition.X, MathF.Floor(CurrentPosition.Y), CurrentPosition.Z);
+            SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
             Logger.LogSuccess($"Reached Fall Destination");
         }
 
