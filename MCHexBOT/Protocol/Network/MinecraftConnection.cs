@@ -10,12 +10,10 @@ namespace MCHexBOT.Network
     public class MinecraftConnection
     {
         private TcpClient Tcp { get; set; }
-        private UdpClient Udp { get; set; }
         public MinecraftStream ReadStream { get; private set; }
         public MinecraftStream WriteStream { get; private set; }
-        public CancellationToken CancellationToken { get; set; }
 
-        private bool IsMinecraft { get; set; }
+        private Protocol.ProtocolType ProtocolType { get; set; }
 
         public ConnectionState State { get; set; }
 
@@ -31,15 +29,15 @@ namespace MCHexBOT.Network
 
         public IPacketHandler Handler { get; set; }
 
-        public MinecraftConnection(TcpClient tcp, bool IsMinecraftClient)
+        public MinecraftConnection(TcpClient tcp, Protocol.ProtocolType Type)
         {
             Tcp = tcp;
 
             State = ConnectionState.Handshaking;
-            IsMinecraft = IsMinecraftClient;
+            ProtocolType = Type;
 
-            ReadStream = new MinecraftStream(Tcp.GetStream(), IsMinecraft, CancellationToken.None);
-            WriteStream = new MinecraftStream(Tcp.GetStream(), IsMinecraft, CancellationToken.None);
+            ReadStream = new MinecraftStream(Tcp.GetStream(), ProtocolType);
+            WriteStream = new MinecraftStream(Tcp.GetStream(), ProtocolType);
         }
 
         public void Start()
@@ -67,10 +65,8 @@ namespace MCHexBOT.Network
             {
                 SpinWait sw = new();
 
-                while (!CancellationToken.IsCancellationRequested)
+                for (; ; )
                 {
-                    if (CancellationToken.IsCancellationRequested) break;
-
                     if (ReadStream.DataAvailable)
                     {
                         IPacket Packet = TryReadPacket(ReadStream, out var lastPacketId);
@@ -109,10 +105,8 @@ namespace MCHexBOT.Network
             {
                 SpinWait sw = new();
 
-                while (!CancellationToken.IsCancellationRequested)
+                for (; ; )
                 {
-                    if (CancellationToken.IsCancellationRequested) break;
-
                     IPacket toSend = null;
                     ConnectionState state = ConnectionState.Handshaking;
 
@@ -151,7 +145,7 @@ namespace MCHexBOT.Network
 
             using (MemoryStream ms = new())
             {
-                using (MinecraftStream mc = new(ms, IsMinecraft, CancellationToken))
+                using (MinecraftStream mc = new(ms, ProtocolType))
                 {
                     int id = WriterRegistry.GetPacketId(Packet, state);
                     mc.WriteVarInt(id);
@@ -164,7 +158,7 @@ namespace MCHexBOT.Network
             if (CompressionEnabled)
             {
                 using MemoryStream ms = new();
-                using (MinecraftStream mc = new(ms, IsMinecraft, CancellationToken))
+                using (MinecraftStream mc = new(ms, ProtocolType))
                 {
 
                     if (encodedPacket.Length >= CompressionThreshold)
@@ -231,7 +225,7 @@ namespace MCHexBOT.Network
 
                     var cache = stream.Read(PacketLenght - dataLenghtLenght);
 
-                    using MinecraftStream a = new(IsMinecraft, CancellationToken);
+                    using MinecraftStream a = new(ProtocolType);
 
                     using (ZlibStream zstream = new(a, CompressionMode.Decompress, true))
                     {
@@ -254,7 +248,7 @@ namespace MCHexBOT.Network
                 Packet = ReaderRegistry.Packets[State][(byte)PacketId];
             }
 
-            Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
+            //Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
 
             try
             {
@@ -262,7 +256,7 @@ namespace MCHexBOT.Network
 
                 using (var memoryStream = new MemoryStream(PacketData))
                 {
-                    using MinecraftStream minecraftStream = new(memoryStream, IsMinecraft, CancellationToken);
+                    using MinecraftStream minecraftStream = new(memoryStream, ProtocolType);
                     Packet.Decode(minecraftStream);
                 }
 

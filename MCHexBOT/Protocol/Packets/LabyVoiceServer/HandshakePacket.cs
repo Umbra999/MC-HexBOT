@@ -1,6 +1,6 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Packets;
-using MCHexBOT.Utils.Data;
+using MCHexBOT.Protocol.Utils;
 
 namespace MCHexBOT.Protocol.Packets.LabyVoiceServer
 {

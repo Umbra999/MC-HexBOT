@@ -1,5 +1,5 @@
-﻿using MCHexBOT.Utils;
-using MCHexBOT.Utils.Data;
+﻿using MCHexBOT.Protocol.Utils;
+using MCHexBOT.Utils;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
@@ -59,8 +59,7 @@ namespace MCHexBOT.Core
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
 
-            string content = await Response.Content.ReadAsStringAsync();
-            if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<SelfAPIUser>(content);
+            if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<SelfAPIUser>(await Response.Content.ReadAsStringAsync());
             return null;
         }
 

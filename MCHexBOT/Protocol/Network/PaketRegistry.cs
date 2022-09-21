@@ -111,6 +111,7 @@ namespace MCHexBOT.Network
             registry.AddPacket(0x25, new Packets.Server.Play.HeldItemChangePacket(), ConnectionState.Play);
             registry.AddPacket(0x0A, new Packets.Server.Play.PluginMessagePacket(), ConnectionState.Play);
             registry.AddPacket(0x1D, new Packets.Server.Play.PongPacket(), ConnectionState.Play);
+            registry.AddPacket(0x2C, new Packets.Server.Play.AnimationPacket(), ConnectionState.Play);
         }
 
         public static void RegisterLabyClientPackets(PacketRegistry registry)

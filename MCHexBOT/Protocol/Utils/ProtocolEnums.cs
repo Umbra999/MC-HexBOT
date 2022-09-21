@@ -8,19 +8,6 @@
         Play
     }
 
-    public enum ChatMode
-    {
-        Enabled = 0,
-        Commands = 1,
-        Hidden = 2
-    }
-
-    public enum MainHandType
-    {
-        Left = 0,
-        Right = 1
-    }
-
     public enum ParticleType : byte
     {
         AmbientEntityEffect = 0,
@@ -113,10 +100,59 @@
         Scrape = 87
     }
 
-    public enum ChatMessagePosition : byte
+    public enum ProtocolType
     {
-        Chat = 0,
-        System = 1,
-        Hotbar = 2
+        Minecraft,
+        Labymod
+    }
+
+    public enum Direction
+    {
+        South = 0,
+        West = 1,
+        North = 2,
+        East = 3,
+        Up = 4,
+        Down = 5,
+        NorthEast = 6,
+        SouthEast = 7,
+        SouthWest = 8,
+        NorthWest = 9,
+    }
+
+    public enum Effects
+    {
+        Speed = 1,
+        Slowness = 2,
+        Haste = 3,
+        MiningFatigue = 4,
+        Strength = 5,
+        InstantHealth = 6,
+        InstantDamage = 7,
+        JumpBoost = 8,
+        Nausea = 9,
+        Regeneration = 10,
+        Resistance = 11,
+        FireResistance = 12,
+        WaterBreathing = 13,
+        Invisibility = 14,
+        Blindness = 15,
+        NightVision = 16,
+        Hunger = 17,
+        Weakness = 18,
+        Poison = 19,
+        Wither = 20,
+        HealthBoost = 21,
+        Absorption = 22,
+        Saturation = 23,
+        Glowing = 24,
+        Levitation = 25,
+        Luck = 26,
+        BadLuck = 27,
+        SlowFalling = 28,
+        ConduitPower = 29,
+        DolphinsGrace = 30,
+        BadOmen = 31,
+        HerooftheVillage = 32,
     }
 }

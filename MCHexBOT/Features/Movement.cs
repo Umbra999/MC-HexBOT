@@ -1,4 +1,5 @@
 ﻿using MCHexBOT.Core;
+using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using System.Numerics;
 
@@ -6,69 +7,6 @@ namespace MCHexBOT.Features
 {
     internal class Movement
     {
-        public enum MovementPosition
-        {
-            None,
-            Forward,
-            Backward,
-        }
-
-        public static string CopyMovementTarget = "";
-
-        private static float WalkSpeed = 0.21585f;
-        private static float SprintSpeed = 0.2806f;
-        private static float SneakSpeed = 0.0655f;
-        private static float SwimmingSpeed = 0.11f;
-        private static float JumpSpeed = 0.1f;
-
-        public static MovementPosition WalkX = MovementPosition.None;
-        public static MovementPosition WalkY = MovementPosition.None;
-        public static MovementPosition WalkZ = MovementPosition.None;
-
-
-        public static async Task MovementLoop(MinecraftClient Bot)
-        {
-            for (; ; )
-            {
-                if (Bot.MCConnection.State == Protocol.ConnectionState.Play)
-                {
-                    Vector3 Positions = Bot.GetLocalPlayer().Position;
-                    Vector2 Rotations = Bot.GetLocalPlayer().Rotation;
-                    bool IsGround = Bot.GetLocalPlayer().IsOnGround;
-
-                    if (CopyMovementTarget != "")
-                    {
-                        Player[] Players = Bot.Players.Where(x => x.PlayerInfo?.Name == CopyMovementTarget).ToArray();
-                        if (Players.Length > 0)
-                        {
-                            Vector3 Distance = Players.First().Position - Bot.GetLocalPlayer().Position;
-
-                            if (Distance.X < 0) Positions.X += -WalkSpeed;
-                            else if (Distance.X > 0) Positions.X += WalkSpeed;
-
-                            if (Distance.Y < 0) Positions.Y += -JumpSpeed;
-                            else if (Distance.Y > 0) Positions.Y += JumpSpeed;
-
-                            if (Distance.Z < 0) Positions.Z += -WalkSpeed;
-                            else if (Distance.Z > 0) Positions.Z = WalkSpeed;
-
-                            Rotations = Players.First().Rotation;
-                        }
-                    }
-                    else
-                    {
-                        if (WalkX != MovementPosition.None) Positions.X += WalkX == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
-                        if (WalkY != MovementPosition.None) Positions.Y += WalkY == MovementPosition.Forward ? JumpSpeed : -JumpSpeed;
-                        if (WalkZ != MovementPosition.None) Positions.Z += WalkZ == MovementPosition.Forward ? WalkSpeed : -WalkSpeed;
-                    }
-
-                    SendMovement(Bot, Positions, Rotations, IsGround);
-                }
-
-                await Task.Delay(50);
-            }
-        }
-
         public static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {
             Player Local = Bot.GetLocalPlayer();
@@ -124,14 +62,188 @@ namespace MCHexBOT.Features
             });
         }
 
-        private static void LookAtPosition(MinecraftClient Bot, Vector3 position)
+        // Helper
+
+
+        // Movement
+        public static void LookAtPosition(MinecraftClient Bot, Vector3 location)
         {
-            var pos = position + new Vector3(0.5f, 0.5f, 0.5f);
-            var r = pos - Bot.GetLocalPlayer().Position + new Vector3(0, 1, 0);
-            double yaw = -Math.Atan2(r.X, r.Z) / Math.PI * 180;
-            if (yaw < 0) yaw = 360 + yaw;
-            double pitch = -Math.Asin(r.Y / r.Length()) / Math.PI * 180;
-            Bot.GetLocalPlayer().Rotation = new Vector2((float)yaw, (float)pitch);
+            double dx = location.X - Bot.GetLocalPlayer().Position.X;
+            double dy = location.Y - Bot.GetLocalPlayer().Position.Y;
+            double dz = location.Z - Bot.GetLocalPlayer().Position.Z;
+
+            double r = Math.Sqrt(dx * dx + dy * dy + dz * dz);
+
+            float yaw = Convert.ToSingle(-Math.Atan2(dx, dz) / Math.PI * 180);
+            float pitch = Convert.ToSingle(-Math.Asin(dy / r) / Math.PI * 180);
+            if (yaw < 0) yaw += 360;
+
+            SendMovement(Bot, Bot.GetLocalPlayer().Position, new Vector2(yaw, pitch), Bot.GetLocalPlayer().IsOnGround);
+        }
+
+        public static void LookAtDirection(MinecraftClient Bot, Direction direction)
+        {
+            float yaw = Bot.GetLocalPlayer().Rotation.X;
+            float pitch = Bot.GetLocalPlayer().Rotation.Y;
+
+            switch (direction)
+            {
+                case Direction.Up:
+                    pitch = -90;
+                    break;
+                case Direction.Down:
+                    pitch = 90;
+                    break;
+                case Direction.East:
+                    yaw = 270;
+                    break;
+                case Direction.West:
+                    yaw = 90;
+                    break;
+                case Direction.North:
+                    yaw = 180;
+                    break;
+                case Direction.South:
+                    yaw = 360;
+                    break;
+            }
+
+            SendMovement(Bot, Bot.GetLocalPlayer().Position, new Vector2(yaw, pitch), Bot.GetLocalPlayer().IsOnGround);
+        }
+
+
+        public static async Task MoveToPosition(MinecraftClient Bot, Vector3 Target, bool ShouldLook = true, CancellationTokenSource token = null)
+        {
+            Vector3 Pos1 = Bot.GetLocalPlayer().Position;
+            Vector3 Pos2 = Target;
+
+            float SneakSpeed = 1.3f;
+            float WalkSpeed = 4.3f; // 4 Units/Time (Blocks/Second) 
+            float SprintSpeed = 5.6f;
+            float FallingSpeed = 0;
+            float JumpSpeed = 2f;
+
+            float CurrentSpeed = WalkSpeed;
+            if (Bot.GetLocalPlayer().IsSneaking) CurrentSpeed = SneakSpeed;
+            else if (Bot.GetLocalPlayer().IsSprinting) CurrentSpeed = SprintSpeed;
+
+            int Timing = 50; // MS Between events.
+            int TPS = 1000 / Timing;
+
+            Vector3 DistanceVector = Pos2 - Pos1;
+            float distance = Vector3.Distance(Pos2, Pos1);
+            float distancePerTiming = (float)CurrentSpeed / TPS;
+
+            //Console.WriteLine($" Start -> {Pos1}");
+            //Console.WriteLine($" End -> {Pos2}");
+            //Console.WriteLine($" Distance -> {distance} units | {DistanceVector}");
+            //Console.WriteLine($" [B/T] Sneek -> {SneakSpeed}, Walk -> {WalkSpeed}, Sprint -> {SprintSpeed}");
+            //Console.WriteLine($" Time Unit -> {Timing} (TPS -> {TPS})");
+            //Console.WriteLine($" DistancePerTiming -> {distancePerTiming}");
+
+            int Events = (int)(distance / (float)distancePerTiming);
+            int RequiredTime = Events * Timing;
+
+            //Console.WriteLine($" Number of Events -> {Events}");
+            //Console.WriteLine($" Takes -> {RequiredTime} MS");
+
+            Vector3 CurrentPosition = Pos1;
+            Vector3 CurrentDistance = DistanceVector;
+
+            if (ShouldLook) LookAtPosition(Bot, Pos2);
+
+            for (int i = 0; i < Events; i++)
+            {
+                if (token != null && token.IsCancellationRequested) return;
+
+                CurrentPosition += new Vector3(
+                    DistanceVector.X / Events,
+                    DistanceVector.Y / Events,
+                    DistanceVector.Z / Events);
+                CurrentDistance = Pos2 - CurrentPosition;
+
+                //Console.WriteLine($" [{i}] Moving -> {CurrentPosition} | Distance -> {CurrentDistance}");
+
+                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
+
+                await Task.Delay(Timing);
+            }
+            Logger.LogSuccess($"Reached Destination");
+        }
+
+        public static string FollowTarget = "";
+        public static async Task LoopPlayerMovement(MinecraftClient Bot)
+        {
+            Player[] Founds = Bot.Players.Where(x => x.PlayerInfo.Name == FollowTarget).ToArray();
+            if (Founds.Length == 0) return;
+            Player Target = Founds.First();
+
+            Vector3 CurrentTargetPos = Target.Position;
+            Vector3 LastTargetPos = Target.Position;
+
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+            while (Target != null && FollowTarget == Target.PlayerInfo.Name)
+            {
+                CurrentTargetPos = Target.Position;
+                if (CurrentTargetPos != LastTargetPos)
+                {
+                    LastTargetPos = CurrentTargetPos;
+                    tokenSource.Cancel();
+                    tokenSource = new CancellationTokenSource();
+                    Task.Run(() => MoveToPosition(Bot, CurrentTargetPos, true, tokenSource));
+                }
+
+                await Task.Delay(50);
+            }
+
+            tokenSource.Cancel();
+        }
+
+        // Math Helper
+
+        public static Vector3 CalculateDirections(Vector3 location, Direction direction, int length = 1)
+        {
+            return location + CalculateDirections(direction) * length;
+        }
+
+        public static Vector3 CalculateDirections(float Distance, Direction direction)
+        {
+            return new Vector3(Distance, Distance, Distance) * CalculateDirections(direction);
+        }
+
+        public static Vector3 CalculateDirections(Direction direction)
+        {
+            switch (direction)
+            {
+                // Move vertical
+                case Direction.Down:
+                    return new Vector3(0, -1, 0);
+                case Direction.Up:
+                    return new Vector3(0, 1, 0);
+
+                // Move horizontal straight
+                case Direction.East:
+                    return new Vector3(1, 0, 0);
+                case Direction.West:
+                    return new Vector3(-1, 0, 0);
+                case Direction.South:
+                    return new Vector3(0, 0, 1);
+                case Direction.North:
+                    return new Vector3(0, 0, -1);
+
+                // Move horizontal diagonal
+                case Direction.NorthEast:
+                    return CalculateDirections(Direction.North) + CalculateDirections(Direction.East);
+                case Direction.SouthEast:
+                    return CalculateDirections(Direction.South) + CalculateDirections(Direction.East);
+                case Direction.SouthWest:
+                    return CalculateDirections(Direction.South) + CalculateDirections(Direction.West);
+                case Direction.NorthWest:
+                    return CalculateDirections(Direction.North) + CalculateDirections(Direction.West);
+            }
+
+            return new Vector3(0, 0, 0);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MCHexBOT.Core
         {
             TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(Client, false);
+            MCConnection = new MinecraftConnection(Client, Protocol.ProtocolType.Labymod);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterLabyServerPackets(writer);

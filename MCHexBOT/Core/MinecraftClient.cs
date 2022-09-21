@@ -38,7 +38,7 @@ namespace MCHexBOT.Core
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
 
-        public async Task<bool> Connect(string Version, string Host, int Port)
+        public async Task<bool> Connect(string Host, int Port)
         {
             if (MCConnection != null)
             {
@@ -46,11 +46,7 @@ namespace MCHexBOT.Core
                 return false;
             }
 
-            if (!Misc.ProtocolVersions.TryGetValue(Version, out int ProtocolVersion))
-            {
-                Logger.LogError($"{Version} is not Supported"); // replace by Server stats protocol once done
-                return false; 
-            }
+            int ProtocolVersion = 757;
 
             Serverstats Stats = await APIClient.GetServerStats($"{Host}:{Port}");
             if (Stats == null)
@@ -66,10 +62,11 @@ namespace MCHexBOT.Core
             }
 
             ServerAddress = Host + ":" + Port;
+            Logger.LogWarning($"{ServerAddress} using Protocol {Stats.server.protocol}");
 
             TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(Client, true);
+            MCConnection = new MinecraftConnection(Client, Protocol.ProtocolType.Minecraft);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterServerPackets(writer, ProtocolVersion);
@@ -109,7 +106,7 @@ namespace MCHexBOT.Core
 
         private void StartLoop()
         {
-            Task.Run(() => Movement.MovementLoop(this));
+            //Task.Run(() => Movement.MovementLoop(this));
             Task.Run(() => Combat.CombatLoop(this));
         }
 
@@ -176,7 +173,7 @@ namespace MCHexBOT.Core
             });
         }
 
-        public void SendPlayerSetings(bool ServerListing, bool ChatColors, ChatMode Chatmode, byte Skinparts, MainHandType MainHand, bool TextFiltering, string LanguageTag, byte ViewDistance)
+        public void SendPlayerSetings(bool ServerListing, bool ChatColors, ClientSettingsPacket.ChatType Chatmode, byte Skinparts, ClientSettingsPacket.MainHandType MainHand, bool TextFiltering, string LanguageTag, byte ViewDistance)
         {
             MCConnection.SendPacket(new ClientSettingsPacket()
             {
@@ -202,6 +199,14 @@ namespace MCHexBOT.Core
             });
 
             GetLocalPlayer().HeldItemSlot = Slot;
+        }
+
+        public void SendAnimation(AnimationPacket.HandType Hand)
+        {
+            MCConnection.SendPacket(new AnimationPacket()
+            {
+                Hand = Hand
+            });
         }
     }
 }

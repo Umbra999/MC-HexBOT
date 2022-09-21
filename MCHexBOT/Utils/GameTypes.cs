@@ -1,4 +1,4 @@
-﻿using MCHexBOT.Utils.Data;
+﻿using MCHexBOT.Protocol.Utils;
 using System.Numerics;
 
 namespace MCHexBOT.Utils

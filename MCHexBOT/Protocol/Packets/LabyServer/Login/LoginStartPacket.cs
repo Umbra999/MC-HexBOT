@@ -1,6 +1,5 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Packets;
-using MCHexBOT.Utils.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,5 @@
 ﻿using MCHexBOT.Network;
-using MCHexBOT.Utils.Data;
+using MCHexBOT.Protocol.Utils;
 
 namespace MCHexBOT.Packets.Client.Login
 {

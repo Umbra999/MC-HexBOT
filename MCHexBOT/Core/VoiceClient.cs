@@ -3,7 +3,6 @@ using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Packets.LabyVoiceServer;
 using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
-using MCHexBOT.Utils.Data;
 using Org.BouncyCastle.Bcpg;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -28,7 +27,7 @@ namespace MCHexBOT.Core
 
             TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(Client, false);
+            MCConnection = new MinecraftConnection(Client, Protocol.ProtocolType.Labymod);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterVoiceServerPackets(writer);

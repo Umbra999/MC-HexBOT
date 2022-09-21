@@ -7,7 +7,7 @@ namespace MCHexBOT.Packets.Server.Play
     {
         public string Locale { get; set; }
         public byte ViewDistance { get; set; }
-        public ChatMode ChatMode { get; set; }
+        public ChatType ChatMode { get; set; }
         public bool ChatColors { get; set; }
         public uint DisplayedSkinParts { get; set; }
         public MainHandType MainHand { get; set; }
@@ -29,6 +29,19 @@ namespace MCHexBOT.Packets.Server.Play
             minecraftStream.WriteVarInt((int)MainHand);
             minecraftStream.WriteBool(EnableTextFiltering);
             minecraftStream.WriteBool(AllowServerListings);
+        }
+
+        public enum MainHandType
+        {
+            Left = 0,
+            Right = 1
+        }
+
+        public enum ChatType
+        {
+            Enabled = 0,
+            Commands = 1,
+            Hidden = 2
         }
     }
 }

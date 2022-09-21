@@ -2,7 +2,6 @@
 using MCHexBOT.Utils;
 using MCHexBOT.Packets;
 using MCHexBOT.Protocol;
-using MCHexBOT.Utils.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Numerics;

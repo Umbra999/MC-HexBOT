@@ -1,6 +1,6 @@
 ﻿using fNbt;
+using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
-using MCHexBOT.Utils.Data;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
@@ -19,9 +19,8 @@ namespace MCHexBOT.Network
 		private BufferedBlockCipher EncryptCipher { get; set; }
 		private BufferedBlockCipher DecryptCipher { get; set; }
 
-		private CancellationTokenSource CancelationToken { get; }
 		private Stream BaseStream { get; set; }
-        private bool IsMinecraftStream { get; set; }
+        private Protocol.ProtocolType ProtocolType { get; set; }
 
         public bool DataAvailable
 		{
@@ -34,16 +33,14 @@ namespace MCHexBOT.Network
 		}
 
 		private readonly Stream _originalBaseStream;
-		public MinecraftStream(Stream baseStream, bool MinecraftEncrypt, CancellationToken cancellationToken = default)
+		public MinecraftStream(Stream baseStream, Protocol.ProtocolType Type)
 		{
 			_originalBaseStream = baseStream;
 			BaseStream = baseStream;
-			IsMinecraftStream = MinecraftEncrypt;
-
-            CancelationToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            ProtocolType = Type;
 		}
 
-		public MinecraftStream(bool MinecraftEncrypt, CancellationToken cancellationToken = default) : this(new MemoryStream(), MinecraftEncrypt, cancellationToken)
+		public MinecraftStream(Protocol.ProtocolType Type) : this(new MemoryStream(), Type)
 		{
 
 		}
@@ -133,14 +130,12 @@ namespace MCHexBOT.Network
 			int read = 0;
 
 			var buffer = new byte[length];
-			while (read < buffer.Length && !CancelationToken.IsCancellationRequested)
+			while (read < buffer.Length)
 			{
 				int r = this.Read(buffer, read, length - read);
 				if (r < 0) break;
 
                 read += r;
-
-				if (CancelationToken.IsCancellationRequested) throw new ObjectDisposedException("");
 			}
 
 			return buffer;
@@ -165,8 +160,7 @@ namespace MCHexBOT.Network
 		public bool ReadBool()
 		{
 			var answer = ReadByte();
-			if (answer == 1)
-				return true;
+			if (answer == 1) return true;
 			return false;
 		}
 
@@ -279,7 +273,7 @@ namespace MCHexBOT.Network
 
 		public string ReadString()
 		{
-			var length = IsMinecraftStream ? ReadVarInt() : ReadInt();
+			var length = ProtocolType == Protocol.ProtocolType.Minecraft ? ReadVarInt() : ReadInt();
 			var stringValue = Read(length);
 
 			return Encoding.UTF8.GetString(stringValue);
@@ -401,7 +395,7 @@ namespace MCHexBOT.Network
 		public void WriteString(string data)
 		{
 			var stringData = Encoding.UTF8.GetBytes(data);
-			if (IsMinecraftStream) WriteVarInt(stringData.Length);
+			if (ProtocolType == Protocol.ProtocolType.Minecraft) WriteVarInt(stringData.Length);
 			else WriteInt(stringData.Length);
             Write(stringData);
 		}
@@ -493,32 +487,6 @@ namespace MCHexBOT.Network
 		}
 
 		#endregion
-
-		private object _disposeLock = new object();
-		private bool _disposed = false;
-		protected override void Dispose(bool disposing)
-		{
-			if (!Monitor.IsEntered(_disposeLock))
-				return;
-
-			try
-			{
-				if (disposing && !_disposed)
-				{
-					_disposed = true;
-
-					if (!CancelationToken.IsCancellationRequested)
-						CancelationToken.Cancel();
-
-
-				}
-				base.Dispose(disposing);
-			}
-			finally
-			{
-				Monitor.Exit(_disposeLock);
-			}
-		}
 
 		public NbtCompound ReadNbtCompound()
 		{

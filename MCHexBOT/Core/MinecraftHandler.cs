@@ -66,7 +66,7 @@ namespace MCHexBOT.Core
 
                 MinecraftClient.GetLocalPlayer().EntityID = joinGamePacket.EntityId;
 
-                MinecraftClient.SendPlayerSetings(false, true, ChatMode.Enabled, byte.MaxValue, MainHandType.Left, false, "en_us", 64);
+                MinecraftClient.SendPlayerSetings(false, true, Packets.Server.Play.ClientSettingsPacket.ChatType.Enabled, byte.MaxValue, Packets.Server.Play.ClientSettingsPacket.MainHandType.Left, false, "en_us", 64);
             }
 
             if (Packet is KeepAlivePacket keepAlivePacket)

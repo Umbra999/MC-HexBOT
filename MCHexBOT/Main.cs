@@ -2,7 +2,10 @@
 using MCHexBOT.Features;
 using MCHexBOT.HexServer;
 using MCHexBOT.Packets.Server.Play;
+using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
+using Newtonsoft.Json.Linq;
+using System.Numerics;
 
 namespace MCHexBOT
 {
@@ -33,7 +36,6 @@ namespace MCHexBOT
 ");
 
             Task.Run(() => CreateBots());
-
             RunGUI();
         }
 
@@ -41,15 +43,17 @@ namespace MCHexBOT
         {
             await ServerHandler.Init();
 
-            if (!File.Exists("Tokens.txt"))
+            if (!File.Exists("Accounts.txt"))
             {
-                Logger.LogError("No Tokens found");
+                Logger.LogError("No Accounts found");
                 Thread.Sleep(5000);
                 return;
             }
 
-            foreach (string Token in File.ReadAllLines("Tokens.txt"))
+            foreach (string Account in File.ReadAllLines("Accounts.txt"))
             {
+                string Token = XboxAuth.Microsoft.GetXboxToken(Account.Split(':')[0], Account.Split(':')[1]);
+
                 APIClient Client = new();
                 if (await Client.LoginToMinecraft(Token))
                 {
@@ -94,11 +98,12 @@ namespace MCHexBOT
 
                     case "3":
                         Logger.LogImportant("-----------------");
-                        Logger.LogImportant("F [Name] - Follow a Player");
-                        Logger.LogImportant("X [+,-,/] - Move the X Cordinate");
-                        Logger.LogImportant("Y [+,-,/] - Move the Y Cordinate");
-                        Logger.LogImportant("Z [+,-,/] - Move the Z Cordinate");
+                        Logger.LogImportant("F [Name] - Walk to Player");
+                        Logger.LogImportant("L [N / E / S / W] - Look at the Direction");
+                        Logger.LogImportant("M [N / E / S / W] - Move at the Direction");
+                        Logger.LogImportant("H - Hit Animation");
                         Logger.LogImportant("S - Toggle Sneak");
+                        Logger.LogImportant("R - Toggle Sprint");
                         Logger.LogImportant("-----------------");
                         HandlePhysicInput(Console.ReadLine());
                         break;
@@ -124,7 +129,7 @@ namespace MCHexBOT
                     string Server = input.Substring(2);
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Task.Run(() => Client.Connect("1.18", Server.Split(':')[0], Server.Split(':').Length > 1 ? Convert.ToInt32(Server.Split(':')[1]) : 25565));
+                        Task.Run(() => Client.Connect(Server.Split(':')[0], Server.Split(':').Length > 1 ? Convert.ToInt32(Server.Split(':')[1]) : 25565));
                     }
                     break;
 
@@ -168,63 +173,97 @@ namespace MCHexBOT
             switch (InputStart.ToLower())
             {
                 case "f":
-                    Movement.CopyMovementTarget = input.Substring(2);
+                    Movement.FollowTarget = input.Substring(2);
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Task.Run(() => Movement.LoopPlayerMovement(Client));
+                    }
                     break;
 
-                case "x":
+                case "w":
+                    foreach (MinecraftClient Client in Clients)
                     {
-                        switch (input.Substring(2))
+                        Vector3 Target = Client.Players.Where(x => x.PlayerInfo.Name == input.Substring(2)).First().Position;
+                        Task.Run(() => Movement.MoveToPosition(Client, Target));
+                    }
+                    break;
+
+                case "l":
+                    {
+                        switch (input.Substring(2).ToLower())
                         {
-                            case "/":
-                                Movement.WalkX = Movement.MovementPosition.None;
+                            case "n":
+                                foreach (MinecraftClient Client in Clients)
+                                {
+                                    Movement.LookAtDirection(Client, Direction.North);
+                                }
                                 break;
 
-                            case "+":
-                                Movement.WalkX = Movement.MovementPosition.Forward;
+                            case "e":
+                                foreach (MinecraftClient Client in Clients)
+                                {
+                                    Movement.LookAtDirection(Client, Direction.East);
+                                }
                                 break;
 
-                            case "-":
-                                Movement.WalkX = Movement.MovementPosition.Backward;
+                            case "s":
+                                foreach (MinecraftClient Client in Clients)
+                                {
+                                    Movement.LookAtDirection(Client, Direction.South);
+                                }
+                                break;
+
+                            case "w":
+                                foreach (MinecraftClient Client in Clients)
+                                {
+                                    Movement.LookAtDirection(Client, Direction.West);
+                                }
                                 break;
                         }
                     }
                     break;
 
-                case "y":
+                case "m":
+                    switch (input.Substring(2).ToLower())
                     {
-                        switch (input.Substring(2))
-                        {
-                            case "/":
-                                Movement.WalkY = Movement.MovementPosition.None;
-                                break;
+                        case "n":
+                            foreach (MinecraftClient Client in Clients)
+                            {
+                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.North);
+                                Task.Run(() => Movement.MoveToPosition(Client, Target));
+                            }
+                            break;
 
-                            case "+":
-                                Movement.WalkY = Movement.MovementPosition.Forward;
-                                break;
+                        case "e":
+                            foreach (MinecraftClient Client in Clients)
+                            {
+                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.East);
+                                Task.Run(() => Movement.MoveToPosition(Client, Target));
+                            }
+                            break;
 
-                            case "-":
-                                Movement.WalkY = Movement.MovementPosition.Backward;
-                                break;
-                        }
+                        case "s":
+                            foreach (MinecraftClient Client in Clients)
+                            {
+                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.South);
+                                Task.Run(() => Movement.MoveToPosition(Client, Target));
+                            }
+                            break;
+
+                        case "w":
+                            foreach (MinecraftClient Client in Clients)
+                            {
+                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.West);
+                                Task.Run(() => Movement.MoveToPosition(Client, Target));
+                            }
+                            break;
                     }
                     break;
 
-                case "z":
+                case "h":
+                    foreach (MinecraftClient Client in Clients)
                     {
-                        switch (input.Substring(2))
-                        {
-                            case "/":
-                                Movement.WalkZ = Movement.MovementPosition.None;
-                                break;
-
-                            case "+":
-                                Movement.WalkZ = Movement.MovementPosition.Forward;
-                                break;
-
-                            case "-":
-                                Movement.WalkZ = Movement.MovementPosition.Backward;
-                                break;
-                        }
+                        Client.SendAnimation(AnimationPacket.HandType.Main);
                     }
                     break;
 
@@ -232,6 +271,13 @@ namespace MCHexBOT
                     foreach (MinecraftClient Client in Clients)
                     {
                         Client.SendEntityAction(Client.GetLocalPlayer().IsSneaking ? EntityActionPacket.Action.StopSneaking : EntityActionPacket.Action.StartSneaking);
+                    }
+                    break;
+
+                case "r":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.SendEntityAction(Client.GetLocalPlayer().IsSprinting ? EntityActionPacket.Action.StopSprinting : EntityActionPacket.Action.StartSprinting);
                     }
                     break;
             }

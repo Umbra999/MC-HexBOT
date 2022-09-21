@@ -1,7 +1,7 @@
 ﻿using MCHexBOT.Network;
 using MCHexBOT.Protocol;
+using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
-using MCHexBOT.Utils.Data;
 
 namespace MCHexBOT.Packets.Client.Play
 {
@@ -21,6 +21,13 @@ namespace MCHexBOT.Packets.Client.Play
         public void Encode(MinecraftStream minecraftStream)
         {
             throw new NotImplementedException();
+        }
+
+        public enum ChatMessagePosition : byte
+        {
+            Chat = 0,
+            System = 1,
+            Hotbar = 2
         }
     }
 }

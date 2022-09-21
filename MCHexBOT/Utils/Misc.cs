@@ -14,23 +14,6 @@ namespace MCHexBOT.Utils
                 ((location1.Z - location2.Z) * (location1.Z - location2.Z)));
         }
 
-        public static Dictionary<string, int> ProtocolVersions = new()
-        {
-            { "1.7", 4 },
-            { "1.8", 47 },
-            { "1.9", 110 },
-            { "1.10", 210 },
-            { "1.11", 316 },
-            { "1.12", 340 },
-            { "1.13", 404 },
-            { "1.14", 498 },
-            { "1.15", 578 },
-            { "1.16", 754 },
-            { "1.17", 756 },
-            { "1.18", 757 },
-            { "1.19", 760 },
-        };
-
         public static void SendEmbedWebHook(string URL, object[] MSG)
         {
             Task.Run(async delegate
