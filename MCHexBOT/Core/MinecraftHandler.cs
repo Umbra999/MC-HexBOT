@@ -1,4 +1,5 @@
-﻿using MCHexBOT.HexServer;
+﻿using MCHexBOT.Features;
+using MCHexBOT.HexServer;
 using MCHexBOT.Network;
 using MCHexBOT.Packets;
 using MCHexBOT.Packets.Client.Login;

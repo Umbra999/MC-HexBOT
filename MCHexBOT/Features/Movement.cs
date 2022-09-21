@@ -10,6 +10,7 @@ namespace MCHexBOT.Features
         public static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {
             Player Local = Bot.GetLocalPlayer();
+
             if (Local.Position != Position && Local.Rotation != Rotation) SendPositionAndRotation(Bot, Position, Rotation, IsGround);
             else if (Local.Position != Position) SendPosition(Bot, Position, IsGround);
             else if (Local.Rotation != Rotation) SendRotation(Bot, Rotation, IsGround);
@@ -136,7 +137,6 @@ namespace MCHexBOT.Features
 
             SendMovement(Bot, Bot.GetLocalPlayer().Position, new Vector2(yaw, pitch), Bot.GetLocalPlayer().IsOnGround);
         }
-
 
         public static async Task MoveToPosition(MinecraftClient Bot, Vector3 Target, CancellationTokenSource token = null)
         {
