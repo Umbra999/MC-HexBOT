@@ -1,8 +1,6 @@
 ﻿using MCHexBOT.Core;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Asn1.X509;
 using System.Numerics;
 
 namespace MCHexBOT.Features
@@ -70,6 +68,11 @@ namespace MCHexBOT.Features
         // Movement
         public static void LookAtPosition(MinecraftClient Bot, Vector3 location)
         {
+            SendMovement(Bot, Bot.GetLocalPlayer().Position, GetLookAtPosition(Bot, location), Bot.GetLocalPlayer().IsOnGround);
+        }
+
+        public static Vector2 GetLookAtPosition(MinecraftClient Bot, Vector3 location)
+        {
             double dx = location.X - Bot.GetLocalPlayer().Position.X;
             double dy = location.Y - Bot.GetLocalPlayer().Position.Y;
             double dz = location.Z - Bot.GetLocalPlayer().Position.Z;
@@ -80,7 +83,7 @@ namespace MCHexBOT.Features
             float pitch = Convert.ToSingle(-Math.Asin(dy / r) / Math.PI * 180);
             if (yaw < 0) yaw += 360;
 
-            SendMovement(Bot, Bot.GetLocalPlayer().Position, new Vector2(yaw, pitch), Bot.GetLocalPlayer().IsOnGround);
+            return new Vector2(yaw, pitch);
         }
 
         public static void LookAtDirection(MinecraftClient Bot, Direction direction)
@@ -93,20 +96,41 @@ namespace MCHexBOT.Features
                 case Direction.Up:
                     pitch = -90;
                     break;
+
                 case Direction.Down:
                     pitch = 90;
                     break;
+
                 case Direction.East:
                     yaw = 270;
                     break;
+
                 case Direction.West:
                     yaw = 90;
                     break;
+
                 case Direction.North:
                     yaw = 180;
                     break;
+
                 case Direction.South:
                     yaw = 360;
+                    break;
+
+                case Direction.SouthWest:
+                    yaw = 45;
+                    break;
+
+                case Direction.SouthEast:
+                    yaw = 315;
+                    break;
+
+                case Direction.NorthWest:
+                    yaw = 135;
+                    break;
+
+                case Direction.NorthEast:
+                    yaw = 225;
                     break;
             }
 
@@ -114,13 +138,13 @@ namespace MCHexBOT.Features
         }
 
 
-        public static async Task MoveToPosition(MinecraftClient Bot, Vector3 Target, bool ShouldLook = true, CancellationTokenSource token = null)
+        public static async Task MoveToPosition(MinecraftClient Bot, Vector3 Target, CancellationTokenSource token = null)
         {
             Vector3 CurrentPosition = Bot.GetLocalPlayer().Position;
 
             float SneakSpeed = 1.3f;
-            float WalkSpeed = 4.3f;
-            float SprintSpeed = 5.6f;
+            float WalkSpeed = 4.31f;
+            float SprintSpeed = 5.61f;
             float FallingSpeed = 28; // Gravity 28 m/s^2
             float JumpSpeed = 5f; // Unknown
 
@@ -137,13 +161,15 @@ namespace MCHexBOT.Features
 
             int Events = (int)(distance / (float)distancePerTiming);
 
-            if (ShouldLook) LookAtPosition(Bot, Target);
+            LookAtPosition(Bot, Target); // needs smothing
 
             for (int i = 0; i < Events; i++)
             {
                 if (token != null && token.IsCancellationRequested) return;
 
-                CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
+                //CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
+                CurrentPosition += new Vector3(DistanceVector.X / Events, 0, DistanceVector.Z / Events);
+
                 SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
 
                 await Task.Delay(Timing);
@@ -174,6 +200,7 @@ namespace MCHexBOT.Features
             Logger.LogSuccess($"Reached Jump Destination");
             await Fall(Bot, CurrentPosition, JumpHeight);
         }
+
         public static async Task Fall(MinecraftClient Bot, Vector3 Pos, float Height = 1f)
         {
             Vector3 Pos1 = Pos;
@@ -190,10 +217,7 @@ namespace MCHexBOT.Features
             Vector3 CurrentPosition = Pos1;
             for (int i = 0; i < Events; i++)
             {
-                CurrentPosition += new Vector3(
-                    DistanceVector.X / Events,
-                    DistanceVector.Y / Events,
-                    DistanceVector.Z / Events);
+                CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
                 SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
                 await Task.Delay(Timing);
             }
@@ -222,7 +246,7 @@ namespace MCHexBOT.Features
                     LastTargetPos = CurrentTargetPos;
                     tokenSource.Cancel();
                     tokenSource = new CancellationTokenSource();
-                    Task.Run(() => MoveToPosition(Bot, CurrentTargetPos, true, tokenSource));
+                    MoveToPosition(Bot, CurrentTargetPos, tokenSource);
                 }
 
                 await Task.Delay(50);

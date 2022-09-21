@@ -47,19 +47,19 @@ namespace MCHexBOT.Features
                         if (Vector3.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range)
                         {
                             Movement.LookAtPosition(Bot, player.Position);
-                            Bot.SendAnimation(AnimationPacket.HandType.Main);
                             Bot.SendEntityInteraction(player.EntityID, Bot.GetLocalPlayer().IsSneaking, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
+                            Bot.SendAnimation(AnimationPacket.HandType.Main);
                         }
                     }
                     else
                     {
                         Movement.LookAtPosition(Bot, player.Position);
-                        Bot.SendAnimation(AnimationPacket.HandType.Main);
                         Bot.SendEntityInteraction(player.EntityID, Bot.GetLocalPlayer().IsSneaking, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
+                        Bot.SendAnimation(AnimationPacket.HandType.Main);
                     }
                 }
 
-                await Task.Delay(50);
+                await Task.Delay(60);
             }
         }
     }
