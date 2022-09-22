@@ -5,11 +5,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <ApplicationIcon>egirlcute.ico</ApplicationIcon>
+    <ApplicationIcon>975523858515890217.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="egirlcute.ico" />
+    <Content Include="975523858515890217.ico" />
   </ItemGroup>
 
   <ItemGroup>

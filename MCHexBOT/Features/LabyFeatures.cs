@@ -5,16 +5,6 @@ namespace MCHexBOT.Features
 {
     internal class LabyFeatures
     {
-        public static async Task CollectCoinLoop(LabyClient client, string Pin)
-        {
-            for (; ; )
-            {
-                await CollectCoins(client, Pin);
-
-                await Task.Delay(21600000);
-            }
-        }
-
         public static async Task CollectCoins(LabyClient client, string Pin)
         {
             if (!await client.MinecraftClient.APIClient.LoginToLaby(Pin))

@@ -52,7 +52,7 @@ namespace MCHexBOT.Core
         public void OnReceivedPin()
         {
             VoiceClient = new VoiceClient(this);
-            Task.Run(() => LabyFeatures.CollectCoinLoop(this, DashboadPin));
+            Task.Run(() => LabyFeatures.CollectCoins(this, DashboadPin));
         }
     }
 }
