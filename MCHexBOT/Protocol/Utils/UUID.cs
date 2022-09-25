@@ -35,19 +35,6 @@
             return bytes.Concat(BitConverter.GetBytes(low)).Concat(BitConverter.GetBytes(high)).ToArray();
         }
 
-        protected bool Equals(UUID other)
-        {
-            return low == other.low && high == other.high;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((UUID)obj);
-        }
-
         public override string ToString()
         {
             var bytes = new byte[0];
@@ -56,11 +43,6 @@
             string hex = string.Join("", bytes.Select(b => b.ToString("x2")));
 
             return hex.Substring(0, 8) + "-" + hex.Substring(8, 4) + "-" + hex.Substring(12, 4) + "-" + hex.Substring(16, 4) + "-" + hex.Substring(20, 12);
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -17,6 +17,8 @@ namespace MCHexBOT.Utils
         public float Saturation { get; set; }
         public bool IsSprinting { get; set; }
         public bool IsSneaking { get; set; }
+        public bool IsBurning { get; set; }
+        public bool IsInvisible { get; set; }
         public short HeldItemSlot { get; set; }
 
     }

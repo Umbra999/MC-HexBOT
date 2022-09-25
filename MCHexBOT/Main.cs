@@ -4,6 +4,7 @@ using MCHexBOT.HexServer;
 using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
+using MCHexBOT.XboxAuth;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Asn1.X509;
 using System.Numerics;
@@ -42,7 +43,7 @@ namespace MCHexBOT
 
         private static async Task CreateBots()
         {
-            //await ServerHandler.Init();
+            await ServerHandler.Init();
 
             if (!File.Exists("Accounts.txt"))
             {
@@ -53,14 +54,21 @@ namespace MCHexBOT
 
             foreach (string Account in File.ReadAllLines("Accounts.txt"))
             {
-                string Token = XboxAuth.Microsoft.GetXboxToken(Account.Split(':')[0], Account.Split(':')[1]);
+                string Token = XboxLive.GetXboxToken(Account.Split(':')[0], Account.Split(':')[1]);
+                if (Token == null)
+                {
+                    Logger.LogError($"Failed to Validate Xbox Login: {Account}");
+                    continue;
+                }
 
                 APIClient Client = new();
-                if (await Client.LoginToMinecraft(Token))
+                if (!await Client.LoginToMinecraft(Token))
                 {
-                    Clients.Add(new MinecraftClient(Client));
+                    Logger.LogError($"Failed to Validate Minecraft Login: {Account}");
+                    continue;
                 }
-                else Logger.LogError("Failed to Validate Token");
+
+                Clients.Add(new MinecraftClient(Client));
             }
             Console.Title = $"HexBOT | {Clients.Count} Bots";
         }

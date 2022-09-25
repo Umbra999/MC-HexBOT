@@ -1,32 +1,29 @@
 ﻿using System.Text.RegularExpressions;
 using System.Collections.Specialized;
+using MCHexBOT.Utils;
 
 namespace MCHexBOT.XboxAuth
 {
-    static class Microsoft
-    {
-        public class LoginResponse
-        {
-            public string Email;
-            public string AccessToken;
-            public string RefreshToken;
-            public int ExpiresIn;
-        }
-
-        public static string GetXboxToken(string email, string password)
-        {
-            var msaResponse = XboxLive.UserLogin(email, password, XboxLive.PreAuth());
-            msaResponse.RefreshToken = string.Empty;
-            var xblResponse = XboxLive.XblAuthenticate(msaResponse);
-            var xsts = XboxLive.XSTSAuthenticate(xblResponse);
-
-            return "XBL3.0 x=" + xsts.UserHash + ";" + xsts.Token;
-        }
-    }
-
     static class XboxLive
     {
         private static readonly string userAgent = "Mozilla/5.0 (XboxReplay; XboxLiveAuth/3.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+
+        public static string GetXboxToken(string email, string password)
+        {
+            PreAuthResponse preAuth = PreAuth();
+            if (preAuth == null) return null;
+
+            string accessToken = UserLogin(email, password, preAuth);
+            if (accessToken == null) return null;
+
+            string xblResponse = XblAuthenticate(accessToken);
+            if (xblResponse == null) return null;
+
+            XSTSAuthenticateResponse xsts = XSTSAuthenticate(xblResponse);
+            if (xsts == null) return null;
+
+            return "XBL3.0 x=" + xsts.UserHash + ";" + xsts.Token;
+        }
 
         public static PreAuthResponse PreAuth()
         {
@@ -36,20 +33,26 @@ namespace MCHexBOT.XboxAuth
             };
             var response = request.Get();
 
-            string html = response.Body;
-
-            string PPFT = new Regex("sFTTag:'.*value=\"(.*)\"\\/>'").Match(html).Groups[1].Value;
-            string urlPost = new Regex("urlPost:'(.+?(?=\'))").Match(html).Groups[1].Value;
-
-            return new PreAuthResponse()
+            if (response.StatusCode == 200)
             {
-                UrlPost = urlPost,
-                PPFT = PPFT,
-                Cookie = response.Cookies
-            };
+                string html = response.Body;
+
+                string PPFT = new Regex("sFTTag:'.*value=\"(.*)\"\\/>'").Match(html).Groups[1].Value;
+                string urlPost = new Regex("urlPost:'(.+?(?=\'))").Match(html).Groups[1].Value;
+
+                return new PreAuthResponse()
+                {
+                    UrlPost = urlPost,
+                    PPFT = PPFT,
+                    Cookie = response.Cookies
+                };
+            }
+
+            Logger.LogError("Xbox PreAuth failed");
+            return null;
         }
 
-        public static Microsoft.LoginResponse UserLogin(string email, string password, PreAuthResponse preAuth)
+        public static string UserLogin(string email, string password, PreAuthResponse preAuth)
         {
             ProxiedWebRequest request = new(preAuth.UrlPost, preAuth.Cookie)
             {
@@ -73,22 +76,16 @@ namespace MCHexBOT.XboxAuth
 
                 if (response2.StatusCode == 200)
                 {
-                    var dict = hash.Split('&').ToDictionary(c => c.Split('=')[0], c => Uri.UnescapeDataString(c.Split('=')[1]));
-
-                    return new Microsoft.LoginResponse()
-                    {
-                        Email = email,
-                        AccessToken = dict["access_token"],
-                        RefreshToken = dict["refresh_token"],
-                        ExpiresIn = int.Parse(dict["expires_in"])
-                    };
+                    Dictionary<string, string> dict = hash.Split('&').ToDictionary(c => c.Split('=')[0], c => Uri.UnescapeDataString(c.Split('=')[1]));
+                    return dict["access_token"];
                 }
             }
 
-            throw new Exception("Failed Authentication to Microsoft");
+            Logger.LogError("Xbox User Login failed");
+            return null;
         }
 
-        public static XblAuthenticateResponse XblAuthenticate(Microsoft.LoginResponse loginResponse)
+        public static string XblAuthenticate(string accessToken)
         {
             ProxiedWebRequest request = new("https://user.auth.xboxlive.com/user/authenticate")
             {
@@ -96,8 +93,6 @@ namespace MCHexBOT.XboxAuth
                 Accept = "application/json"
             };
             request.Headers.Add("x-xbl-contract-version", "0");
-
-            var accessToken = loginResponse.AccessToken;
 
             string payload = "{"
                 + "\"Properties\": {"
@@ -115,21 +110,14 @@ namespace MCHexBOT.XboxAuth
                 string jsonString = response.Body;
 
                 JsonUtils.JSONData json = JsonUtils.ParseJson(jsonString);
-                string token = json.Properties["Token"].StringValue;
-                string userHash = json.Properties["DisplayClaims"].Properties["xui"].DataArray[0].Properties["uhs"].StringValue;
-                return new XblAuthenticateResponse()
-                {
-                    Token = token,
-                    UserHash = userHash
-                };
+                return json.Properties["Token"].StringValue;
             }
-            else
-            {
-                throw new Exception("XBL Authentication failed");
-            }
+
+            Logger.LogError("Xbox Live Login failed");
+            return null;
         }
 
-        public static XSTSAuthenticateResponse XSTSAuthenticate(XblAuthenticateResponse xblResponse)
+        public static XSTSAuthenticateResponse XSTSAuthenticate(string Token)
         {
             ProxiedWebRequest request = new("https://xsts.auth.xboxlive.com/xsts/authorize")
             {
@@ -142,7 +130,7 @@ namespace MCHexBOT.XboxAuth
                 + "\"Properties\": {"
                 + "\"SandboxId\": \"RETAIL\","
                 + "\"UserTokens\": ["
-                + "\"" + xblResponse.Token + "\""
+                + "\"" + Token + "\""
                 + "]"
                 + "},"
                 + "\"RelyingParty\": \"rp://api.minecraftservices.com/\","
@@ -163,7 +151,8 @@ namespace MCHexBOT.XboxAuth
                 };
             }
 
-            throw new Exception("XSTS Authentication failed");
+            Logger.LogError("Xbox XSTS Login failed");
+            return null;
         }
 
         public class PreAuthResponse
@@ -171,12 +160,6 @@ namespace MCHexBOT.XboxAuth
             public string UrlPost;
             public string PPFT;
             public NameValueCollection Cookie;
-        }
-
-        public class XblAuthenticateResponse
-        {
-            public string Token;
-            public string UserHash;
         }
 
         public class XSTSAuthenticateResponse

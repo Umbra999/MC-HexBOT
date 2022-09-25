@@ -16,7 +16,7 @@ namespace MCHexBOT.XboxAuth
         private string path { get { return uri.PathAndQuery; } }
         private bool isSecure { get { return uri.Scheme == "https"; } }
 
-        public NameValueCollection Headers = new NameValueCollection();
+        public NameValueCollection Headers = new();
 
         public string UserAgent { get { return Headers.Get("User-Agent"); } set { Headers.Set("User-Agent", value); } }
         public string Accept { get { return Headers.Get("Accept"); } set { Headers.Set("Accept", value); } }
@@ -105,7 +105,7 @@ namespace MCHexBOT.XboxAuth
             return response;
         }
 
-        private Response ParseResponse(string raw)
+        private static Response ParseResponse(string raw)
         {
             int statusCode;
             string responseBody = "";
@@ -113,7 +113,7 @@ namespace MCHexBOT.XboxAuth
             NameValueCollection cookies = new();
             if (raw.StartsWith("HTTP/1.1") || raw.StartsWith("HTTP/1.0"))
             {
-                Queue<string> msg = new Queue<string>(raw.Split(new string[] { "\r\n" }, StringSplitOptions.None));
+                Queue<string> msg = new(raw.Split(new string[] { "\r\n" }, StringSplitOptions.None));
                 statusCode = int.Parse(msg.Dequeue().Split(' ')[1]);
                 
                 while (msg.Peek() != "")

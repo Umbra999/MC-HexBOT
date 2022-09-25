@@ -80,6 +80,8 @@ namespace MCHexBOT.Network
             registry.AddPacket(0x3E, new Packets.Client.Play.EntityHeadLookPacket(), ConnectionState.Play);
             registry.AddPacket(0x18, new Packets.Client.Play.PluginMessagePacket(), ConnectionState.Play);
             registry.AddPacket(0x48, new Packets.Client.Play.SlotSelectionPacket(), ConnectionState.Play);
+            registry.AddPacket(0x06, new Packets.Client.Play.EntityAnimationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x4D, new Packets.Client.Play.EntityMetadataPacket(), ConnectionState.Play);
         }
 
         // Packets the server can understand

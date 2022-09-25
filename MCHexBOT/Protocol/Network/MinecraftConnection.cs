@@ -248,7 +248,7 @@ namespace MCHexBOT.Network
                 Packet = ReaderRegistry.Packets[State][(byte)PacketId];
             }
 
-            //Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
+            Logger.LogWarning($"Got packet: {Packet} (0x{PacketId:X2})");
 
             try
             {
