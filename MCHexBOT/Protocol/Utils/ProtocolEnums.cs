@@ -108,12 +108,12 @@
 
     public enum Direction
     {
-        South = 0,
-        West = 1,
+        Down = 0,
+        Up = 1,
         North = 2,
-        East = 3,
-        Up = 4,
-        Down = 5,
+        South = 3,
+        West = 4,
+        East = 5,
         NorthEast = 6,
         SouthEast = 7,
         SouthWest = 8,
@@ -154,5 +154,50 @@
         DolphinsGrace = 30,
         BadOmen = 31,
         HerooftheVillage = 32,
+    }
+
+    public enum EntityMetadataType
+    {
+        Byte = 0,
+        VarInt = 1,
+        Float = 2,
+        String = 3,
+        ChatMessage = 4,
+        OptChatMessage = 5,
+        Slot = 6,
+        Boolean = 7,
+        Rotation = 8,
+        Position = 9,
+        OptPosition = 10,
+        Direction = 11,
+        OptUUID = 12,
+        OptBlockId = 13,
+        NBT = 14,
+        Particle = 15,
+        VillagerData = 16,
+        OptVarInt = 17,
+        Pose = 18,
+        CatVariant = 19,
+        FrogVariant = 20,
+        GlobalPosition = 21,
+        PaintingVariant = 22
+    }
+
+    public enum EntityPose
+    {
+        Standing = 0,
+        FallFlying = 1,
+        Sleeping = 2,
+        Swimming = 3,
+        SpinAttack = 4,
+        Sneaking = 5,
+        LongJump = 6,
+        Dying = 7,
+        Croaking = 8,
+        UseTongue = 9,
+        Roaring = 10,
+        Sniffing = 11,
+        Emerging = 12,
+        Digging = 13
     }
 }

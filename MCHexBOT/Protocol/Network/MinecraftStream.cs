@@ -1,4 +1,5 @@
 ﻿using fNbt;
+using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
 using Newtonsoft.Json;
@@ -234,43 +235,7 @@ namespace MCHexBOT.Network
 			var da = Read(2);
 			return NetworkToHostOrder(BitConverter.ToUInt16(da, 0));
 		}
-
-		public ushort[] ReadUShort(int count)
-		{
-			var us = new ushort[count];
-			for (var i = 0; i < us.Length; i++)
-			{
-				var da = Read(2);
-				var d = BitConverter.ToUInt16(da, 0);
-				us[i] = d;
-			}
-			return NetworkToHostOrder(us);
-		}
-
-		public ushort[] ReadUShortLocal(int count)
-		{
-			var us = new ushort[count];
-			for (var i = 0; i < us.Length; i++)
-			{
-				var da = Read(2);
-				var d = BitConverter.ToUInt16(da, 0);
-				us[i] = d;
-			}
-			return us;
-		}
-
-		public short[] ReadShortLocal(int count)
-		{
-			var us = new short[count];
-			for (var i = 0; i < us.Length; i++)
-			{
-				var da = Read(2);
-				var d = BitConverter.ToInt16(da, 0);
-				us[i] = d;
-			}
-			return us;
-		}
-
+		
 		public string ReadString()
 		{
 			var length = ProtocolType == Protocol.ProtocolType.Minecraft ? ReadVarInt() : ReadInt();
@@ -300,6 +265,133 @@ namespace MCHexBOT.Network
             return new Vector3(x, y, z);
 		}
 
+		public Vector3 ReadRotation()
+		{
+			float x = ReadFloat();
+            float y = ReadFloat();
+            float z = ReadFloat();
+            return new Vector3(x, y, z);
+        }
+		
+		public List<EntityMetadata> ReadEntityData()
+		{
+			List<EntityMetadata> entities = new();
+
+			while ((byte)ReadByte() != 255)
+			{
+				EntityMetadataType Type = (EntityMetadataType)ReadVarInt();
+				object Value = null;
+
+				switch (Type)
+				{
+					case EntityMetadataType.Byte:
+                        Value = (byte)ReadByte();
+						break;
+
+					case EntityMetadataType.VarInt:
+                        Value = ReadVarInt();
+						break;
+
+					case EntityMetadataType.Float:
+						Value = ReadFloat();
+						break;
+
+					case EntityMetadataType.String:
+						Value = ReadString();
+						break;
+
+					case EntityMetadataType.ChatMessage:
+						Value = ReadString(); // chat message object
+						break;
+
+					case EntityMetadataType.OptChatMessage:
+                        Value = ReadBool() ? ReadString() : null; // chat message object
+                        break;
+
+					case EntityMetadataType.Slot:
+						// no clue?
+                        throw new NotImplementedException();
+
+					case EntityMetadataType.Boolean:
+						Value = ReadBool();
+						break;
+
+					case EntityMetadataType.Rotation:
+						Value = ReadRotation();
+						break;
+
+					case EntityMetadataType.Position:
+						Value = ReadPosition();
+						break;
+
+					case EntityMetadataType.OptPosition:
+                        Value = ReadBool() ? ReadPosition() : null;
+                        break;
+
+					case EntityMetadataType.Direction:
+						Value = (Direction)ReadVarInt();
+						break;
+
+					case EntityMetadataType.OptUUID:
+						Value = ReadBool() ? ReadUuid() : null;
+						break;
+
+					case EntityMetadataType.OptBlockId:
+						Value = ReadVarInt();
+						break;
+
+					case EntityMetadataType.NBT:
+						Value = ReadNbtCompound();
+						break;
+
+					case EntityMetadataType.Particle:
+                        throw new NotImplementedException();
+
+					case EntityMetadataType.VillagerData:
+						Value = new VillagerData()
+						{
+							Type = ReadVarInt(),
+							Profession = ReadVarInt(),
+							Level = ReadVarInt()
+						};
+						break;
+
+					case EntityMetadataType.OptVarInt:
+						Value = ReadVarInt();
+						break;
+
+					case EntityMetadataType.Pose:
+						Value = (EntityPose)ReadVarInt();
+						break;
+
+					case EntityMetadataType.CatVariant:
+						Value = ReadVarInt();
+						break;
+
+					case EntityMetadataType.FrogVariant:
+						Value = ReadVarInt();
+						break;
+
+					case EntityMetadataType.GlobalPosition:
+						// read dimension identifier???
+						//ReadPosition();
+                        throw new NotImplementedException();
+
+					case EntityMetadataType.PaintingVariant:
+						Value = ReadVarInt();
+						break;
+                }
+
+				entities.Add(new EntityMetadata()
+				{
+					Type = Type,
+					Value = Value
+				});
+            }
+
+			return entities;
+		}
+
 		private static double NetworkToHostOrder(byte[] data)
 		{
 			if (BitConverter.IsLittleEndian) Array.Reverse(data);
@@ -313,12 +405,6 @@ namespace MCHexBOT.Network
 			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
 			return BitConverter.ToSingle(bytes, 0);
-		}
-
-		private static ushort[] NetworkToHostOrder(ushort[] network)
-		{
-			if (BitConverter.IsLittleEndian) Array.Reverse(network);
-			return network;
 		}
 
 		private static ushort NetworkToHostOrder(ushort network)

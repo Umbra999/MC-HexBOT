@@ -1,4 +1,5 @@
-﻿using MCHexBOT.Protocol.Utils;
+﻿using MCHexBOT.Protocol;
+using MCHexBOT.Protocol.Utils;
 using System.Numerics;
 
 namespace MCHexBOT.Utils
@@ -64,5 +65,18 @@ namespace MCHexBOT.Utils
         public string Value { get; set; }
         public bool Singed { get; set; }
         public string Signature { get; set; }
+    }
+
+    public class EntityMetadata
+    {
+        public EntityMetadataType Type { get; set; }
+        public object Value { get; set; }
+    }
+
+    public class VillagerData
+    {
+        public int Type { get; set; }
+        public int Profession { get; set; }
+        public int Level { get; set; }
     }
 }
