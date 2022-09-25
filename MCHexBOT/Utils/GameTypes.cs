@@ -1,4 +1,5 @@
-﻿using MCHexBOT.Protocol;
+﻿using fNbt;
+using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Utils;
 using System.Numerics;
 
@@ -78,5 +79,12 @@ namespace MCHexBOT.Utils
         public int Type { get; set; }
         public int Profession { get; set; }
         public int Level { get; set; }
+    }
+
+    public class SlotData
+    {
+        public int ID { get; set; }
+        public byte Count { get; set; }
+        public NbtCompound NBT { get; set; }
     }
 }

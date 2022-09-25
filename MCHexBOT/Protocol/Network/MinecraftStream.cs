@@ -309,8 +309,13 @@ namespace MCHexBOT.Network
                         break;
 
 					case EntityMetadataType.Slot:
-						// no clue?
-                        throw new NotImplementedException();
+						Value = ReadBool() ? new SlotData()
+						{
+							ID = ReadVarInt(),
+							Count = (byte)ReadByte(),
+							NBT = ReadNbtCompound(),
+						} : null;
+						break;
 
 					case EntityMetadataType.Boolean:
 						Value = ReadBool();
