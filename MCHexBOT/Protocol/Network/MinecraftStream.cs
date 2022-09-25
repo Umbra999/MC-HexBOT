@@ -350,6 +350,8 @@ namespace MCHexBOT.Network
 						break;
 
 					case EntityMetadataType.Particle:
+						// fr its cancer 
+						//ReadVarInt();
                         throw new NotImplementedException();
 
 					case EntityMetadataType.VillagerData:

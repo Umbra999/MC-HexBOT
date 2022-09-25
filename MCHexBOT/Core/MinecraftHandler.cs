@@ -287,6 +287,21 @@ namespace MCHexBOT.Core
                 }
             }
 
+            if (Packet is SpawnEntityPacket entitySpawnPacket)
+            {
+                if (entitySpawnPacket.Type == 116)
+                {
+                    Player[] Players = MinecraftClient.Players.Where(x => x.EntityID == entitySpawnPacket.EntityId || x.PlayerInfo.UUID.ToString() == entitySpawnPacket.ObjectUUID.ToString()).ToArray();
+                    if (Players.Length > 0)
+                    {
+                        Players.First().EntityID = entitySpawnPacket.EntityId;
+                        Players.First().Position = new Vector3((float)entitySpawnPacket.XPosition, (float)entitySpawnPacket.YPosition, (float)entitySpawnPacket.ZPosition);
+                        Players.First().Rotation = new Vector2(entitySpawnPacket.Yaw, entitySpawnPacket.Pitch);
+                        Players.First().Velocity = new Vector3(entitySpawnPacket.XVelocity, entitySpawnPacket.YVelocity, entitySpawnPacket.ZVelocity);
+                    }
+                }
+            }
+
             if (Packet is EntityPositionAndRotationPacket entityPosAndRotPacket)
             {
                 Player[] Players = MinecraftClient.Players.Where(x => x.EntityID == entityPosAndRotPacket.EntityId).ToArray();

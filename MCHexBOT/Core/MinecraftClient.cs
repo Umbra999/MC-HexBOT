@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Features;
+using MCHexBOT.Protocol.Network;
 
 namespace MCHexBOT.Core
 {
@@ -46,8 +47,6 @@ namespace MCHexBOT.Core
                 return false;
             }
 
-            int ProtocolVersion = 757;
-
             Serverstats Stats = await APIClient.GetServerStats($"{Host}:{Port}");
             if (Stats == null)
             {
@@ -62,7 +61,11 @@ namespace MCHexBOT.Core
             }
 
             ServerAddress = Host + ":" + Port;
-            Logger.LogWarning($"{ServerAddress} using Protocol {Stats.server.protocol}");
+            Logger.LogWarning($"{ServerAddress} using Protocol {Stats.server.protocol} [{Stats.server.name}]");
+
+            int ProtocolVersion = 757;
+            if (PacketMapping.SupportedProtocols.Contains(Stats.server.protocol)) ProtocolVersion = Stats.server.protocol;
+            else Logger.LogWarning($"Protocol {Stats.server.protocol} is not Supported, using {ProtocolVersion}");
 
             TcpClient Client = new(Host, Port);
 
