@@ -61,11 +61,11 @@ namespace MCHexBOT.Network
 
         public void ProcessNetworkRead()
         {
-            try
-            {
-                SpinWait sw = new();
+            SpinWait sw = new();
 
-                for (; ; )
+            for (; ; )
+            {
+                try
                 {
                     if (ReadStream.DataAvailable)
                     {
@@ -92,20 +92,20 @@ namespace MCHexBOT.Network
                     }
                     else sw.SpinOnce();
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.LogError($"Error reading Packet: (State {State}) {e.Message}");
+                catch (Exception e)
+                {
+                    Logger.LogError($"Error reading Packet: (State {State}) {e.Message}");
+                }
             }
         }
 
         public void ProcessNetworkWrite()
         {
-            try
-            {
-                SpinWait sw = new();
+            SpinWait sw = new();
 
-                for (; ; )
+            for (; ; )
+            {
+                try
                 {
                     IPacket toSend = null;
                     ConnectionState state = ConnectionState.Handshaking;
@@ -132,10 +132,10 @@ namespace MCHexBOT.Network
 
                     sw.SpinOnce();
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.LogError($"Error writing Packet: (State: {State}) {e.Message}");
+                catch (Exception e)
+                {
+                    Logger.LogError($"Error writing Packet: (State: {State}) {e.Message}");
+                }
             }
         }
 
