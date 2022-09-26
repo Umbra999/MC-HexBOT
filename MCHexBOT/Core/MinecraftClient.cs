@@ -41,11 +41,11 @@ namespace MCHexBOT.Core
 
         public async Task<bool> Connect(string Host, int Port)
         {
-            if (MCConnection != null)
-            {
-                Logger.LogError($"Bot is already connected");
-                return false;
-            }
+            //if (MCConnection != null)
+            //{
+            //    Logger.LogError($"Bot is already connected");
+            //    return false;
+            //}
 
             Serverstats Stats = await APIClient.GetServerStats($"{Host}:{Port}");
             if (Stats == null)

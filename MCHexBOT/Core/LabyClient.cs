@@ -1,6 +1,5 @@
 ﻿using MCHexBOT.Features;
 using MCHexBOT.Network;
-using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Packets.LabyServer.Handshake;
 using System.Net.Sockets;
 

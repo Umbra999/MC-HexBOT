@@ -111,6 +111,8 @@ namespace MCHexBOT.Core
                                     Players.First().HeldItemSlot = 0;
                                     Players.First().IsSneaking = false;
                                     Players.First().IsSprinting = false;
+                                    Players.First().IsBurning = false;
+                                    Players.First().IsInvisible = false;
                                 }
                             }
 
@@ -131,6 +133,8 @@ namespace MCHexBOT.Core
                                     HeldItemSlot = 0,
                                     IsSneaking = false,
                                     IsSprinting = false,
+                                    IsBurning = false,
+                                    IsInvisible = false
                                 });
                                 //Logger.Log($"[ + ] {player.Name}");
 
@@ -209,13 +213,13 @@ namespace MCHexBOT.Core
             {
                 switch (pluginPacket.Channel)
                 {
-                    case "minecraft:brand":
-                        Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
-                        {
-                            Channel = pluginPacket.Channel,
-                            Data = Encoding.UTF8.GetBytes("vanilla")
-                        });
-                        break;
+                    //case "minecraft:brand":
+                    //    Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
+                    //    {
+                    //        Channel = "minecraft:brand",
+                    //        Data = Encoding.UTF8.GetBytes("vanilla")
+                    //    });
+                    //    break;
 
                     case "minecraft:register":
                         Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
