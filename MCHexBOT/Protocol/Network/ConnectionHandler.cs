@@ -4,10 +4,11 @@ using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Utils;
 using Ionic.Zlib;
 using MCHexBOT.Protocol;
+using System.Collections.Concurrent;
 
 namespace MCHexBOT.Network
 {
-    public class MinecraftConnection
+    public class ConnectionHandler
     {
         private TcpClient Tcp { get; set; }
         public MinecraftStream ReadStream { get; private set; }
@@ -17,19 +18,16 @@ namespace MCHexBOT.Network
 
         public ConnectionState State { get; set; }
 
-        public Queue<PacketQueueItem> PacketQueue { get; set; } = new Queue<PacketQueueItem>();
+        public ConcurrentQueue<PacketQueueItem> PacketQueue { get; set; } = new ConcurrentQueue<PacketQueueItem>();
         public PacketRegistry WriterRegistry { get; set; }
         public PacketRegistry ReaderRegistry { get; set; }
-
-        public Thread ReadThread { get; private set; }
-        public Thread WriteThread { get; private set; }
 
         public bool CompressionEnabled { get; set; } = false;
         public int CompressionThreshold { get; set; } = 256;
 
         public IPacketHandler Handler { get; set; }
 
-        public MinecraftConnection(TcpClient tcp, Protocol.ProtocolType Type)
+        public ConnectionHandler(TcpClient tcp, Protocol.ProtocolType Type)
         {
             Tcp = tcp;
 
@@ -42,11 +40,16 @@ namespace MCHexBOT.Network
 
         public void Start()
         {
-            ReadThread = new Thread(ProcessNetworkRead);
-            WriteThread = new Thread(ProcessNetworkWrite);
+            Task.Run(() => ProcessNetworkRead());
+            Task.Run(() => ProcessNetworkWrite());
+        }
 
-            ReadThread.Start();
-            WriteThread.Start();
+        public void Stop()
+        {
+            Tcp.Client.Close();
+            Tcp.Client.Dispose();
+            Tcp.Close();
+            Tcp.Dispose();
         }
 
         public void EnableWriteEncryption(byte[] key)
@@ -59,11 +62,9 @@ namespace MCHexBOT.Network
             ReadStream.InitEncryption(key);
         }
 
-        public void ProcessNetworkRead()
+        public async Task ProcessNetworkRead()
         {
-            SpinWait sw = new();
-
-            for (; ; )
+            while (Tcp.Connected)
             {
                 try
                 {
@@ -90,7 +91,7 @@ namespace MCHexBOT.Network
                             }
                         }
                     }
-                    else sw.SpinOnce();
+                    else await Task.Delay(1);
                 }
                 catch (Exception e)
                 {
@@ -99,38 +100,29 @@ namespace MCHexBOT.Network
             }
         }
 
-        public void ProcessNetworkWrite()
+        public async Task ProcessNetworkWrite()
         {
-            SpinWait sw = new();
-
-            for (; ; )
+            while (Tcp.Connected)
             {
                 try
                 {
-                    IPacket toSend = null;
-                    ConnectionState state = ConnectionState.Handshaking;
-
-                    lock (PacketQueue)
+                    if (PacketQueue.Count > 0)
                     {
-                        if (PacketQueue.Count > 0)
+                        bool Status = PacketQueue.TryDequeue(out PacketQueueItem item);
+                        if (Status)
                         {
-                            var mcs = PacketQueue.Dequeue();
-                            toSend = mcs.Packet;
-                            state = mcs.State;
+                            IPacket toSend = item.Packet;
+                            ConnectionState state = item.State;
+
+                            byte[] data = EncodePacket(toSend, state);
+
+                            WriteStream.WriteVarInt(data.Length);
+                            WriteStream.Write(data);
+
+                            if (toSend is SetCompressionPacket) CompressionEnabled = true;
                         }
                     }
-
-                    if (toSend != null)
-                    {
-                        byte[] data = EncodePacket(toSend, state);
-
-                        WriteStream.WriteVarInt(data.Length);
-                        WriteStream.Write(data);
-
-                        if (toSend is SetCompressionPacket) CompressionEnabled = true;
-                    }
-
-                    sw.SpinOnce();
+                    else await Task.Delay(1);
                 }
                 catch (Exception e)
                 {
@@ -277,14 +269,11 @@ namespace MCHexBOT.Network
 
         public void SendPacket(IPacket Packet)
         {
-            lock (PacketQueue)
+            PacketQueue.Enqueue(new PacketQueueItem()
             {
-                PacketQueue.Enqueue(new PacketQueueItem()
-                {
-                    State = State,
-                    Packet = Packet
-                });
-            }
+                State = State,
+                Packet = Packet
+            });
         }
     }
 }

@@ -1,13 +1,15 @@
-﻿using MCHexBOT.Features;
+﻿using MCHexBOT.Core.Minecraft;
+using MCHexBOT.Features;
 using MCHexBOT.Network;
 using MCHexBOT.Protocol.Packets.LabyServer.Handshake;
+using MCHexBOT.Utils;
 using System.Net.Sockets;
 
-namespace MCHexBOT.Core
+namespace MCHexBOT.Core.Laby
 {
     public class LabyClient
     {
-        public MinecraftConnection MCConnection;
+        public ConnectionHandler MCConnection;
         public MinecraftClient MinecraftClient;
         public VoiceClient VoiceClient;
         public int ProtocolVersion = 27;
@@ -21,9 +23,11 @@ namespace MCHexBOT.Core
 
         public void Connect(string Host, int Port)
         {
+            Disconnect();
+
             TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(Client, Protocol.ProtocolType.Labymod);
+            MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Labymod);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterLabyServerPackets(writer);
@@ -46,6 +50,15 @@ namespace MCHexBOT.Core
                 TickTime = Environment.TickCount,
                 Type = ProtocolVersion,
             });
+        }
+
+        public void Disconnect()
+        {
+            if (MCConnection != null)
+            {
+                MCConnection.Stop();
+                Logger.LogError($"{MinecraftClient.APIClient.CurrentUser.name} disconnected from Labymod");
+            }
         }
 
         public void OnReceivedPin()

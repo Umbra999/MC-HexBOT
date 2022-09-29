@@ -1,4 +1,5 @@
 ﻿using fNbt;
+using MCHexBOT.Packets;
 using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Utils;
 using System.Numerics;
@@ -86,5 +87,11 @@ namespace MCHexBOT.Utils
         public int ID { get; set; }
         public byte Count { get; set; }
         public NbtCompound NBT { get; set; }
+    }
+
+    public class PacketQueueItem
+    {
+        public IPacket Packet { get; set; }
+        public ConnectionState State { get; set; }
     }
 }

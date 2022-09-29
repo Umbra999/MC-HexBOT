@@ -1,4 +1,4 @@
-﻿using MCHexBOT.Core;
+﻿using MCHexBOT.Core.Minecraft;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using System.Numerics;

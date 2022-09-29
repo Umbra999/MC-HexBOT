@@ -5,6 +5,7 @@ namespace MCHexBOT.Protocol.Network
 {
     internal class PacketMapping
     {
+        public static readonly int DefaultProtocol = 757;
         public static readonly int[] SupportedProtocols = new int[] { 340, 757 };
 
         public static byte? GetServerPacketID(int Protocol, IPacket packet)

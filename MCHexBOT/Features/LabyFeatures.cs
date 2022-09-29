@@ -1,4 +1,4 @@
-﻿using MCHexBOT.Core;
+﻿using MCHexBOT.Core.Laby;
 using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
@@ -15,7 +15,6 @@ namespace MCHexBOT.Features
 
             string Coins = await client.MinecraftClient.APIClient.ClaimDailyCoins();
             if (Coins != null) Logger.LogSuccess($"{client.MinecraftClient.APIClient.CurrentUser.name} claimed {Coins} Labycoins");
-            await Task.Delay(21600000);
         }
     }
 }

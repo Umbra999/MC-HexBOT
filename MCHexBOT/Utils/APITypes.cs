@@ -41,17 +41,17 @@
 
     public class Serverstats
     {
-        public string status { get; set; }
-        public bool online { get; set; }
-        public string motd { get; set; }
         public ServerstatsPlayers players { get; set; }
-        public ServerstatsServer server { get; set; }
+        public ServerstatsServer version { get; set; }
+        public APIUser[] sample { get; set; }
+        public string IP { get; set; }
     }
+
 
     public class ServerstatsPlayers
     {
         public int max { get; set; }
-        public int now { get; set; }
+        public int online { get; set; }
     }
 
     public class ServerstatsServer

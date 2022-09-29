@@ -82,7 +82,7 @@ namespace MCHexBOT.Network
             registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.PluginMessagePacket()), new Packets.Client.Play.PluginMessagePacket(), ConnectionState.Play);
             registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.SlotSelectionPacket()), new Packets.Client.Play.SlotSelectionPacket(), ConnectionState.Play);
             registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityAnimationPacket()), new Packets.Client.Play.EntityAnimationPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityMetadataPacket()), new Packets.Client.Play.EntityMetadataPacket(), ConnectionState.Play);
+            //registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityMetadataPacket()), new Packets.Client.Play.EntityMetadataPacket(), ConnectionState.Play);
         }
 
         // Packets the server can understand

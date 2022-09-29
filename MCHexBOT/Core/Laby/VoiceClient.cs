@@ -1,17 +1,15 @@
-﻿using MCHexBOT.Network;
-using MCHexBOT.Protocol;
+﻿using MCHexBOT.Core.Laby;
+using MCHexBOT.Network;
 using MCHexBOT.Protocol.Packets.LabyVoiceServer;
 using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
-using Org.BouncyCastle.Bcpg;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 
 namespace MCHexBOT.Core
 {
     public class VoiceClient
     {
-        public MinecraftConnection MCConnection;
+        public ConnectionHandler MCConnection;
         public LabyClient LabyClient;
         public int ProtocolVersion = 1;
 
@@ -27,7 +25,7 @@ namespace MCHexBOT.Core
 
             TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(Client, Protocol.ProtocolType.Labymod);
+            MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Labymod);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterVoiceServerPackets(writer);
@@ -52,7 +50,6 @@ namespace MCHexBOT.Core
         private async Task<bool> HandleEncryptionAuth()
         {
             PrivateKey = CryptoHandler.GenerateAESPrivateKey();
-
 
             MCConnection.SendPacket(new HandshakePacket()
             {

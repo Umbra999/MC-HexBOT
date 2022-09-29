@@ -10,7 +10,7 @@ namespace MCHexBOT.Core
     internal class VoiceHandler : IPacketHandler
     {
         private VoiceClient VoiceClient { get; set; }
-        public MinecraftConnection Connection { get; set; }
+        public ConnectionHandler Connection { get; set; }
 
         public VoiceHandler(VoiceClient minecraft)
         {

@@ -5,21 +5,23 @@ using MCHexBOT.Packets.Server.Login;
 using System.Net.Sockets;
 using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Protocol;
-using MCHexBOT.Features;
 using MCHexBOT.Protocol.Network;
+using MCHexBOT.Packets.Server.Status;
+using MCHexBOT.Core.API;
+using MCHexBOT.Core.Laby;
 
-namespace MCHexBOT.Core
+namespace MCHexBOT.Core.Minecraft
 {
     public class MinecraftClient
     {
         public readonly APIClient APIClient;
-        public MinecraftConnection MCConnection;
+        public ConnectionHandler MCConnection;
         public LabyClient LabyClient;
 
         public List<Player> Players = new();
         private Player LocalPlayer;
 
-        public string ServerAddress;
+        public Serverstats ServerStats;
 
         public Player GetLocalPlayer()
         {
@@ -39,37 +41,79 @@ namespace MCHexBOT.Core
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
 
-        public async Task<bool> Connect(string Host, int Port)
+        public async Task<bool> GetServerstats(string Host, int Port)
         {
-            //if (MCConnection != null)
-            //{
-            //    Logger.LogError($"Bot is already connected");
-            //    return false;
-            //}
-
-            Serverstats Stats = await APIClient.GetServerStats($"{Host}:{Port}");
-            if (Stats == null)
-            {
-                Logger.LogError($"Failed to fetch Server");
-                return false;
-            }
-
-            if (Stats.status != "success")
-            {
-                Logger.LogError($"Server was unable to Ping");
-                return false;
-            }
-
-            ServerAddress = Host + ":" + Port;
-            Logger.LogWarning($"{ServerAddress} using Protocol {Stats.server.protocol} [{Stats.server.name}]");
-
-            int ProtocolVersion = 757;
-            if (PacketMapping.SupportedProtocols.Contains(Stats.server.protocol)) ProtocolVersion = Stats.server.protocol;
-            else Logger.LogWarning($"Protocol {Stats.server.protocol} is not Supported, using {ProtocolVersion}");
+            ServerStats = null;
 
             TcpClient Client = new(Host, Port);
 
-            MCConnection = new MinecraftConnection(Client, Protocol.ProtocolType.Minecraft);
+            ConnectionHandler statusConnection = new(Client, Protocol.ProtocolType.Minecraft);
+
+            PacketRegistry writer = new();
+            PacketRegistry.RegisterServerPackets(writer, PacketMapping.DefaultProtocol);
+
+            PacketRegistry reader = new();
+            PacketRegistry.RegisterClientPackets(reader, PacketMapping.DefaultProtocol);
+
+            statusConnection.WriterRegistry = writer;
+            statusConnection.ReaderRegistry = reader;
+
+            statusConnection.Handler = new MinecraftHandler(this)
+            {
+                Connection = statusConnection
+            };
+
+            statusConnection.Start();
+
+            statusConnection.SendPacket(new HandshakePacket()
+            {
+                NextState = HandshakePacket.HandshakeType.Status,
+                ProtocolVersion = PacketMapping.DefaultProtocol,
+                ServerAddress = Host,
+                ServerPort = (ushort)Port
+            });
+
+            statusConnection.State = ConnectionState.Status;
+
+            statusConnection.SendPacket(new StatusRequestPacket()
+            {
+
+            });
+
+            int Wait = 0;
+            while (ServerStats == null)
+            {
+                await Task.Delay(1);
+                if (Wait++ == 2000)
+                {
+                    statusConnection.Stop();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public async Task<bool> Connect(string Host, int Port)
+        {
+            Disconnect();
+
+            if (!await GetServerstats(Host, Port))
+            {
+                Logger.LogError("Failed to Ping Server");
+                return false;
+            }
+
+            ServerStats.IP = Host + ":" + Port;
+            Logger.LogWarning($"{ServerStats.IP} using Protocol {ServerStats.version.protocol} [{ServerStats.version.name}]");
+
+            int ProtocolVersion = PacketMapping.DefaultProtocol;
+            if (PacketMapping.SupportedProtocols.Contains(ServerStats.version.protocol)) ProtocolVersion = ServerStats.version.protocol;
+            else Logger.LogWarning($"Protocol {ServerStats.version.protocol} is not Supported, using {ProtocolVersion}");
+
+            TcpClient Client = new(Host, Port);
+
+            MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Minecraft);
 
             PacketRegistry writer = new();
             PacketRegistry.RegisterServerPackets(writer, ProtocolVersion);
@@ -103,6 +147,15 @@ namespace MCHexBOT.Core
             });
 
             return true;
+        }
+
+        public void Disconnect()
+        {
+            if (MCConnection != null)
+            {
+                MCConnection.Stop();
+                Logger.LogError($"{APIClient.CurrentUser.name} disconnected from {ServerStats.IP}");
+            }
         }
 
         public void SendChat(string Message)

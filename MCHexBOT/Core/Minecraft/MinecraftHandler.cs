@@ -1,12 +1,15 @@
-﻿using MCHexBOT.Features;
+﻿using MCHexBOT.Core.Minecraft;
+using MCHexBOT.Features;
 using MCHexBOT.HexServer;
 using MCHexBOT.Network;
 using MCHexBOT.Packets;
 using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Packets.Client.Play;
+using MCHexBOT.Packets.Client.Status;
 using MCHexBOT.Protocol;
 using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
+using Newtonsoft.Json;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,7 +19,7 @@ namespace MCHexBOT.Core
 {
     internal class MinecraftHandler : IPacketHandler
     {
-        public MinecraftConnection Connection { get; set; }
+        public ConnectionHandler Connection { get; set; }
         private MinecraftClient MinecraftClient { get; set; }
 
         public MinecraftHandler(MinecraftClient minecraft)
@@ -138,7 +141,7 @@ namespace MCHexBOT.Core
                                 });
                                 //Logger.Log($"[ + ] {player.Name}");
 
-                                ServerHandler.CheckOverseePlayer(player.UUID.ToString(), player.Name, MinecraftClient.ServerAddress);
+                                ServerHandler.CheckOverseePlayer(player.UUID.ToString(), player.Name, MinecraftClient.ServerStats.IP);
                             }
                         }
                         break;
@@ -370,7 +373,10 @@ namespace MCHexBOT.Core
 
         public void Status(IPacket Packet)
         {
-
+            if (Packet is StatusResponsePacket statusResponsePacket)
+            {
+                MinecraftClient.ServerStats = JsonConvert.DeserializeObject<Serverstats>(statusResponsePacket.Status);
+            }
         }
 
         private byte[] PrivateKey;

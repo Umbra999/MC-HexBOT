@@ -1,4 +1,4 @@
-﻿using MCHexBOT.Core;
+﻿using MCHexBOT.Core.Minecraft;
 using MCHexBOT.HexServer;
 using MCHexBOT.Utils;
 

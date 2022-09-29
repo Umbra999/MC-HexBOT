@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 
-namespace MCHexBOT.Core
+namespace MCHexBOT.Core.API
 {
     public class APIClient
     {
@@ -126,20 +126,6 @@ namespace MCHexBOT.Core
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
             return Response.IsSuccessStatusCode;
-        }
-
-        public static async Task<Serverstats> GetServerStats(string Host)
-        {
-            HttpClient Client = new();
-            Client.DefaultRequestHeaders.Add("User-Agent", "HEXED");
-
-            HttpRequestMessage Payload = new(HttpMethod.Get, $"https://mcapi.us/server/status?ip={Host}");
-
-            HttpResponseMessage Response = await Client.SendAsync(Payload);
-
-            string content = await Response.Content.ReadAsStringAsync();
-            if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<Serverstats>(content);
-            return null;
         }
 
         public async Task<bool> LoginToLaby(string Pin)

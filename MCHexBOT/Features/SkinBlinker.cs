@@ -1,6 +1,6 @@
-﻿using MCHexBOT.Core;
+﻿using MCHexBOT.Core.Minecraft;
 using MCHexBOT.HexServer;
-using MCHexBOT.Protocol;
+using MCHexBOT.Utils;
 
 namespace MCHexBOT.Features
 {
@@ -8,15 +8,16 @@ namespace MCHexBOT.Features
     {
         private static bool SkinBlinkToggle = false;
 
-        public static void ToggleSkinBlinker(MinecraftClient Bot, bool State)
+        public static void ToggleSkinBlinker(MinecraftClient Bot)
         {
-            if (State) new Thread(() => { SkinBlink(Bot); Thread.CurrentThread.IsBackground = true; }).Start();
+            if (!SkinBlinkToggle) Task.Run(() => SkinBlinkLoop(Bot));
             else SkinBlinkToggle = false;
         }
 
-        private static void SkinBlink(MinecraftClient Bot)
+        private static async Task SkinBlinkLoop(MinecraftClient Bot)
         {
             SkinBlinkToggle = true;
+            Logger.LogDebug("SkinBlinker enabled");
 
             while (SkinBlinkToggle)
             {
@@ -24,10 +25,11 @@ namespace MCHexBOT.Features
 
                 Bot.SendPlayerSetings(true, true, Packets.Server.Play.ClientSettingsPacket.ChatType.Enabled, Random, Random > 127 ? Packets.Server.Play.ClientSettingsPacket.MainHandType.Left : Packets.Server.Play.ClientSettingsPacket.MainHandType.Right, false, "en_us", 64);
 
-                Thread.Sleep(50);
+                await Task.Delay(50);
             }
 
             SkinBlinkToggle = false;
+            Logger.LogDebug("SkinBlinker disabled");
         }
     }
 }

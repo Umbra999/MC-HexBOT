@@ -3,23 +3,18 @@ using MCHexBOT.Utils;
 using MCHexBOT.Packets;
 using MCHexBOT.Protocol;
 using System.Security.Cryptography;
-using System.Text;
-using System.Numerics;
 using MCHexBOT.Protocol.Packets.LabyClient.Handshake;
 using MCHexBOT.Protocol.Packets.LabyClient.Login;
 using MCHexBOT.Protocol.Packets.LabyServer.Login;
-using MCHexBOT.Features;
-using System.Runtime.Versioning;
 using MCHexBOT.Protocol.Utils;
-using MCHexBOT.HexServer;
-using Org.BouncyCastle.Utilities.Net;
+using MCHexBOT.Core.Laby;
 
 namespace MCHexBOT.Core
 {
     internal class LabyHandler : IPacketHandler
     {
         private LabyClient LabyClient { get; set; }
-        public MinecraftConnection Connection { get; set; }
+        public ConnectionHandler Connection { get; set; }
 
         public LabyHandler(LabyClient minecraft)
         {

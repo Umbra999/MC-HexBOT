@@ -1,12 +1,11 @@
-﻿using MCHexBOT.Core;
+﻿using MCHexBOT.Core.API;
+using MCHexBOT.Core.Minecraft;
 using MCHexBOT.Features;
 using MCHexBOT.HexServer;
 using MCHexBOT.Packets.Server.Play;
 using MCHexBOT.Protocol;
 using MCHexBOT.Utils;
 using MCHexBOT.XboxAuth;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Asn1.X509;
 using System.Numerics;
 
 namespace MCHexBOT
@@ -20,7 +19,7 @@ namespace MCHexBOT
             Console.Title = "HexBOT | Minecraft";
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine(@"
-          
+
  ▄▀▀▄ ▄▄   ▄▀▀█▄▄▄▄  ▄▀▀▄  ▄▀▄  ▄▀▀█▄▄▄▄  ▄▀▀█▄▄  
 █  █   ▄▀ ▐  ▄▀   ▐ █    █   █ ▐  ▄▀   ▐ █ ▄▀   █ 
 ▐  █▄▄▄█    █▄▄▄▄▄  ▐     ▀▄▀    █▄▄▄▄▄  ▐ █    █ 
@@ -91,6 +90,7 @@ namespace MCHexBOT
                     case "1":
                         Logger.LogImportant("-----------------");
                         Logger.LogImportant("J [IP:PORT] - Join a Server");
+                        Logger.LogImportant("L - Leave a Server");
                         Logger.LogImportant("C [MESSAGE] - Send a Chat Message");
                         Logger.LogImportant("-----------------");
                         HandleCoreInput(Console.ReadLine());
@@ -98,8 +98,8 @@ namespace MCHexBOT
 
                     case "2":
                         Logger.LogImportant("-----------------");
-                        Logger.LogImportant("Z [true / false] - Skinblinker");
-                        Logger.LogImportant("T [true / false] - Teabagger");
+                        Logger.LogImportant("Z - Toggle Skinblinker");
+                        Logger.LogImportant("T - Toggle Teabagger");
                         Logger.LogImportant("K [NAME] - Target the Player");
                         Logger.LogImportant("-----------------");
                         HandleExploitInput(Console.ReadLine());
@@ -122,6 +122,7 @@ namespace MCHexBOT
                         Logger.LogImportant("N [NAME] - Change the Name");
                         Logger.LogImportant("S [URL] - Change the Skin");
                         Logger.LogImportant("O - Refresh the Oversee");
+                        Logger.LogImportant("A - Toggle AntiAFK");
                         Logger.LogImportant("-----------------");
                         HandleDebugInput(Console.ReadLine());
                         break;
@@ -142,6 +143,13 @@ namespace MCHexBOT
                     }
                     break;
 
+                case "l":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.Disconnect();
+                    }
+                    break;
+
                 case "c":
                     foreach (MinecraftClient Client in Clients)
                     {
@@ -159,14 +167,14 @@ namespace MCHexBOT
                 case "z":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        SkinBlinker.ToggleSkinBlinker(Client, input.Substring(2) == "true");
+                        SkinBlinker.ToggleSkinBlinker(Client);
                     }
                     break;
 
                 case "t":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        TeaBagger.ToggleTeaBagger(Client, input.Substring(2) == "true");
+                        TeaBagger.ToggleTeaBagger(Client);
                     }
                     break;
 
@@ -318,6 +326,13 @@ namespace MCHexBOT
 
                 case "o":
                     Task.Run(() => ServerHandler.FetchSearchList());
+                    break;
+
+                case "a":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        AntiAFK.ToggleAntiAFK(Client);
+                    }
                     break;
             }
         }
