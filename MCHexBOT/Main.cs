@@ -81,6 +81,7 @@ namespace MCHexBOT
                 Logger.LogImportant("2 - EXPLOITS");
                 Logger.LogImportant("3 - PHYSICS");
                 Logger.LogImportant("4 - DEBUG");
+                Logger.LogImportant("5 - LABYMOD");
                 Logger.LogImportant("-----------------");
 
                 string input = Console.ReadLine();
@@ -125,6 +126,14 @@ namespace MCHexBOT
                         Logger.LogImportant("A - Toggle AntiAFK");
                         Logger.LogImportant("-----------------");
                         HandleDebugInput(Console.ReadLine());
+                        break;
+
+                    case "5":
+                        Logger.LogImportant("-----------------");
+                        Logger.LogImportant("F [NAME] - Friend the Player");
+                        Logger.LogImportant("U [NAME] - Unfriend the Player");
+                        Logger.LogImportant("-----------------");
+                        HandleLabyInput(Console.ReadLine());
                         break;
                 }
             }
@@ -332,6 +341,33 @@ namespace MCHexBOT
                     foreach (MinecraftClient Client in Clients)
                     {
                         AntiAFK.ToggleAntiAFK(Client);
+                    }
+                    break;
+            }
+        }
+
+        private static void HandleLabyInput(string input)
+        {
+            string InputStart = input.Split(' ')[0];
+            switch (InputStart.ToLower())
+            {
+                case "f":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.LabyClient.MCConnection.SendPacket(new Protocol.Packets.LabyServer.Play.FriendRequestPacket()
+                        {
+                            Name = input.Substring(2)
+                        });
+                    }
+                    break;
+
+                case "u":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        Client.LabyClient.MCConnection.SendPacket(new Protocol.Packets.LabyServer.Play.FriendRemovePacket()
+                        {
+                            Name = input.Substring(2)
+                        });
                     }
                     break;
             }

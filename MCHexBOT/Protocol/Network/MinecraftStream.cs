@@ -309,13 +309,13 @@ namespace MCHexBOT.Network
                         break;
 
 					case EntityMetadataType.Slot:
-						Value = ReadBool() ? new SlotData()
-						{
-							ID = ReadVarInt(),
-							Count = (byte)ReadByte(),
-							NBT = ReadNbtCompound(),
-						} : null;
-						break;
+						//Value = ReadBool() ? new SlotData()
+						//{
+						//	ID = ReadVarInt(),
+						//	Count = (byte)ReadByte(),
+						//	NBT = ReadNbtCompound(),
+						//} : null;
+						throw new NotImplementedException();
 
 					case EntityMetadataType.Boolean:
 						Value = ReadBool();
@@ -346,8 +346,9 @@ namespace MCHexBOT.Network
 						break;
 
 					case EntityMetadataType.NBT:
-						Value = ReadNbtCompound();
-						break;
+                        //Value = ReadNbtCompound();
+                        throw new NotImplementedException();
+                        break;
 
 					case EntityMetadataType.Particle:
 						// fr its cancer 
@@ -585,7 +586,7 @@ namespace MCHexBOT.Network
 		{
 			try
             {
-				NbtTagType t = (NbtTagType)(ReadUnsignedByte());
+				NbtTagType t = (NbtTagType)ReadUnsignedByte();
 
 				if (t != NbtTagType.Compound) return null;
 				Position--;

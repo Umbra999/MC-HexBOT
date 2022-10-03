@@ -145,6 +145,8 @@ namespace MCHexBOT.Network
             // Play
             registry.AddPacket(0x3F, new Protocol.Packets.LabyServer.Play.PongPacket(), ConnectionState.Play);
             registry.AddPacket(0x44, new Protocol.Packets.LabyServer.Play.PlayServerPacket(), ConnectionState.Play);
+            registry.AddPacket(0x10, new Protocol.Packets.LabyServer.Play.FriendRequestPacket(), ConnectionState.Play);
+            registry.AddPacket(0x12, new Protocol.Packets.LabyServer.Play.FriendRemovePacket(), ConnectionState.Play);
         }
 
         public static void RegisterVoiceClientPackets(PacketRegistry registry)

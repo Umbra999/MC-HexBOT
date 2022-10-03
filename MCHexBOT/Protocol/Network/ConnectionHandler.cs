@@ -10,7 +10,7 @@ namespace MCHexBOT.Network
 {
     public class ConnectionHandler
     {
-        private TcpClient Tcp { get; set; }
+        public TcpClient Tcp { get; }
         public MinecraftStream ReadStream { get; private set; }
         public MinecraftStream WriteStream { get; private set; }
 
@@ -47,9 +47,7 @@ namespace MCHexBOT.Network
         public void Stop()
         {
             Tcp.Client.Close();
-            Tcp.Client.Dispose();
             Tcp.Close();
-            Tcp.Dispose();
         }
 
         public void EnableWriteEncryption(byte[] key)

@@ -22,5 +22,27 @@ namespace MCHexBOT.Utils
                 HttpResponseMessage Response = await CurrentClient.SendAsync(Payload);
             });
         }
+
+        public static byte[] GetVarInt(int paramInt)
+        {
+            List<byte> bytes = new();
+            while ((paramInt & -128) != 0)
+            {
+                bytes.Add((byte)(paramInt & 127 | 128));
+                paramInt = (int)(((uint)paramInt) >> 7);
+            }
+            bytes.Add((byte)paramInt);
+            return bytes.ToArray();
+        }
+
+        public static byte[] ConcatBytes(params byte[][] bytes)
+        {
+            List<byte> result = new();
+            foreach (byte[] array in bytes)
+            {
+                result.AddRange(array);
+            }
+            return result.ToArray();
+        }
     }
 }

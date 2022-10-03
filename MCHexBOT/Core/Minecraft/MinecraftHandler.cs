@@ -1,4 +1,5 @@
-﻿using MCHexBOT.Core.Minecraft;
+﻿using MCHexBOT.Core.API;
+using MCHexBOT.Core.Minecraft;
 using MCHexBOT.Features;
 using MCHexBOT.HexServer;
 using MCHexBOT.Network;
@@ -6,10 +7,18 @@ using MCHexBOT.Packets;
 using MCHexBOT.Packets.Client.Login;
 using MCHexBOT.Packets.Client.Play;
 using MCHexBOT.Packets.Client.Status;
+using MCHexBOT.Packets.Server.Handshake;
+using MCHexBOT.Packets.Server.Login;
 using MCHexBOT.Protocol;
+using MCHexBOT.Protocol.Network;
 using MCHexBOT.Protocol.Utils;
 using MCHexBOT.Utils;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Tls;
+using Org.BouncyCastle.Utilities.Net;
+using System.Data.Common;
+using System.Net;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -216,13 +225,13 @@ namespace MCHexBOT.Core
             {
                 switch (pluginPacket.Channel)
                 {
-                    //case "minecraft:brand":
-                    //    Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
-                    //    {
-                    //        Channel = "minecraft:brand",
-                    //        Data = Encoding.UTF8.GetBytes("vanilla")
-                    //    });
-                    //    break;
+                    case "minecraft:brand":
+                        Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
+                        {
+                            Channel = pluginPacket.Channel,
+                            Data = Encoding.UTF8.GetBytes("vanilla")
+                        });
+                        break;
 
                     case "minecraft:register":
                         Connection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
@@ -375,7 +384,52 @@ namespace MCHexBOT.Core
         {
             if (Packet is StatusResponsePacket statusResponsePacket)
             {
+                string IP = MinecraftClient.ServerStats.IP;
                 MinecraftClient.ServerStats = JsonConvert.DeserializeObject<Serverstats>(statusResponsePacket.Status);
+                MinecraftClient.ServerStats.IP = IP;
+
+                MinecraftClient.MCConnection.Stop();
+
+                Logger.LogWarning($"{MinecraftClient.ServerStats.IP} using Protocol {MinecraftClient.ServerStats.version.protocol} [{MinecraftClient.ServerStats.version.name}]");
+
+                int ProtocolVersion = PacketMapping.DefaultProtocol;
+                if (PacketMapping.SupportedProtocols.Contains(MinecraftClient.ServerStats.version.protocol)) ProtocolVersion = MinecraftClient.ServerStats.version.protocol;
+                else Logger.LogWarning($"Protocol {MinecraftClient.ServerStats.version.protocol} is not Supported, using {ProtocolVersion}");
+
+                TcpClient Client = new(MinecraftClient.ServerStats.IP.Split(':')[0], Convert.ToInt32(MinecraftClient.ServerStats.IP.Split(':')[1]));
+
+                MinecraftClient.MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Minecraft);
+
+                PacketRegistry writer = new();
+                PacketRegistry.RegisterServerPackets(writer, ProtocolVersion);
+
+                PacketRegistry reader = new();
+                PacketRegistry.RegisterClientPackets(reader, ProtocolVersion);
+
+                MinecraftClient.MCConnection.WriterRegistry = writer;
+                MinecraftClient.MCConnection.ReaderRegistry = reader;
+
+                MinecraftClient.MCConnection.Handler = new MinecraftHandler(MinecraftClient)
+                {
+                    Connection = MinecraftClient.MCConnection
+                };
+
+                MinecraftClient.MCConnection.Start();
+
+                MinecraftClient.MCConnection.SendPacket(new HandshakePacket()
+                {
+                    NextState = HandshakePacket.HandshakeType.Login,
+                    ProtocolVersion = JsonConvert.DeserializeObject<Serverstats>(statusResponsePacket.Status).version.protocol,
+                    ServerAddress = MinecraftClient.ServerStats.IP.Split(':')[0],
+                    ServerPort = Convert.ToUInt16(MinecraftClient.ServerStats.IP.Split(':')[1])
+                });
+
+                MinecraftClient.MCConnection.State = ConnectionState.Login;
+
+                MinecraftClient.MCConnection.SendPacket(new LoginStartPacket()
+                {
+                    Username = MinecraftClient.APIClient.CurrentUser.name
+                });
             }
         }
 
