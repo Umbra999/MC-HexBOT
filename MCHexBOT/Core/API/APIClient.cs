@@ -159,5 +159,18 @@ namespace MCHexBOT.Core.API
             if (Response.IsSuccessStatusCode) return await Response.Content.ReadAsStringAsync();
             return null;
         }
+
+        public async Task<LabyCoinCount> GetCoinsCount()
+        {
+            HttpRequestMessage Payload = new(HttpMethod.Post, $"https://www.labymod.net/api/coins/action/get-balance-to-send");
+
+            HttpResponseMessage Response = await LabyClient.SendAsync(Payload);
+            if (Response.IsSuccessStatusCode)
+            {
+                string content = await Response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<LabyCoinCount>(content);
+            }
+            return null;
+        }
     }
 }

@@ -13,9 +13,9 @@ namespace MCHexBOT.HexServer
         {
             if (!File.Exists("Key.Hexed"))
             {
-                Logger.LogError("Failed to find Hex Key");
-                Thread.Sleep(5000);
-                Environment.Exit(0);
+                Logger.LogWarning("Enter Key:");
+                string NewKey = Console.ReadLine();
+                File.WriteAllText("Key.Hexed", Encryption.ToBase64(NewKey));
             }
 
             Key = Encryption.FromBase64(File.ReadAllText("Key.Hexed"));
@@ -23,12 +23,11 @@ namespace MCHexBOT.HexServer
             if (!await IsValidKey())
             {
                 Logger.LogError("Key is not Valid");
-                Thread.Sleep(5000);
+                await Task.Delay(5000);
                 Environment.Exit(0);
             }
 
             await FetchSearchList();
-
         }
 
         private static async Task<string> FetchTime()

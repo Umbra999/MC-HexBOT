@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -60,21 +61,14 @@ namespace MCHexBOT.HexServer
         public static string GetHWID()
         {
             string HWID = "";
-            HWID += GetProductID();
-            HWID += "0";
-            HWID += Environment.ProcessorCount;
-            HWID += ToBase64(Environment.UserName);
-            HWID += "o";
-            HWID += ToBase64(Environment.MachineName);
-            HWID += "XI";
-            HWID += GetMachineID();
-            HWID += "v3";
-            HWID += GetProfileGUID();
-            HWID = ToBase64(HWID);
-            HWID += "94p";
-            HWID = ToBase64(HWID);
-            HWID += "xL";
-            return GenerateHash(HWID);
+            HWID += Environment.MachineName;
+            HWID += GetMacID();
+            HWID += GetBiosID();
+            HWID += GetDriveID();
+            HWID += GetBoardID();
+            HWID += GetProcessorID();
+            HWID = GenerateHash(ToBase64(HWID));
+            return "H" + HWID + "EX";
         }
 
         public static string GenerateHash(string Text)
@@ -86,28 +80,54 @@ namespace MCHexBOT.HexServer
         }
 
 
-        private static string GetProductID()
+        private static string GetIdentifier(string wmiClass, string wmiProperty, string wmiMustBeTrue = "")
         {
-            RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", false);
-            string ProductID = registryKey.GetValue("ProductID").ToString();
-            registryKey.Close();
-            return ProductID;
+            string result = "";
+            ManagementClass mc = new(wmiClass);
+            ManagementObjectCollection moc = mc.GetInstances();
+            foreach (ManagementObject mo in moc)
+            {
+                if (wmiMustBeTrue != "")
+                {
+                    if (mo[wmiMustBeTrue].ToString() != "True") continue;
+                }
+
+                if (result == "")
+                {
+                    try
+                    {
+                        result = mo[wmiProperty].ToString();
+                        break;
+                    }
+                    catch { }
+                }
+            }
+            return result;
         }
 
-        private static string GetMachineID()
+        private static string GetMacID()
         {
-            RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE\\Microsoft\\SQMClient", false);
-            string MachineID = registryKey.GetValue("MachineId").ToString();
-            registryKey.Close();
-            return MachineID;
+            return GetIdentifier("Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled");
         }
 
-        private static string GetProfileGUID()
+        private static string GetBiosID()
         {
-            RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\IDConfigDB\\Hardware Profiles\\0001", false);
-            string ProfileGUID = registryKey.GetValue("HwProfileGUID").ToString();
-            registryKey.Close();
-            return ProfileGUID;
+            return GetIdentifier("Win32_BIOS", "Manufacturer") + GetIdentifier("Win32_BIOS", "SerialNumber") + GetIdentifier("Win32_BIOS", "ReleaseDate");
+        }
+
+        private static string GetDriveID()
+        {
+            return GetIdentifier("Win32_DiskDrive", "Model");
+        }
+
+        private static string GetBoardID()
+        {
+            return GetIdentifier("Win32_BaseBoard", "Manufacturer") + GetIdentifier("Win32_BaseBoard", "SerialNumber");
+        }
+
+        private static string GetProcessorID()
+        {
+            return GetIdentifier("Win32_Processor", "ProcessorId") + GetIdentifier("Win32_Processor", "Name") + GetIdentifier("Win32_Processor", "Manufacturer");
         }
     }
 }

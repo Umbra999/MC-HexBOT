@@ -13,8 +13,10 @@ namespace MCHexBOT
     internal class Main
     {
         public static List<MinecraftClient> Clients = new();
+       
+        public static bool LabyCoinCollector = false;
 
-        public static void Init()
+        public static async Task Load()
         {
             Console.Title = "HexBOT | Minecraft";
             Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -36,23 +38,36 @@ namespace MCHexBOT
       \|
 ");
 
-            Task.Run(() => CreateBots());
+            Logger.Log("Authenticating...");
+            await ServerHandler.Init();
+
+            await CreateBots();
+
+            if (LabyCoinCollector) await RunLabyLoop();
+
             RunGUI();
         }
 
         private static async Task CreateBots()
         {
-            await ServerHandler.Init();
-
             if (!File.Exists("Accounts.txt"))
             {
                 Logger.LogError("No Accounts found");
-                Thread.Sleep(5000);
+                await Task.Delay(3000);
                 return;
             }
 
+            int NeedsDelayCount = 0;
             foreach (string Account in File.ReadAllLines("Accounts.txt"))
             {
+                NeedsDelayCount++;
+                if (NeedsDelayCount == 4)
+                {
+                    Logger.LogWarning("Logged into to many Accounts, delaying for 60 seconds");
+                    await Task.Delay(60000);
+                    NeedsDelayCount = 1;
+                }
+
                 string Token = XboxLive.GetXboxToken(Account.Split(':')[0], Account.Split(':')[1]);
                 if (Token == null)
                 {
@@ -70,6 +85,28 @@ namespace MCHexBOT
                 Clients.Add(new MinecraftClient(Client));
             }
             Console.Title = $"HexBOT | {Clients.Count} Bots";
+
+            await Task.Delay(2500);
+        }
+
+        private static async Task RunLabyLoop()
+        {
+            for (; ; )
+            {
+                foreach (MinecraftClient Client in Clients)
+                {
+                    Logger.LogImportant($"{Client.APIClient.CurrentUser.name} collecting Labycoins");
+                    Client.LabyClient.Disconnect();
+                    Client.Disconnect();
+                }
+
+                Clients.Clear();
+
+                Logger.Log("Waiting 6 Hours before collecting Coins again");
+                Thread.Sleep(21600000);
+
+                await CreateBots();
+            }
         }
 
         private static void RunGUI()

@@ -1,3 +1,4 @@
 ﻿using MCHexBOT;
 
-Main.Init();
+var task = Main.Load();
+task.Wait();

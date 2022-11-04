@@ -23,33 +23,37 @@ namespace MCHexBOT.Core.Laby
 
         public void Connect(string Host, int Port)
         {
-            Disconnect();
-
-            TcpClient Client = new(Host, Port);
-
-            MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Labymod);
-
-            PacketRegistry writer = new();
-            PacketRegistry.RegisterLabyServerPackets(writer);
-
-            PacketRegistry reader = new();
-            PacketRegistry.RegisterLabyClientPackets(reader);
-
-            MCConnection.WriterRegistry = writer;
-            MCConnection.ReaderRegistry = reader;
-
-            MCConnection.Handler = new LabyHandler(this)
+            try
             {
-                Connection = MCConnection
-            };
+                Disconnect();
 
-            MCConnection.Start();
+                TcpClient Client = new(Host, Port);
 
-            MCConnection.SendPacket(new HelloPacket()
-            {
-                TickTime = Environment.TickCount,
-                Type = ProtocolVersion,
-            });
+                MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Labymod);
+
+                PacketRegistry writer = new();
+                PacketRegistry.RegisterLabyServerPackets(writer);
+
+                PacketRegistry reader = new();
+                PacketRegistry.RegisterLabyClientPackets(reader);
+
+                MCConnection.WriterRegistry = writer;
+                MCConnection.ReaderRegistry = reader;
+
+                MCConnection.Handler = new LabyHandler(this)
+                {
+                    Connection = MCConnection
+                };
+
+                MCConnection.Start();
+
+                MCConnection.SendPacket(new HelloPacket()
+                {
+                    TickTime = Environment.TickCount,
+                    Type = ProtocolVersion,
+                });
+            }
+            catch { }
         }
 
         public void Disconnect()

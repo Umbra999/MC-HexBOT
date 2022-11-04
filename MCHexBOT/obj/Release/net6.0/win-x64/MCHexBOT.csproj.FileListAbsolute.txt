@@ -18,3 +18,5 @@ C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\obj\Release\net6.0\win-x64\ref
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\obj\Release\net6.0\win-x64\MCHexBOT.pdb
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\obj\Release\net6.0\win-x64\MCHexBOT.genruntimeconfig.cache
 C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\obj\Release\net6.0\win-x64\ref\MCHexBOT.dll
+C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\win-x64\System.CodeDom.dll
+C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\win-x64\System.Management.dll

@@ -42,46 +42,50 @@ namespace MCHexBOT.Core.Minecraft
 
         public bool Connect(string Host, int Port)
         {
-            Disconnect();
-
-            TcpClient Client = new(Host, Port);
-
-            MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Minecraft);
-
-            PacketRegistry writer = new();
-            PacketRegistry.RegisterServerPackets(writer, PacketMapping.DefaultProtocol);
-
-            PacketRegistry reader = new();
-            PacketRegistry.RegisterClientPackets(reader, PacketMapping.DefaultProtocol);
-
-            MCConnection.WriterRegistry = writer;
-            MCConnection.ReaderRegistry = reader;
-
-            MCConnection.Handler = new MinecraftHandler(this)
+            try
             {
-                Connection = MCConnection
-            };
+                Disconnect();
 
-            MCConnection.Start();
+                TcpClient Client = new(Host, Port);
 
-            ServerStats = new Serverstats() { IP = Host + ":" + Port };
+                MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Minecraft);
 
-            MCConnection.SendPacket(new HandshakePacket()
-            {
-                NextState = HandshakePacket.HandshakeType.Status,
-                ProtocolVersion = PacketMapping.DefaultProtocol,
-                ServerAddress = Host,
-                ServerPort = (ushort)Port
-            });
+                PacketRegistry writer = new();
+                PacketRegistry.RegisterServerPackets(writer, PacketMapping.DefaultProtocol);
 
-            MCConnection.State = ConnectionState.Status;
+                PacketRegistry reader = new();
+                PacketRegistry.RegisterClientPackets(reader, PacketMapping.DefaultProtocol);
 
-            MCConnection.SendPacket(new StatusRequestPacket()
-            {
+                MCConnection.WriterRegistry = writer;
+                MCConnection.ReaderRegistry = reader;
 
-            });
+                MCConnection.Handler = new MinecraftHandler(this)
+                {
+                    Connection = MCConnection
+                };
 
-            return true;
+                MCConnection.Start();
+
+                ServerStats = new Serverstats() { IP = Host + ":" + Port };
+
+                MCConnection.SendPacket(new HandshakePacket()
+                {
+                    NextState = HandshakePacket.HandshakeType.Status,
+                    ProtocolVersion = PacketMapping.DefaultProtocol,
+                    ServerAddress = Host,
+                    ServerPort = (ushort)Port
+                });
+
+                MCConnection.State = ConnectionState.Status;
+
+                MCConnection.SendPacket(new StatusRequestPacket()
+                {
+
+                });
+
+                return true;
+            }
+            catch { return false; }
         }
 
         public void Disconnect()

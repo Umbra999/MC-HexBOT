@@ -65,4 +65,10 @@
         public string pin { get; set; }
         public long expires_at { get; set; }
     }
+
+    public class LabyCoinCount
+    {
+        public int balance { get; set; }
+        public int boughtBalance { get; set; }
+    }
 }
