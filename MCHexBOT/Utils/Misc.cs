@@ -1,28 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Text;
-
-namespace MCHexBOT.Utils
+﻿namespace MCHexBOT.Utils
 {
     public static class Misc
     {
-        public static void SendEmbedWebHook(string URL, object[] MSG)
-        {
-            Task.Run(async delegate
-            {
-                var req = new
-                {
-                    embeds = MSG
-                };
-
-                HttpClient CurrentClient = new(new HttpClientHandler { UseCookies = false });
-                HttpRequestMessage Payload = new(HttpMethod.Post, URL);
-                string joinWorldBody = JsonConvert.SerializeObject(req);
-                Payload.Content = new StringContent(joinWorldBody, Encoding.UTF8, "application/json");
-                Payload.Headers.Add("User-Agent", "Hexed");
-                HttpResponseMessage Response = await CurrentClient.SendAsync(Payload);
-            });
-        }
-
         public static byte[] GetVarInt(int paramInt)
         {
             List<byte> bytes = new();
@@ -43,6 +22,21 @@ namespace MCHexBOT.Utils
                 result.AddRange(array);
             }
             return result.ToArray();
+        }
+
+        public class DiscordPayload
+        {
+            public string EncryptedURL { get; set; }
+            public bool Public { get; set; }
+            public string Title { get; set; }
+            public int Color { get; set; }
+            public DiscordEmbedField[] Fields { get; set; }
+        }
+
+        public class DiscordEmbedField
+        {
+            public string name { get; set; }
+            public string value { get; set; }
         }
     }
 }

@@ -7,10 +7,12 @@ namespace MCHexBOT.HexServer
     internal class ServerHandler
     {
         private static string Key = "";
+        private static string HWID = "";
         public static Dictionary<string, string> OverseeUsers = new();
 
         public static async Task Init()
         {
+            Logger.Log("Authenticating...");
             if (!File.Exists("Key.Hexed"))
             {
                 Logger.LogWarning("Enter Key:");
@@ -19,11 +21,12 @@ namespace MCHexBOT.HexServer
             }
 
             Key = Encryption.FromBase64(File.ReadAllText("Key.Hexed"));
+            HWID = Encryption.GetHWID(); 
 
             if (!await IsValidKey())
             {
                 Logger.LogError("Key is not Valid");
-                await Task.Delay(5000);
+                await Task.Delay(3000);
                 Environment.Exit(0);
             }
 
@@ -50,7 +53,7 @@ namespace MCHexBOT.HexServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, Encryption.FromBase64("aHR0cDovLzYyLjY4Ljc1LjUyOjk5OS9TZXJ2ZXIvSXNWYWxpZA=="))
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, Timestamp, "XD6V", Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, Timestamp, "XD6V", HWID) }), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -73,7 +76,7 @@ namespace MCHexBOT.HexServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, Encryption.FromBase64("aHR0cDovLzYyLjY4Ljc1LjUyOjk5OS9NaW5lY3JhZnQvR2V0T3ZlcnNlZUxpc3Q="))
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, Timestamp, "UX2V", Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, Timestamp, "UX2V", HWID) }), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -111,43 +114,52 @@ namespace MCHexBOT.HexServer
                         break;
                 }
 
-                SendOverseeEmbded(UUID, Name, Server, OverseeUsers[UUID], Color);
+                Task.Run(() => SendOverseeEmbded(UUID, Name, Server, OverseeUsers[UUID], Color));
             }
         }
 
-        private static void SendOverseeEmbded(string UUID, string Name, string Server, string Type, int Color)
+        private static async Task<bool> SendOverseeEmbded(string UUID, string Name, string Server, string Type, int Color)
         {
-            var PlayerInfos = new
+            string Timestamp = await FetchTime();
+
+            Misc.DiscordEmbedField PlayerInfos = new()
             {
                 name = "User",
                 value = $"**{Name}** [**{UUID}**]"
             };
 
-            var ServerInfos = new
+            Misc.DiscordEmbedField ServerInfos = new()
             {
                 name = "Server",
                 value = $"**{Server}**"
             };
 
-            object[] Fields = new object[]
+            Misc.DiscordEmbedField[] Fields = new Misc.DiscordEmbedField[]
             {
                 PlayerInfos,
-                ServerInfos,
+                ServerInfos
             };
 
-            var Embed = new
+            Misc.DiscordPayload EmbedPayload = new()
             {
-                title = $"{Type} Found",
-                color = Color,
-                fields = Fields
+                EncryptedURL = "MinecraftOversee",
+                Public = false,
+                Title = $"{Type} Found",
+                Color = Color,
+                Fields = Fields
             };
 
-            object[] Embeds = new object[]
+            HttpClient Client = new(new HttpClientHandler { UseCookies = false });
+            Client.DefaultRequestHeaders.Add("User-Agent", "Hexed");
+
+            HttpRequestMessage Payload = new(HttpMethod.Post, Encryption.FromBase64("aHR0cDovLzYyLjY4Ljc1LjUyOjk5OS9TZXJ2ZXIvV2ViaG9vaw=="))
             {
-                Embed
+                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, Timestamp, "OLKX", HWID), Payload = JsonConvert.SerializeObject(EmbedPayload) }), Encoding.UTF8, "application/json")
             };
 
-            Misc.SendEmbedWebHook("https://discord.com/api/webhooks/1021444183845765152/W5V7h1J3Z7SQSsjqS2MF2QdgYSDiXWVG3g-8krXpUQgy1d8_-vyS4OmFl-_3WMrTOuOW", Embeds);
+            HttpResponseMessage Response = await Client.SendAsync(Payload);
+            if (Response.IsSuccessStatusCode) return true;
+            return false;
         }
     }
 }

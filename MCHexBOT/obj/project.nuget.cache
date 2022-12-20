@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "DYrxhlY3B7tUEGO56cks/wS4PSi0IF1CuUuFFHO0caMceT5dj2OBIhH4aAYYZxwCE5hbrdkE+FbB4ybjr8kKMA==",
+  "dgSpecHash": "mWvBOvuk/K2wcmk/MdZAia48164ryuihLk8BDK1cllyjq4dZr89sgSBnOzVWTcCAQCldloTGHm3SdS+fSWR5eg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Umbra\\Documents\\GitHub\\HexbotMC\\MCHexBOT\\MCHexBOT.csproj",
   "expectedPackageFiles": [
@@ -18,7 +18,6 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.native.system.security.cryptography\\4.0.0\\runtime.native.system.security.cryptography.4.0.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.appcontext\\4.1.0\\system.appcontext.4.1.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.buffers\\4.0.0\\system.buffers.4.0.0.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.collections\\4.0.11\\system.collections.4.0.11.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.collections.concurrent\\4.0.12\\system.collections.concurrent.4.0.12.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.console\\4.0.0\\system.console.4.0.0.nupkg.sha512",
@@ -36,7 +35,6 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\system.io.filesystem.primitives\\4.0.1\\system.io.filesystem.primitives.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.linq\\4.1.0\\system.linq.4.1.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.linq.expressions\\4.1.0\\system.linq.expressions.4.1.0.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\system.management\\6.0.0\\system.management.6.0.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.net.http\\4.1.0\\system.net.http.4.1.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.net.primitives\\4.0.11\\system.net.primitives.4.0.11.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.net.sockets\\4.1.0\\system.net.sockets.4.1.0.nupkg.sha512",

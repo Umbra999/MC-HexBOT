@@ -38,15 +38,15 @@ namespace MCHexBOT.Utils
         public string font { get; set; }
         public string insertion { get; set; }
         public string color { get; set; }
-        ChatClickEvent clickEvent { get; set; }
+        public ChatClickEvent clickEvent { get; set; }
         public ChatMessage[] extra { get; set; }
         public ChatMessage[] with { get; set; }
     }
 
     public class ChatClickEvent
     {
-        string action { get; set; }
-        string value { get; set; }
+        public string action { get; set; }
+        public string value { get; set; }
     }
 
     public class PlayerInfo

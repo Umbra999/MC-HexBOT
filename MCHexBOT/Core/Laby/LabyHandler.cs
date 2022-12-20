@@ -44,7 +44,7 @@ namespace MCHexBOT.Core
                 Connection.SendPacket(new LoginVersionPacket()
                 {
                     Version = LabyClient.ProtocolVersion,
-                    Name = "1.8.9_3.9.46",
+                    Name = "1.8.9_3.9.54",
                     UpdateUrl = ""
                 });
             }

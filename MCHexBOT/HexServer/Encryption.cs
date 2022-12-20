@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -62,11 +61,14 @@ namespace MCHexBOT.HexServer
         {
             string HWID = "";
             HWID += Environment.MachineName;
-            HWID += GetMacID();
-            HWID += GetBiosID();
-            HWID += GetDriveID();
-            HWID += GetBoardID();
+            HWID += Environment.UserName;
+            HWID += Environment.ProcessorCount;
             HWID += GetProcessorID();
+            HWID += GetProcessorName();
+            HWID += GetBIOSVendor();
+            HWID += GetBIOSName();
+            HWID += GetDriveName();
+            HWID += GetDriveID();
             HWID = GenerateHash(ToBase64(HWID));
             return "H" + HWID + "EX";
         }
@@ -79,55 +81,70 @@ namespace MCHexBOT.HexServer
             return ComputeHash;
         }
 
-
-        private static string GetIdentifier(string wmiClass, string wmiProperty, string wmiMustBeTrue = "")
+        private static string GetProcessorID()
         {
-            string result = "";
-            ManagementClass mc = new(wmiClass);
-            ManagementObjectCollection moc = mc.GetInstances();
-            foreach (ManagementObject mo in moc)
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+            if (key != null)
             {
-                if (wmiMustBeTrue != "")
-                {
-                    if (mo[wmiMustBeTrue].ToString() != "True") continue;
-                }
-
-                if (result == "")
-                {
-                    try
-                    {
-                        result = mo[wmiProperty].ToString();
-                        break;
-                    }
-                    catch { }
-                }
+                return key.GetValue("Identifier").ToString();
             }
-            return result;
+
+            return "";
         }
 
-        private static string GetMacID()
+        private static string GetProcessorName()
         {
-            return GetIdentifier("Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled");
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+            if (key != null)
+            {
+                return key.GetValue("ProcessorNameString").ToString();
+            }
+
+            return "";
         }
 
-        private static string GetBiosID()
+        private static string GetBIOSVendor()
         {
-            return GetIdentifier("Win32_BIOS", "Manufacturer") + GetIdentifier("Win32_BIOS", "SerialNumber") + GetIdentifier("Win32_BIOS", "ReleaseDate");
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\BIOS");
+            if (key != null)
+            {
+                return key.GetValue("BaseBoardManufacturer").ToString();
+            }
+
+            return "";
+        }
+
+        private static string GetBIOSName()
+        {
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\BIOS");
+            if (key != null)
+            {
+                return key.GetValue("BaseBoardProduct").ToString();
+            }
+
+            return "";
+        }
+
+        private static string GetDriveName()
+        {
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DEVICEMAP\Scsi\Scsi Port 0\Scsi Bus 0\Target Id 0\Logical Unit Id 0");
+            if (key != null)
+            {
+                return key.GetValue("Identifier").ToString();
+            }
+
+            return "";
         }
 
         private static string GetDriveID()
         {
-            return GetIdentifier("Win32_DiskDrive", "Model");
-        }
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DEVICEMAP\Scsi\Scsi Port 0\Scsi Bus 0\Target Id 0\Logical Unit Id 0");
+            if (key != null)
+            {
+                return key.GetValue("SerialNumber").ToString();
+            }
 
-        private static string GetBoardID()
-        {
-            return GetIdentifier("Win32_BaseBoard", "Manufacturer") + GetIdentifier("Win32_BaseBoard", "SerialNumber");
-        }
-
-        private static string GetProcessorID()
-        {
-            return GetIdentifier("Win32_Processor", "ProcessorId") + GetIdentifier("Win32_Processor", "Name") + GetIdentifier("Win32_Processor", "Manufacturer");
+            return "";
         }
     }
 }

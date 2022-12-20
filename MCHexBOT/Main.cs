@@ -38,7 +38,6 @@ namespace MCHexBOT
       \|
 ");
 
-            Logger.Log("Authenticating...");
             await ServerHandler.Init();
 
             await CreateBots();
@@ -76,7 +75,7 @@ namespace MCHexBOT
                 }
 
                 APIClient Client = new();
-                if (!await Client.LoginToMinecraft(Token))
+                if (!await Client.LoginToMinecraft(Token) || Client.CurrentUser == null)
                 {
                     Logger.LogError($"Failed to Validate Minecraft Login: {Account}");
                     continue;

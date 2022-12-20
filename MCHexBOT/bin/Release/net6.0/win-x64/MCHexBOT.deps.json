@@ -12,8 +12,7 @@
           "BouncyCastle.Crypto.dll": "1.8.1",
           "Iconic.Zlib.Netstandard": "1.0.0",
           "MiNET.fnbt": "1.0.22",
-          "Newtonsoft.Json": "13.0.1",
-          "System.Management": "6.0.0"
+          "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
           "MCHexBOT.dll": {}
@@ -253,14 +252,6 @@
           "System.Threading": "4.0.11"
         }
       },
-      "System.CodeDom/6.0.0": {
-        "runtime": {
-          "lib/net6.0/System.CodeDom.dll": {
-            "assemblyVersion": "6.0.0.0",
-            "fileVersion": "6.0.21.52210"
-          }
-        }
-      },
       "System.Collections/4.0.11": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.0.1",
@@ -440,17 +431,6 @@
           "System.Runtime": "4.1.0",
           "System.Runtime.Extensions": "4.1.0",
           "System.Threading": "4.0.11"
-        }
-      },
-      "System.Management/6.0.0": {
-        "dependencies": {
-          "System.CodeDom": "6.0.0"
-        },
-        "runtime": {
-          "runtimes/win/lib/net6.0/System.Management.dll": {
-            "assemblyVersion": "4.0.0.0",
-            "fileVersion": "6.0.21.52210"
-          }
         }
       },
       "System.Net.Http/4.1.0": {
@@ -1185,13 +1165,6 @@
       "path": "system.buffers/4.0.0",
       "hashPath": "system.buffers.4.0.0.nupkg.sha512"
     },
-    "System.CodeDom/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-CPc6tWO1LAer3IzfZufDBRL+UZQcj5uS207NHALQzP84Vp/z6wF0Aa0YZImOQY8iStY0A2zI/e3ihKNPfUm8XA==",
-      "path": "system.codedom/6.0.0",
-      "hashPath": "system.codedom.6.0.0.nupkg.sha512"
-    },
     "System.Collections/4.0.11": {
       "type": "package",
       "serviceable": true,
@@ -1310,13 +1283,6 @@
       "sha512": "sha512-I+y02iqkgmCAyfbqOmSDOgqdZQ5tTj80Akm5BPSS8EeB0VGWdy6X1KCoYe8Pk6pwDoAKZUOdLVxnTJcExiv5zw==",
       "path": "system.linq.expressions/4.1.0",
       "hashPath": "system.linq.expressions.4.1.0.nupkg.sha512"
-    },
-    "System.Management/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-sHsESYMmPDhQuOC66h6AEOs/XowzKsbT9srMbX71TCXP58hkpn1BqBjdmKj1+DCA/WlBETX1K5WjQHwmV0Txrg==",
-      "path": "system.management/6.0.0",
-      "hashPath": "system.management.6.0.0.nupkg.sha512"
     },
     "System.Net.Http/4.1.0": {
       "type": "package",
