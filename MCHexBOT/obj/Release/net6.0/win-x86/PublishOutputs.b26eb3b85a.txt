@@ -1,2 +1,0 @@
-C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\win-x86\MCHexBOT.pdb
-C:\Users\Umbra\Documents\GitHub\HexbotMC\MCHexBOT\bin\Release\net6.0\publish\win-x86\MCHexBOT.exe
