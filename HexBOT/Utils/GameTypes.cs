@@ -1,8 +1,7 @@
-﻿using fNbt;
-using HexBOT.Packets;
+﻿using HexBOT.Packets;
 using HexBOT.Protocol;
-using HexBOT.Protocol.Utils;
 using System.Numerics;
+using static HexBOT.Packets.Client.Play.PlayerListItemPacket;
 
 namespace HexBOT.Utils
 {
@@ -10,8 +9,8 @@ namespace HexBOT.Utils
     {
         public int EntityID { get; set; }
         public string UUID { get; set; }
+        public string Name { get; set; }
         public bool IsLocal { get; set; }
-        public PlayerInfo PlayerInfo { get; set; }
         public Vector3 Position { get; set; }
         public Vector2 Rotation { get; set; }
         public Vector3 Velocity { get; set; }
@@ -24,6 +23,12 @@ namespace HexBOT.Utils
         public bool IsBurning { get; set; }
         public bool IsInvisible { get; set; }
         public short HeldItemSlot { get; set; }
+        public int NumberOfProperties { get; set; }
+        public List<PlayerInfoProperty> Properties { get; set; }
+        public int GameMode { get; set; }
+        public int Ping { get; set; }
+        public bool HasDisplayName { get; set; }
+        public string DisplayName { get; set; }
 
     }
 
@@ -48,26 +53,6 @@ namespace HexBOT.Utils
     {
         public string action { get; set; }
         public string value { get; set; }
-    }
-
-    public class PlayerInfo
-    {
-        public string UUID { get; set; }
-        public string Name { get; set; }
-        public int NumberOfProperties { get; set; }
-        public List<PlayerInfoProperty> Properties { get; set; }
-        public int GameMode { get; set; }
-        public int Ping { get; set; }
-        public bool HasDisplayName { get; set; }
-        public string DisplayName { get; set; }
-    }
-
-    public class PlayerInfoProperty
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public bool Singed { get; set; }
-        public string Signature { get; set; }
     }
 
     public class PacketQueueItem

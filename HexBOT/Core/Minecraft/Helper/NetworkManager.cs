@@ -31,6 +31,12 @@ namespace HexBOT.Core.Minecraft.Helper
             Bot.SendPlayerSetings(true, Packets.Server.Play.ClientSettingsPacket.ChatType.Enabled, byte.MaxValue, "en_GB", 64);
         }
 
+        public void OnDisconnectedFromServer(string Reason)
+        {
+            Logger.LogError($"{Bot.APIClient.CurrentUser.name} disconnected from Server: {Reason}");
+            Bot.EntityManager.ClearAllPlayers();
+        }
+
         public static uint PingDelay = 0; 
         public void OnPingReceived(KeepAlivePacket packet)
         {

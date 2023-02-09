@@ -55,7 +55,7 @@ namespace HexBOT.Features
 
         private static void SendOnGround(MinecraftClient Bot, bool IsGround)
         {
-            Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerMovementPacket()
+            Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerPacket()
             {
                 OnGround = IsGround,
             });
@@ -227,30 +227,35 @@ namespace HexBOT.Features
         public static string FollowTarget = "";
         public static async Task LoopPlayerMovement(MinecraftClient Bot)
         {
-            Player[] Founds = Bot.EntityManager.AllPlayers.Where(x => x.PlayerInfo.Name == FollowTarget).ToArray();
-            if (Founds.Length == 0) return;
-            Player Target = Founds.First();
-
-            Vector3 CurrentTargetPos = Target.Position;
-            Vector3 LastTargetPos = Target.Position;
-
-            CancellationTokenSource tokenSource = new();
-
-            while (Target != null && FollowTarget == Target.PlayerInfo.Name)
+            var MatchingPlayers = Bot.EntityManager.AllPlayers.Where(x => x.Name == FollowTarget);
+            if (MatchingPlayers != null)
             {
-                CurrentTargetPos = Target.Position;
-                if (CurrentTargetPos != LastTargetPos)
+                Player[] players = MatchingPlayers.ToArray();
+                if (players.Length < 1) return;
+
+                Player Target = players[0];
+
+                Vector3 CurrentTargetPos = Target.Position;
+                Vector3 LastTargetPos = Target.Position;
+
+                CancellationTokenSource tokenSource = new();
+
+                while (Target != null && FollowTarget == Target.Name)
                 {
-                    LastTargetPos = CurrentTargetPos;
-                    tokenSource.Cancel();
-                    tokenSource = new CancellationTokenSource();
-                    MoveToPosition(Bot, CurrentTargetPos, tokenSource);
+                    CurrentTargetPos = Target.Position;
+                    if (CurrentTargetPos != LastTargetPos)
+                    {
+                        LastTargetPos = CurrentTargetPos;
+                        tokenSource.Cancel();
+                        tokenSource = new CancellationTokenSource();
+                        MoveToPosition(Bot, CurrentTargetPos, tokenSource);
+                    }
+
+                    await Task.Delay(50);
                 }
 
-                await Task.Delay(50);
+                tokenSource.Cancel();
             }
-
-            tokenSource.Cancel();
         }
 
         // Math Helper

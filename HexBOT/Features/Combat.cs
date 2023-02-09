@@ -35,32 +35,32 @@ namespace HexBOT.Features
 
         public static async Task CombatLoop(MinecraftClient Bot)
         {
-            while (TargetNames.Count > 0)
-            {
-                Player[] Founds = Bot.EntityManager.AllPlayers.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)).ToArray();
-                if (Founds.Length == 0) return;
+            //while (TargetNames.Count > 0)
+            //{
+            //    Player[] Founds = Bot.EntityManager.AllPlayers.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)).ToArray();
+            //    if (Founds.Length == 0) return;
 
-                foreach (Player player in Founds)
-                {
-                    if (RangeLimit)
-                    {
-                        if (Vector3.Distance(Bot.EntityManager.LocalPlayer.Position, player.Position) < Range)
-                        {
-                            Movement.LookAtPosition(Bot, player.Position);
-                            Bot.SendEntityInteraction(player.EntityID, UseEntityPacket.EntityInteractType.Attack);
-                            Bot.SendAnimation();
-                        }
-                    }
-                    else
-                    {
-                        Movement.LookAtPosition(Bot, player.Position);
-                        Bot.SendEntityInteraction(player.EntityID, UseEntityPacket.EntityInteractType.Attack);
-                        Bot.SendAnimation();
-                    }
-                }
+            //    foreach (Player player in Founds)
+            //    {
+            //        if (RangeLimit)
+            //        {
+            //            if (Vector3.Distance(Bot.EntityManager.LocalPlayer.Position, player.Position) < Range)
+            //            {
+            //                Movement.LookAtPosition(Bot, player.Position);
+            //                Bot.SendEntityInteraction(player.EntityID, UseEntityPacket.EntityInteractType.Attack);
+            //                Bot.SendAnimation();
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Movement.LookAtPosition(Bot, player.Position);
+            //            Bot.SendEntityInteraction(player.EntityID, UseEntityPacket.EntityInteractType.Attack);
+            //            Bot.SendAnimation();
+            //        }
+            //    }
 
-                await Task.Delay(60);
-            }
+            //    await Task.Delay(60);
+            //}
         }
     }
 }

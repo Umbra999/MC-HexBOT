@@ -64,12 +64,13 @@ namespace HexBOT.Core
 
                 Connection.SendPacket(new Protocol.Packets.LabyServer.Play.PlayServerPacket()
                 {
-                    IP = "www.logout.space <3",
+                    IP = "➥ www.logout.space ⚠",
                     //IP = Encryption.RandomString(99900),
                     Port = 25565,
+                    //Port = -999,
                     viaServerList = true,
                     //Gamemode = Encryption.RandomString(99900),
-                    Gamemode = "i simp for pokimane <3"
+                    Gamemode = "❤ i hate everything about u ❤"
                 });
 
                 Logger.Log($"{LabyClient.MinecraftClient.APIClient.CurrentUser.name} connected to Labymod");

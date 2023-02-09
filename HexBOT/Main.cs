@@ -139,6 +139,7 @@ namespace HexBOT
                         Logger.LogImportant("N [NAME] - Change the Name");
                         Logger.LogImportant("S [URL] - Change the Skin");
                         Logger.LogImportant("O - Refresh the Oversee");
+                        Logger.LogImportant("D - Dump all Players");
                         Logger.LogImportant("-----------------");
                         HandleDebugInput(Console.ReadLine());
                         break;
@@ -229,8 +230,8 @@ namespace HexBOT
                 case "w":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Vector3 Target = Client.EntityManager.AllPlayers.Where(x => x.PlayerInfo.Name == input.Substring(2)).First().Position;
-                        Task.Run(() => Movement.MoveToPosition(Client, Target));
+                        //Vector3 Target = Client.EntityManager.AllPlayers.Where(x => x.PlayerInfo.Name == input.Substring(2)).First().Position;
+                        //Task.Run(() => Movement.MoveToPosition(Client, Target));
                     }
                     break;
 
@@ -350,6 +351,23 @@ namespace HexBOT
 
                 case "o":
                     Task.Run(() => ServerHandler.FetchSearchList());
+                    break;
+
+                case "d":
+                    foreach (MinecraftClient Client in Clients)
+                    {
+                        foreach (Player p in Client.EntityManager.AllPlayers)
+                        {
+                            Console.WriteLine("=================");
+                            Console.WriteLine("Name: " + p.Name);
+                            Console.WriteLine("UUID: " + p.UUID);
+                            Console.WriteLine("Ping: " + p.Ping);
+                            Console.WriteLine("Position: " + p.Position);
+                            Console.WriteLine("Rotation: " + p.Rotation);
+                            Console.WriteLine("Velocity: " + p.Velocity);
+                            Console.WriteLine("=================");
+                        }
+                    }
                     break;
             }
         }

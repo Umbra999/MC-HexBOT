@@ -1,5 +1,4 @@
 ﻿using HexBOT.Network;
-using HexBOT.Utils;
 
 namespace HexBOT.Packets.Client.Play
 {
@@ -70,6 +69,26 @@ namespace HexBOT.Packets.Client.Play
         public void Encode(MinecraftStream minecraftStream)
         {
             throw new NotImplementedException();
+        }
+
+        public class PlayerInfo
+        {
+            public string UUID { get; set; }
+            public string Name { get; set; }
+            public int NumberOfProperties { get; set; }
+            public List<PlayerInfoProperty> Properties { get; set; }
+            public int GameMode { get; set; }
+            public int Ping { get; set; }
+            public bool HasDisplayName { get; set; }
+            public string DisplayName { get; set; }
+        }
+
+        public class PlayerInfoProperty
+        {
+            public string Name { get; set; }
+            public string Value { get; set; }
+            public bool Singed { get; set; }
+            public string Signature { get; set; }
         }
     }
 }

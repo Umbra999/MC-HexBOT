@@ -84,7 +84,7 @@ namespace HexBOT.Network
             registry.AddPacket(0x3F, new Packets.Client.Play.PluginMessagePacket(), ConnectionState.Play);
             registry.AddPacket(0x40, new Packets.Client.Play.DisconnectPacket(), ConnectionState.Play);
 
-            //registry.AddPacket(0x38, new Packets.Client.Play.PlayerListItemPacket(), ConnectionState.Play);
+            registry.AddPacket(0x38, new Packets.Client.Play.PlayerListItemPacket(), ConnectionState.Play);
         }
 
         // Packets the server can understand
@@ -105,7 +105,7 @@ namespace HexBOT.Network
             registry.AddPacket(0x00, new Packets.Server.Play.KeepAlivePacket(), ConnectionState.Play);
             registry.AddPacket(0x01, new Packets.Server.Play.ChatMessagePacket(), ConnectionState.Play);
             registry.AddPacket(0x02, new Packets.Server.Play.UseEntityPacket(), ConnectionState.Play);
-            registry.AddPacket(0x03, new Packets.Server.Play.PlayerMovementPacket(), ConnectionState.Play);
+            registry.AddPacket(0x03, new Packets.Server.Play.PlayerPacket(), ConnectionState.Play);
             registry.AddPacket(0x04, new Packets.Server.Play.PlayerPositionPacket(), ConnectionState.Play);
             registry.AddPacket(0x05, new Packets.Server.Play.PlayerRotationPacket(), ConnectionState.Play);
             registry.AddPacket(0x06, new Packets.Server.Play.PlayerPositionAndRotationPacket(), ConnectionState.Play);

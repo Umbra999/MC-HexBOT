@@ -16,12 +16,13 @@ namespace HexBOT.Core.Minecraft
         public ConnectionHandler MCConnection;
 
         public readonly APIClient APIClient;
-        public LabyClient LabyClient;
+        public readonly LabyClient LabyClient;
 
-        public EntityManager EntityManager;
-        public NetworkManager NetworkManager;
-        public ChatManager ChatManager;
-        public MovementManager MovementManager;
+        public readonly EntityManager EntityManager;
+        public readonly NetworkManager NetworkManager;
+        public readonly ChatManager ChatManager;
+        public readonly MovementManager MovementManager;
+        public readonly CombatManager CombatManager;
 
         public MinecraftClient(APIClient WebClient)
         {
@@ -31,6 +32,7 @@ namespace HexBOT.Core.Minecraft
             NetworkManager = new NetworkManager(this);
             ChatManager = new ChatManager(this);
             MovementManager = new MovementManager(this);
+            CombatManager = new CombatManager(this);
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
@@ -90,8 +92,9 @@ namespace HexBOT.Core.Minecraft
             if (MCConnection != null)
             {
                 MCConnection.Stop();
-                Logger.LogError($"{APIClient.CurrentUser.name} disconnected from Server");
                 MCConnection = null;
+
+                NetworkManager.OnDisconnectedFromServer("Leave");
             }
         }
 
