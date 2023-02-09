@@ -75,6 +75,7 @@ namespace HexBOT.Core.API
             Payload.Content.Headers.ContentType.CharSet = "";
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
+
             return Response.IsSuccessStatusCode;
         }
 
@@ -89,6 +90,7 @@ namespace HexBOT.Core.API
             Payload.Content.Headers.ContentType.CharSet = "";
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
+
             return Response.IsSuccessStatusCode;
         }
 
@@ -99,6 +101,7 @@ namespace HexBOT.Core.API
             HttpResponseMessage Response = await Client.SendAsync(Payload);
 
             string content = await Response.Content.ReadAsStringAsync();
+
             if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<APIUser>(content);
             return null;
         }
@@ -110,6 +113,7 @@ namespace HexBOT.Core.API
             HttpResponseMessage Response = await Client.SendAsync(Payload);
 
             string content = await Response.Content.ReadAsStringAsync();
+
             if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<APIUser>(content);
             return null;
         }

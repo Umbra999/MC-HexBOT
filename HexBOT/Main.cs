@@ -14,8 +14,6 @@ namespace HexBOT
     internal class Main
     {
         public static List<MinecraftClient> Clients = new();
-       
-        public static bool LabyCoinCollector = false;
 
         public static async Task Load()
         {
@@ -45,8 +43,6 @@ namespace HexBOT
             await ServerHandler.Init();
 
             await CreateBots();
-
-            if (LabyCoinCollector) await RunLabyLoop();
 
             RunGUI();
         }
@@ -90,26 +86,6 @@ namespace HexBOT
             Console.Title = $"HexBOT | {Clients.Count} Bots";
 
             await Task.Delay(2500);
-        }
-
-        private static async Task RunLabyLoop()
-        {
-            for (; ; )
-            {
-                foreach (MinecraftClient Client in Clients)
-                {
-                    Logger.LogImportant($"{Client.APIClient.CurrentUser.name} collecting Labycoins");
-                    Client.LabyClient.Disconnect();
-                    Client.Disconnect();
-                }
-
-                Clients.Clear();
-
-                Logger.Log("Waiting 6 Hours before collecting Coins again");
-                Thread.Sleep(21600000);
-
-                await CreateBots();
-            }
         }
 
         private static void RunGUI()

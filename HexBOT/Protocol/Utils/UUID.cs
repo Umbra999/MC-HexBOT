@@ -19,7 +19,7 @@
         public UUID(string uuidString)
         {
             uuidString = uuidString.Replace("-", "");
-            var bytes = StringToByteArray(uuidString);
+            byte[] bytes = StringToByteArray(uuidString);
             low = BitConverter.ToUInt64(bytes.Skip(0).Take(8).ToArray(), 0);
             high = BitConverter.ToUInt64(bytes.Skip(8).Take(8).ToArray(), 0);
         }
@@ -31,14 +31,12 @@
 
         public byte[] GetBytes()
         {
-            var bytes = new byte[0];
-            return bytes.Concat(BitConverter.GetBytes(low)).Concat(BitConverter.GetBytes(high)).ToArray();
+            return new byte[0].Concat(BitConverter.GetBytes(low)).Concat(BitConverter.GetBytes(high)).ToArray();
         }
 
         public override string ToString()
         {
-            var bytes = new byte[0];
-            bytes = bytes.Concat(BitConverter.GetBytes(low)).Concat(BitConverter.GetBytes(high)).ToArray();
+            byte[] bytes = new byte[0].Concat(BitConverter.GetBytes(low)).Concat(BitConverter.GetBytes(high)).ToArray();
 
             string hex = string.Join("", bytes.Select(b => b.ToString("x2")));
 
