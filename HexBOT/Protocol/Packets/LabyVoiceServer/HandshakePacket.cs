@@ -9,7 +9,7 @@ namespace HexBOT.Protocol.Packets.LabyVoiceServer
         public int ProtocolVersion { get; set; }
         public int PublicKeyLenght { get; set; }
         public byte[] PublicKey { get; set; }
-        public UUID UUID { get; set; }
+        public string UUID { get; set; }
         public int Auth { get; set; }
         public string Pin { get; set; }
 

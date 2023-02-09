@@ -74,8 +74,8 @@ namespace HexBOT
                     continue;
                 }
 
-                APIClient Client = new();
-                if (!await Client.LoginToMinecraft(Token) || Client.CurrentUser == null)
+                APIClient Client = await APIClient.LoginToMinecraft(Token);
+                if (Client == null || Client.CurrentUser == null)
                 {
                     Logger.LogError($"Failed to Validate Minecraft Login: {Account}");
                     continue;
@@ -139,7 +139,6 @@ namespace HexBOT
                         Logger.LogImportant("N [NAME] - Change the Name");
                         Logger.LogImportant("S [URL] - Change the Skin");
                         Logger.LogImportant("O - Refresh the Oversee");
-                        Logger.LogImportant("A - Toggle AntiAFK");
                         Logger.LogImportant("-----------------");
                         HandleDebugInput(Console.ReadLine());
                         break;
@@ -230,7 +229,7 @@ namespace HexBOT
                 case "w":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Vector3 Target = Client.Players.Where(x => x.PlayerInfo.Name == input.Substring(2)).First().Position;
+                        Vector3 Target = Client.EntityManager.AllPlayers.Where(x => x.PlayerInfo.Name == input.Substring(2)).First().Position;
                         Task.Run(() => Movement.MoveToPosition(Client, Target));
                     }
                     break;
@@ -276,7 +275,7 @@ namespace HexBOT
                         case "n":
                             foreach (MinecraftClient Client in Clients)
                             {
-                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.North);
+                                Vector3 Target = Client.EntityManager.LocalPlayer.Position + Movement.CalculateDirections(Direction.North);
                                 Task.Run(() => Movement.MoveToPosition(Client, Target));
                             }
                             break;
@@ -284,7 +283,7 @@ namespace HexBOT
                         case "e":
                             foreach (MinecraftClient Client in Clients)
                             {
-                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.East);
+                                Vector3 Target = Client.EntityManager.LocalPlayer.Position + Movement.CalculateDirections(Direction.East);
                                 Task.Run(() => Movement.MoveToPosition(Client, Target));
                             }
                             break;
@@ -292,7 +291,7 @@ namespace HexBOT
                         case "s":
                             foreach (MinecraftClient Client in Clients)
                             {
-                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.South);
+                                Vector3 Target = Client.EntityManager.LocalPlayer.Position + Movement.CalculateDirections(Direction.South);
                                 Task.Run(() => Movement.MoveToPosition(Client, Target));
                             }
                             break;
@@ -300,7 +299,7 @@ namespace HexBOT
                         case "w":
                             foreach (MinecraftClient Client in Clients)
                             {
-                                Vector3 Target = Client.GetLocalPlayer().Position + Movement.CalculateDirections(Direction.West);
+                                Vector3 Target = Client.EntityManager.LocalPlayer.Position + Movement.CalculateDirections(Direction.West);
                                 Task.Run(() => Movement.MoveToPosition(Client, Target));
                             }
                             break;
@@ -310,21 +309,21 @@ namespace HexBOT
                 case "h":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.SendAnimation(AnimationPacket.HandType.Main);
+                        Client.SendAnimation();
                     }
                     break;
 
                 case "s":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.SendEntityAction(Client.GetLocalPlayer().IsSneaking ? EntityActionPacket.Action.StopSneaking : EntityActionPacket.Action.StartSneaking);
+                        Client.SendEntityAction(Client.EntityManager.LocalPlayer.IsSneaking ? EntityActionPacket.Action.StopSneaking : EntityActionPacket.Action.StartSneaking);
                     }
                     break;
 
                 case "r":
                     foreach (MinecraftClient Client in Clients)
                     {
-                        Client.SendEntityAction(Client.GetLocalPlayer().IsSprinting ? EntityActionPacket.Action.StopSprinting : EntityActionPacket.Action.StartSprinting);
+                        Client.SendEntityAction(Client.EntityManager.LocalPlayer.IsSprinting ? EntityActionPacket.Action.StopSprinting : EntityActionPacket.Action.StartSprinting);
                     }
                     break;
             }
@@ -351,13 +350,6 @@ namespace HexBOT
 
                 case "o":
                     Task.Run(() => ServerHandler.FetchSearchList());
-                    break;
-
-                case "a":
-                    foreach (MinecraftClient Client in Clients)
-                    {
-                        AntiAFK.ToggleAntiAFK(Client);
-                    }
                     break;
             }
         }

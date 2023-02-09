@@ -1,5 +1,4 @@
 ﻿using HexBOT.Network;
-using HexBOT.Protocol;
 
 namespace HexBOT.Packets.Server.Play
 {
@@ -10,9 +9,6 @@ namespace HexBOT.Packets.Server.Play
         public ChatType ChatMode { get; set; }
         public bool ChatColors { get; set; }
         public uint DisplayedSkinParts { get; set; }
-        public MainHandType MainHand { get; set; }
-        public bool EnableTextFiltering { get; set; }
-        public bool AllowServerListings { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
@@ -25,22 +21,22 @@ namespace HexBOT.Packets.Server.Play
             minecraftStream.WriteByte(ViewDistance);
             minecraftStream.WriteVarInt((int)ChatMode);
             minecraftStream.WriteBool(ChatColors);
-            minecraftStream.WriteByte((byte)DisplayedSkinParts);
-            minecraftStream.WriteVarInt((int)MainHand);
-            minecraftStream.WriteBool(EnableTextFiltering);
-            minecraftStream.WriteBool(AllowServerListings);
-        }
+            minecraftStream.WriteByte((byte)DisplayedSkinParts); // rework to have a easier bit toggler
 
-        public enum MainHandType
-        {
-            Left = 0,
-            Right = 1
+            //          Bit 0(0x01): Cape enabled
+            //          Bit 1(0x02): Jacket enabled
+            //          Bit 2(0x04): Left Sleeve enabled
+            //          Bit 3(0x08): Right Sleeve enabled
+            //          Bit 4(0x10): Left Pants Leg enabled
+            //          Bit 5(0x20): Right Pants Leg enabled
+            //          Bit 6(0x40): Hat enabled
+            //          The most significant bit (bit 7, 0x80) appears to be unused.
         }
 
         public enum ChatType
         {
             Enabled = 0,
-            Commands = 1,
+            CommandsOnly = 1,
             Hidden = 2
         }
     }

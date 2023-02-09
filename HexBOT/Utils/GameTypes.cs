@@ -9,6 +9,7 @@ namespace HexBOT.Utils
     public class Player
     {
         public int EntityID { get; set; }
+        public string UUID { get; set; }
         public bool IsLocal { get; set; }
         public PlayerInfo PlayerInfo { get; set; }
         public Vector3 Position { get; set; }
@@ -51,7 +52,7 @@ namespace HexBOT.Utils
 
     public class PlayerInfo
     {
-        public UUID UUID { get; set; }
+        public string UUID { get; set; }
         public string Name { get; set; }
         public int NumberOfProperties { get; set; }
         public List<PlayerInfoProperty> Properties { get; set; }
@@ -67,26 +68,6 @@ namespace HexBOT.Utils
         public string Value { get; set; }
         public bool Singed { get; set; }
         public string Signature { get; set; }
-    }
-
-    public class EntityMetadata
-    {
-        public EntityMetadataType Type { get; set; }
-        public object Value { get; set; }
-    }
-
-    public class VillagerData
-    {
-        public int Type { get; set; }
-        public int Profession { get; set; }
-        public int Level { get; set; }
-    }
-
-    public class SlotData
-    {
-        public int ID { get; set; }
-        public byte Count { get; set; }
-        public NbtCompound NBT { get; set; }
     }
 
     public class PacketQueueItem

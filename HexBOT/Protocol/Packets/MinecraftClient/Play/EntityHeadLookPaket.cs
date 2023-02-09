@@ -5,11 +5,11 @@ namespace HexBOT.Packets.Client.Play
     internal class EntityHeadLookPacket : IPacket
     {
         public int EntityId { get; set; }
-        public byte HeadYaw { get; set; }
+        public float HeadYaw { get; set; }
         public void Decode(MinecraftStream minecraftStream)
         {
             EntityId = minecraftStream.ReadVarInt();
-            HeadYaw = (byte)minecraftStream.ReadByte();
+            HeadYaw = minecraftStream.ReadByte() / (256.0f / 360.0f); // this is a Angle?
         }
 
         public void Encode(MinecraftStream minecraftStream)

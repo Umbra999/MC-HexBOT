@@ -30,7 +30,7 @@ namespace HexBOT.Core
                 Connection.SendPacket(new LoginDataPacket()
                 {
                     name = LabyClient.MinecraftClient.APIClient.CurrentUser.name,
-                    id = new UUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
+                    id = UUID.AddDashesToUUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
                     motd = "www.logout.space"
                 });
 
@@ -38,7 +38,7 @@ namespace HexBOT.Core
                 {
                     ShowServer = true,
                     Status = 0,
-                    TimeZone = "Europe/Berlin"
+                    TimeZone = "Europe/Moscow"
                 });
 
                 Connection.SendPacket(new LoginVersionPacket()

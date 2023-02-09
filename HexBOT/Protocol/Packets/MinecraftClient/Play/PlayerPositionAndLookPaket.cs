@@ -10,8 +10,6 @@ namespace HexBOT.Packets.Client.Play
         public float Yaw { get; set; }
         public float Pitch { get; set; }
         public byte Flags { get; set; }
-        public int TeleportID { get; set; }
-        public bool DismountVehicle { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
@@ -21,8 +19,6 @@ namespace HexBOT.Packets.Client.Play
             Yaw = minecraftStream.ReadFloat();
             Pitch = minecraftStream.ReadFloat();
             Flags = (byte)minecraftStream.ReadByte();
-            TeleportID = minecraftStream.ReadVarInt();
-            DismountVehicle = minecraftStream.ReadBool();
         }
 
         public void Encode(MinecraftStream minecraftStream)

@@ -23,7 +23,7 @@ namespace HexBOT.Features
             {
                 byte Random = Encryption.RandomByte();
 
-                Bot.SendPlayerSetings(true, true, Packets.Server.Play.ClientSettingsPacket.ChatType.Enabled, Random, Random > 127 ? Packets.Server.Play.ClientSettingsPacket.MainHandType.Left : Packets.Server.Play.ClientSettingsPacket.MainHandType.Right, false, "en_us", 64);
+                Bot.SendPlayerSetings(true, Packets.Server.Play.ClientSettingsPacket.ChatType.Enabled, Random, "en_us", 64);
 
                 await Task.Delay(50);
             }

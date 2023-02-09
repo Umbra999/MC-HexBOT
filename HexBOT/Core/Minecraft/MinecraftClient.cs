@@ -4,38 +4,33 @@ using HexBOT.Packets.Server.Handshake;
 using System.Net.Sockets;
 using HexBOT.Packets.Server.Play;
 using HexBOT.Protocol;
-using HexBOT.Protocol.Network;
-using HexBOT.Packets.Server.Status;
 using HexBOT.Core.API;
 using HexBOT.Core.Laby;
+using HexBOT.Packets.Server.Login;
+using HexBOT.Core.Minecraft.Helper;
 
 namespace HexBOT.Core.Minecraft
 {
     public class MinecraftClient
     {
-        public readonly APIClient APIClient;
         public ConnectionHandler MCConnection;
+
+        public readonly APIClient APIClient;
         public LabyClient LabyClient;
 
-        public List<Player> Players = new();
-        private Player LocalPlayer;
-
-        public Serverstats ServerStats;
-
-        public Player GetLocalPlayer()
-        {
-            if (LocalPlayer == null || Players.Count == 0)
-            {
-                LocalPlayer = new() { IsLocal = true };
-                Players.Add(LocalPlayer);
-            }
-            return LocalPlayer;
-        }
+        public EntityManager EntityManager;
+        public NetworkManager NetworkManager;
+        public ChatManager ChatManager;
+        public MovementManager MovementManager;
 
         public MinecraftClient(APIClient WebClient)
         {
             APIClient = WebClient;
             LabyClient = new LabyClient(this);
+            EntityManager = new EntityManager(this);
+            NetworkManager = new NetworkManager(this);
+            ChatManager = new ChatManager(this);
+            MovementManager = new MovementManager(this);
 
             Logger.Log($"{APIClient.CurrentUser.name} connected as Bot");
         }
@@ -51,10 +46,10 @@ namespace HexBOT.Core.Minecraft
                 MCConnection = new ConnectionHandler(Client, Protocol.ProtocolType.Minecraft);
 
                 PacketRegistry writer = new();
-                PacketRegistry.RegisterServerPackets(writer, PacketMapping.DefaultProtocol);
+                PacketRegistry.RegisterServerPackets(writer);
 
                 PacketRegistry reader = new();
-                PacketRegistry.RegisterClientPackets(reader, PacketMapping.DefaultProtocol);
+                PacketRegistry.RegisterClientPackets(reader);
 
                 MCConnection.WriterRegistry = writer;
                 MCConnection.ReaderRegistry = reader;
@@ -66,26 +61,28 @@ namespace HexBOT.Core.Minecraft
 
                 MCConnection.Start();
 
-                ServerStats = new Serverstats() { IP = Host + ":" + Port };
-
                 MCConnection.SendPacket(new HandshakePacket()
                 {
-                    NextState = HandshakePacket.HandshakeType.Status,
-                    ProtocolVersion = PacketMapping.DefaultProtocol,
+                    NextState = HandshakePacket.HandshakeType.Login,
+                    ProtocolVersion = 47, // 1.8.X
                     ServerAddress = Host,
-                    ServerPort = (ushort)Port
+                    ServerPort = Convert.ToUInt16(Port)
                 });
 
-                MCConnection.State = ConnectionState.Status;
+                MCConnection.State = ConnectionState.Login;
 
-                MCConnection.SendPacket(new StatusRequestPacket()
+                MCConnection.SendPacket(new LoginStartPacket()
                 {
-
+                    Username = APIClient.CurrentUser.name
                 });
 
                 return true;
             }
-            catch { return false; }
+            catch 
+            {
+                Logger.LogError($"Failed connecting to {Host}:{Port}");
+                return false; 
+            }
         }
 
         public void Disconnect()
@@ -93,7 +90,7 @@ namespace HexBOT.Core.Minecraft
             if (MCConnection != null)
             {
                 MCConnection.Stop();
-                Logger.LogError($"{APIClient.CurrentUser.name} disconnected from {ServerStats.IP}");
+                Logger.LogError($"{APIClient.CurrentUser.name} disconnected from Server");
                 MCConnection = null;
             }
         }
@@ -110,69 +107,64 @@ namespace HexBOT.Core.Minecraft
         {
             MCConnection.SendPacket(new ClientStatusPacket()
             {
-                ActionID = 0
+                ActionID = ClientStatusPacket.Action.Respawn
             });
 
-            GetLocalPlayer().Health = 20;
-            GetLocalPlayer().Saturation = 5;
-            GetLocalPlayer().Food = 20;
+            EntityManager.LocalPlayer.Health = 20;
+            EntityManager.LocalPlayer.Saturation = 5;
+            EntityManager.LocalPlayer.Food = 20;
         }
 
         public void SendEntityAction(EntityActionPacket.Action Action)
         {
             MCConnection.SendPacket(new EntityActionPacket()
             {
-                EntityId = GetLocalPlayer().EntityID,
+                EntityId = EntityManager.LocalPlayer.EntityID,
                 ActionId = Action,
-                JumpBoost = Action == EntityActionPacket.Action.StartHorseJump ? 100 : 0,
+                HorseJumpBoost = Action == EntityActionPacket.Action.JumpWithHorse ? 100 : 0,
             });
 
             switch (Action)
             {
                 case EntityActionPacket.Action.StartSneaking:
-                    GetLocalPlayer().IsSneaking = true;
+                    EntityManager.LocalPlayer.IsSneaking = true;
                     break;
 
                 case EntityActionPacket.Action.StopSneaking:
-                    GetLocalPlayer().IsSneaking = false;
+                    EntityManager.LocalPlayer.IsSneaking = false;
                     break;
 
                 case EntityActionPacket.Action.StartSprinting:
-                    GetLocalPlayer().IsSprinting = true;
+                    EntityManager.LocalPlayer.IsSprinting = true;
                     break;
 
                 case EntityActionPacket.Action.StopSprinting:
-                    GetLocalPlayer().IsSprinting = false;
+                    EntityManager.LocalPlayer.IsSprinting = false;
                     break;
             }
         }
 
-        public void SendEntityInteraction(int EntityID, bool Sneaking, InteractEntityPacket.EntityInteractType Interact, InteractEntityPacket.EntityInteractHandType Hand)
+        public void SendEntityInteraction(int EntityID, UseEntityPacket.EntityInteractType Interact)
         {
-            MCConnection.SendPacket(new InteractEntityPacket()
+            MCConnection.SendPacket(new UseEntityPacket()
             {
                 EntityID = EntityID,
-                Sneaking = Sneaking,
                 InteractType = Interact,
-                HandType = Hand,
                 TargetX = 0,
                 TargetY = 0,
                 TargetZ = 0,
             });
         }
 
-        public void SendPlayerSetings(bool ServerListing, bool ChatColors, ClientSettingsPacket.ChatType Chatmode, byte Skinparts, ClientSettingsPacket.MainHandType MainHand, bool TextFiltering, string LanguageTag, byte ViewDistance)
+        public void SendPlayerSetings(bool ChatColors, ClientSettingsPacket.ChatType Chatmode, byte Skinparts, string LanguageTag, byte ViewDistance)
         {
             MCConnection.SendPacket(new ClientSettingsPacket()
             {
-                AllowServerListings = ServerListing,
                 ChatColors = ChatColors,
                 ChatMode = Chatmode,
                 DisplayedSkinParts = Skinparts,
-                MainHand = MainHand,
-                EnableTextFiltering = TextFiltering,
                 Locale = LanguageTag,
-                ViewDistance = ViewDistance
+                ViewDistance = ViewDistance,
             });
         }
 
@@ -186,14 +178,14 @@ namespace HexBOT.Core.Minecraft
                 Slot = Slot
             });
 
-            GetLocalPlayer().HeldItemSlot = Slot;
+            EntityManager.LocalPlayer.HeldItemSlot = Slot;
         }
 
-        public void SendAnimation(AnimationPacket.HandType Hand)
+        public void SendAnimation()
         {
             MCConnection.SendPacket(new AnimationPacket()
             {
-                Hand = Hand
+                
             });
         }
     }

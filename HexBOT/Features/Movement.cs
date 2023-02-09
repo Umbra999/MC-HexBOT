@@ -9,16 +9,14 @@ namespace HexBOT.Features
     {
         public static void SendMovement(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {
-            Player Local = Bot.GetLocalPlayer();
+            if (Bot.EntityManager.LocalPlayer.Position != Position && Bot.EntityManager.LocalPlayer.Rotation != Rotation) SendPositionAndRotation(Bot, Position, Rotation, IsGround);
+            else if (Bot.EntityManager.LocalPlayer.Position != Position) SendPosition(Bot, Position, IsGround);
+            else if (Bot.EntityManager.LocalPlayer.Rotation != Rotation) SendRotation(Bot, Rotation, IsGround);
+            else if (Bot.EntityManager.LocalPlayer.IsOnGround != IsGround) SendOnGround(Bot, IsGround);
 
-            if (Local.Position != Position && Local.Rotation != Rotation) SendPositionAndRotation(Bot, Position, Rotation, IsGround);
-            else if (Local.Position != Position) SendPosition(Bot, Position, IsGround);
-            else if (Local.Rotation != Rotation) SendRotation(Bot, Rotation, IsGround);
-            else if (Local.IsOnGround != IsGround) SendOnGround(Bot, IsGround);
-
-            Local.Position = Position;
-            Local.Rotation = Rotation;
-            Local.IsOnGround = IsGround;
+            Bot.EntityManager.LocalPlayer.Position = Position;
+            Bot.EntityManager.LocalPlayer.Rotation = Rotation;
+            Bot.EntityManager.LocalPlayer.IsOnGround = IsGround;
         }
 
         private static void SendPositionAndRotation(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
@@ -69,14 +67,14 @@ namespace HexBOT.Features
         // Movement
         public static void LookAtPosition(MinecraftClient Bot, Vector3 location)
         {
-            SendMovement(Bot, Bot.GetLocalPlayer().Position, GetLookAtPosition(Bot, location), Bot.GetLocalPlayer().IsOnGround);
+            SendMovement(Bot, Bot.EntityManager.LocalPlayer.Position, GetLookAtPosition(Bot, location), Bot.EntityManager.LocalPlayer.IsOnGround);
         }
 
         public static Vector2 GetLookAtPosition(MinecraftClient Bot, Vector3 location)
         {
-            double dx = location.X - Bot.GetLocalPlayer().Position.X;
-            double dy = location.Y - Bot.GetLocalPlayer().Position.Y;
-            double dz = location.Z - Bot.GetLocalPlayer().Position.Z;
+            double dx = location.X - Bot.EntityManager.LocalPlayer.Position.X;
+            double dy = location.Y - Bot.EntityManager.LocalPlayer.Position.Y;
+            double dz = location.Z - Bot.EntityManager.LocalPlayer.Position.Z;
 
             double r = Math.Sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -89,8 +87,8 @@ namespace HexBOT.Features
 
         public static void LookAtDirection(MinecraftClient Bot, Direction direction)
         {
-            float yaw = Bot.GetLocalPlayer().Rotation.X;
-            float pitch = Bot.GetLocalPlayer().Rotation.Y;
+            float yaw = Bot.EntityManager.LocalPlayer.Rotation.X;
+            float pitch = Bot.EntityManager.LocalPlayer.Rotation.Y;
 
             switch (direction)
             {
@@ -135,12 +133,12 @@ namespace HexBOT.Features
                     break;
             }
 
-            SendMovement(Bot, Bot.GetLocalPlayer().Position, new Vector2(yaw, pitch), Bot.GetLocalPlayer().IsOnGround);
+            SendMovement(Bot, Bot.EntityManager.LocalPlayer.Position, new Vector2(yaw, pitch), Bot.EntityManager.LocalPlayer.IsOnGround);
         }
 
         public static async Task MoveToPosition(MinecraftClient Bot, Vector3 Target, CancellationTokenSource token = null)
         {
-            Vector3 CurrentPosition = Bot.GetLocalPlayer().Position;
+            Vector3 CurrentPosition = Bot.EntityManager.LocalPlayer.Position;
 
             float SneakSpeed = 1.3f;
             float WalkSpeed = 4.31f;
@@ -149,8 +147,8 @@ namespace HexBOT.Features
             float JumpSpeed = 5f; // Unknown
 
             float CurrentSpeed = WalkSpeed;
-            if (Bot.GetLocalPlayer().IsSneaking) CurrentSpeed = SneakSpeed;
-            else if (Bot.GetLocalPlayer().IsSprinting) CurrentSpeed = SprintSpeed;
+            if (Bot.EntityManager.LocalPlayer.IsSneaking) CurrentSpeed = SneakSpeed;
+            else if (Bot.EntityManager.LocalPlayer.IsSprinting) CurrentSpeed = SprintSpeed;
 
             int Timing = 50; // MS Between events.
             int TPS = 1000 / Timing;
@@ -170,7 +168,7 @@ namespace HexBOT.Features
                 //CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
                 CurrentPosition += new Vector3(DistanceVector.X / Events, 0, DistanceVector.Z / Events);
 
-                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, Bot.GetLocalPlayer().IsOnGround);
+                SendMovement(Bot, CurrentPosition, Bot.EntityManager.LocalPlayer.Rotation, Bot.EntityManager.LocalPlayer.IsOnGround);
 
                 await Task.Delay(Timing);
             }
@@ -179,7 +177,7 @@ namespace HexBOT.Features
         public static async Task Jump(MinecraftClient Bot)
         {
             float JumpHeight = 1.25f;
-            Vector3 Pos1 = Bot.GetLocalPlayer().Position;
+            Vector3 Pos1 = Bot.EntityManager.LocalPlayer.Position;
             Vector3 Pos2 = Pos1 + new Vector3(0, JumpHeight, 0);
             float JumpSpeed = 3.5f;
             float CurrentSpeed = JumpSpeed;
@@ -194,7 +192,7 @@ namespace HexBOT.Features
             for (int i = 0; i < Events; i++)
             {
                 CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
-                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
+                SendMovement(Bot, CurrentPosition, Bot.EntityManager.LocalPlayer.Rotation, false);
                 await Task.Delay(Timing);
             }
             Logger.LogSuccess($"Reached Jump Destination");
@@ -218,18 +216,18 @@ namespace HexBOT.Features
             for (int i = 0; i < Events; i++)
             {
                 CurrentPosition += new Vector3(DistanceVector.X / Events, DistanceVector.Y / Events, DistanceVector.Z / Events);
-                SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, false);
+                SendMovement(Bot, CurrentPosition, Bot.EntityManager.LocalPlayer.Rotation, false);
                 await Task.Delay(Timing);
             }
             CurrentPosition = new Vector3(CurrentPosition.X, MathF.Floor(CurrentPosition.Y), CurrentPosition.Z);
-            SendMovement(Bot, CurrentPosition, Bot.GetLocalPlayer().Rotation, true);
+            SendMovement(Bot, CurrentPosition, Bot.EntityManager.LocalPlayer.Rotation, true);
             Logger.LogSuccess($"Reached Fall Destination");
         }
 
         public static string FollowTarget = "";
         public static async Task LoopPlayerMovement(MinecraftClient Bot)
         {
-            Player[] Founds = Bot.Players.Where(x => x.PlayerInfo.Name == FollowTarget).ToArray();
+            Player[] Founds = Bot.EntityManager.AllPlayers.Where(x => x.PlayerInfo.Name == FollowTarget).ToArray();
             if (Founds.Length == 0) return;
             Player Target = Founds.First();
 

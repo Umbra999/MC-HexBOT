@@ -123,14 +123,14 @@ namespace HexBOT.Network
 		{
 			if (BaseStream is MemoryStream)
 			{
-				var dat = new byte[length];
+				byte[] dat = new byte[length];
 				Read(dat, 0, length);
 				return dat;
 			}
 
 			int read = 0;
 
-			var buffer = new byte[length];
+			byte[] buffer = new byte[length];
 			while (read < buffer.Length)
 			{
 				int r = this.Read(buffer, read, length - read);
@@ -145,7 +145,7 @@ namespace HexBOT.Network
 
 		public int ReadInt()
 		{
-			var dat = new byte[4];
+			byte[] dat = new byte[4];
 			Read(dat, 0, 4);
 			var value = BitConverter.ToInt32(dat, 0);
 			return IPAddress.NetworkToHostOrder(value);
@@ -153,7 +153,7 @@ namespace HexBOT.Network
 
 		public float ReadFloat()
 		{
-			var almost = Read(4);
+			byte[] almost = Read(4);
 			var f = BitConverter.ToSingle(almost, 0);
 			return NetworkToHostOrder(f);
 		}
@@ -167,7 +167,7 @@ namespace HexBOT.Network
 
 		public double ReadDouble()
 		{
-			var almostValue = Read(8);
+			byte[] almostValue = Read(8);
 			return NetworkToHostOrder(almostValue);
 		}
 
@@ -178,7 +178,7 @@ namespace HexBOT.Network
 
 		public byte ReadUnsignedByte()
 		{
-			var buffer = new byte[1];
+			byte[] buffer = new byte[1];
 			Read(buffer);
 
 			return buffer[0];
@@ -189,6 +189,7 @@ namespace HexBOT.Network
 			int numRead = 0;
 			int result = 0;
 			byte read;
+
 			do
 			{
 				read = (byte)ReadByte();
@@ -225,34 +226,34 @@ namespace HexBOT.Network
 
 		public short ReadShort()
 		{
-			var da = Read(2);
+			byte[] da = Read(2);
 			var d = BitConverter.ToInt16(da, 0);
 			return IPAddress.NetworkToHostOrder(d);
 		}
 
 		public ushort ReadUShort()
 		{
-			var da = Read(2);
+			byte[] da = Read(2);
 			return NetworkToHostOrder(BitConverter.ToUInt16(da, 0));
 		}
 		
 		public string ReadString()
 		{
 			var length = ProtocolType == Protocol.ProtocolType.Minecraft ? ReadVarInt() : ReadInt();
-			var stringValue = Read(length);
+			byte[] stringValue = Read(length);
 
 			return Encoding.UTF8.GetString(stringValue);
 		}
 
 		public long ReadLong()
 		{
-			var l = Read(8);
+			byte[] l = Read(8);
 			return IPAddress.NetworkToHostOrder(BitConverter.ToInt64(l, 0));
 		}
 
 		public ulong ReadULong()
 		{
-			var l = Read(8);
+			byte[] l = Read(8);
 			return NetworkToHostOrder(BitConverter.ToUInt64(l, 0));
 		}
 
@@ -273,133 +274,6 @@ namespace HexBOT.Network
             return new Vector3(x, y, z);
         }
 		
-		public List<EntityMetadata> ReadEntityData()
-		{
-			List<EntityMetadata> entities = new();
-
-			while ((byte)ReadByte() != 255)
-			{
-				EntityMetadataType Type = (EntityMetadataType)ReadVarInt();
-				object Value = null;
-
-				switch (Type)
-				{
-					case EntityMetadataType.Byte:
-                        Value = (byte)ReadByte();
-						break;
-
-					case EntityMetadataType.VarInt:
-                        Value = ReadVarInt();
-						break;
-
-					case EntityMetadataType.Float:
-						Value = ReadFloat();
-						break;
-
-					case EntityMetadataType.String:
-						Value = ReadString();
-						break;
-
-					case EntityMetadataType.ChatMessage:
-						Value = ReadString(); // chat message object
-						break;
-
-					case EntityMetadataType.OptChatMessage:
-                        Value = ReadBool() ? ReadString() : null; // chat message object
-                        break;
-
-					case EntityMetadataType.Slot:
-						//Value = ReadBool() ? new SlotData()
-						//{
-						//	ID = ReadVarInt(),
-						//	Count = (byte)ReadByte(),
-						//	NBT = ReadNbtCompound(),
-						//} : null;
-						throw new NotImplementedException();
-
-					case EntityMetadataType.Boolean:
-						Value = ReadBool();
-						break;
-
-					case EntityMetadataType.Rotation:
-						Value = ReadRotation();
-						break;
-
-					case EntityMetadataType.Position:
-						Value = ReadPosition();
-						break;
-
-					case EntityMetadataType.OptPosition:
-                        Value = ReadBool() ? ReadPosition() : null;
-                        break;
-
-					case EntityMetadataType.Direction:
-						Value = (Direction)ReadVarInt();
-						break;
-
-					case EntityMetadataType.OptUUID:
-						Value = ReadBool() ? ReadUuid() : null;
-						break;
-
-					case EntityMetadataType.OptBlockId:
-						Value = ReadVarInt();
-						break;
-
-					case EntityMetadataType.NBT:
-                        //Value = ReadNbtCompound();
-                        throw new NotImplementedException();
-                        break;
-
-					case EntityMetadataType.Particle:
-						// fr its cancer 
-						//ReadVarInt();
-                        throw new NotImplementedException();
-
-					case EntityMetadataType.VillagerData:
-						Value = new VillagerData()
-						{
-							Type = ReadVarInt(),
-							Profession = ReadVarInt(),
-							Level = ReadVarInt()
-						};
-						break;
-
-					case EntityMetadataType.OptVarInt:
-						Value = ReadVarInt();
-						break;
-
-					case EntityMetadataType.Pose:
-						Value = (EntityPose)ReadVarInt();
-						break;
-
-					case EntityMetadataType.CatVariant:
-						Value = ReadVarInt();
-						break;
-
-					case EntityMetadataType.FrogVariant:
-						Value = ReadVarInt();
-						break;
-
-					case EntityMetadataType.GlobalPosition:
-						// read dimension identifier???
-						//ReadPosition();
-                        throw new NotImplementedException();
-
-					case EntityMetadataType.PaintingVariant:
-						Value = ReadVarInt();
-						break;
-                }
-
-				entities.Add(new EntityMetadata()
-				{
-					Type = Type,
-					Value = Value
-				});
-            }
-
-			return entities;
-		}
-
 		private static double NetworkToHostOrder(byte[] data)
 		{
 			if (BitConverter.IsLittleEndian) Array.Reverse(data);
@@ -408,7 +282,7 @@ namespace HexBOT.Network
 
 		private static float NetworkToHostOrder(float network)
 		{
-			var bytes = BitConverter.GetBytes(network);
+			byte[] bytes = BitConverter.GetBytes(network);
 
 			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
@@ -417,13 +291,13 @@ namespace HexBOT.Network
 
 		private static ushort NetworkToHostOrder(ushort network)
 		{
-			var net = BitConverter.GetBytes(network);
+			byte[] net = BitConverter.GetBytes(network);
 			if (BitConverter.IsLittleEndian) Array.Reverse(net);
 			return BitConverter.ToUInt16(net, 0);
 		}
 		private static ulong NetworkToHostOrder(ulong network)
 		{
-			var net = BitConverter.GetBytes(network);
+			byte[] net = BitConverter.GetBytes(network);
 			if (BitConverter.IsLittleEndian) Array.Reverse(net);
 			return BitConverter.ToUInt64(net, 0);
 		}
@@ -482,13 +356,13 @@ namespace HexBOT.Network
 
 		public void WriteInt(int data)
 		{
-			var buffer = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data));
+			byte[] buffer = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data));
 			Write(buffer);
 		}
 
 		public void WriteString(string data)
 		{
-			var stringData = Encoding.UTF8.GetBytes(data);
+			byte[] stringData = Encoding.UTF8.GetBytes(data);
 			if (ProtocolType == Protocol.ProtocolType.Minecraft) WriteVarInt(stringData.Length);
 			else WriteInt(stringData.Length);
             Write(stringData);
@@ -496,13 +370,13 @@ namespace HexBOT.Network
 
 		public void WriteShort(short data)
 		{
-			var shortData = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data));
+			byte[] shortData = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data));
 			Write(shortData);
 		}
 
 		public void WriteUShort(ushort data)
 		{
-			var uShortData = BitConverter.GetBytes(data);
+			byte[] uShortData = BitConverter.GetBytes(data);
 			Write(uShortData);
 		}
 
@@ -531,15 +405,12 @@ namespace HexBOT.Network
 			Write(HostToNetworkOrderLong(data));
 		}
 
-		public void WriteUuid(UUID uuid)
+		public void WriteUuid(string id)
 		{
-			var guid = uuid.GetBytes();
-			var long1 = new byte[8];
-			var long2 = new byte[8];
-			Array.Copy(guid, 0, long1, 0, 8);
-			Array.Copy(guid, 8, long2, 0, 8);
-			Write(long1);
-			Write(long2);
+			UUID.EncodeUUID(id, out ulong high, out ulong low);
+
+			WriteULong(high);
+			WriteULong(low);
 		}
 
 		public void WriteChatObject(ChatMessage data)
@@ -547,18 +418,18 @@ namespace HexBOT.Network
 			WriteString(JsonConvert.SerializeObject(data));
 		}
 
-		public UUID ReadUuid()
+		public string ReadUuid()
 		{
-			var long1 = Read(8);
-			var long2 = Read(8);
+			byte[] high = Read(8);
+			byte[] low = Read(8);
 
-			return new UUID(long1.Concat(long2).ToArray());
+			return UUID.DecodeUUID(BitConverter.ToUInt64(high), BitConverter.ToUInt64(low));
 		}
 
 
 		private static byte[] HostToNetworkOrder(double d)
 		{
-			var data = BitConverter.GetBytes(d);
+			byte[] data = BitConverter.GetBytes(d);
 			if (BitConverter.IsLittleEndian) Array.Reverse(data);
 
 			return data;
@@ -566,7 +437,7 @@ namespace HexBOT.Network
 
 		private static byte[] HostToNetworkOrder(float host)
 		{
-			var bytes = BitConverter.GetBytes(host);
+            byte[] bytes = BitConverter.GetBytes(host);
 			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
 			return bytes;
@@ -574,7 +445,7 @@ namespace HexBOT.Network
 
 		private static byte[] HostToNetworkOrderLong(ulong host)
 		{
-			var bytes = BitConverter.GetBytes(host);
+			byte[] bytes = BitConverter.GetBytes(host);
 			if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
 
 			return bytes;

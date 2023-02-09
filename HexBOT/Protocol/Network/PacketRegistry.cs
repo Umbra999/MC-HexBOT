@@ -1,6 +1,5 @@
 ﻿using HexBOT.Packets;
 using HexBOT.Protocol;
-using HexBOT.Protocol.Network;
 
 namespace HexBOT.Network
 {
@@ -43,78 +42,79 @@ namespace HexBOT.Network
         }
 
         // Packets the client can understand
-        public static void RegisterClientPackets(PacketRegistry registry, int ProtocolVersion)
+        public static void RegisterClientPackets(PacketRegistry registry)
         {
             // Login
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Login.DisconnectPacket()), new Packets.Client.Login.DisconnectPacket(), ConnectionState.Login);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Login.EncryptionRequestPacket()), new Packets.Client.Login.EncryptionRequestPacket(), ConnectionState.Login);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Login.LoginSuccessPacket()), new Packets.Client.Login.LoginSuccessPacket(), ConnectionState.Login);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Login.SetCompressionPacket()), new Packets.Client.Login.SetCompressionPacket(), ConnectionState.Login);
+            registry.AddPacket(0x00, new Packets.Client.Login.DisconnectPacket(), ConnectionState.Login);
+            registry.AddPacket(0x01, new Packets.Client.Login.EncryptionRequestPacket(), ConnectionState.Login);
+            registry.AddPacket(0x02, new Packets.Client.Login.LoginSuccessPacket(), ConnectionState.Login);
+            registry.AddPacket(0x03, new Packets.Client.Login.SetCompressionPacket(), ConnectionState.Login);
 
             // Status
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Status.StatusResponsePacket()), new Packets.Client.Status.StatusResponsePacket(), ConnectionState.Status);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Status.PongPacket()), new Packets.Client.Status.PongPacket(), ConnectionState.Status);
+            registry.AddPacket(0x00, new Packets.Client.Status.StatusResponsePacket(), ConnectionState.Status);
+            registry.AddPacket(0x01, new Packets.Client.Status.PongPacket(), ConnectionState.Status);
 
             // Play
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.SpawnEntityPacket()), new Packets.Client.Play.SpawnEntityPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.SpawnLivingEntity()), new Packets.Client.Play.SpawnLivingEntity(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.JoinGamePacket()), new Packets.Client.Play.JoinGamePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.KeepAlivePacket()), new Packets.Client.Play.KeepAlivePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.SpawnPlayerPacket()), new Packets.Client.Play.SpawnPlayerPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.AcknowledgePlayerDiggingPacket()), new Packets.Client.Play.AcknowledgePlayerDiggingPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.BlockChangePacket()), new Packets.Client.Play.BlockChangePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.PingPacket()), new Packets.Client.Play.PingPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.PlayerInfoPacket()), new Packets.Client.Play.PlayerInfoPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.UpdateHealthPacket()), new Packets.Client.Play.UpdateHealthPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.PlayerPositionAndLookPacket()), new Packets.Client.Play.PlayerPositionAndLookPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.ChatMessagePacket()), new Packets.Client.Play.ChatMessagePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityPositionPacket()), new Packets.Client.Play.EntityPositionPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityPositionAndRotationPacket()), new Packets.Client.Play.EntityPositionAndRotationPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.UpdateViewPositionPacket()), new Packets.Client.Play.UpdateViewPositionPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.UnloadChunkPacket()), new Packets.Client.Play.UnloadChunkPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.SpawnPositionPacket()), new Packets.Client.Play.SpawnPositionPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.DisconnectPacket()), new Packets.Client.Play.DisconnectPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.DeathCombatPacket()), new Packets.Client.Play.DeathCombatPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityRotationPacket()), new Packets.Client.Play.EntityRotationPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityTeleportPacket()), new Packets.Client.Play.EntityTeleportPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityVelocityPacket()), new Packets.Client.Play.EntityVelocityPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityHeadLookPacket()), new Packets.Client.Play.EntityHeadLookPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.PluginMessagePacket()), new Packets.Client.Play.PluginMessagePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.SlotSelectionPacket()), new Packets.Client.Play.SlotSelectionPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityAnimationPacket()), new Packets.Client.Play.EntityAnimationPacket(), ConnectionState.Play);
-            //registry.AddPacket(PacketMapping.GetClientPacketID(ProtocolVersion, new Packets.Client.Play.EntityMetadataPacket()), new Packets.Client.Play.EntityMetadataPacket(), ConnectionState.Play);
+            registry.AddPacket(0x00, new Packets.Client.Play.KeepAlivePacket(), ConnectionState.Play);
+            registry.AddPacket(0x01, new Packets.Client.Play.JoinGamePacket(), ConnectionState.Play);
+            registry.AddPacket(0x02, new Packets.Client.Play.ChatMessagePacket(), ConnectionState.Play);
+            registry.AddPacket(0x03, new Packets.Client.Play.TimeUpdatePacket(), ConnectionState.Play);
+            //registry.AddPacket(0x04, new Packets.Client.Play.EntityEquipmentPacket(), ConnectionState.Play);
+            registry.AddPacket(0x05, new Packets.Client.Play.SpawnPositionPacket(), ConnectionState.Play);
+            registry.AddPacket(0x06, new Packets.Client.Play.UpdateHealthPacket(), ConnectionState.Play);
+            registry.AddPacket(0x07, new Packets.Client.Play.RespawnPacket(), ConnectionState.Play);
+            registry.AddPacket(0x08, new Packets.Client.Play.PlayerPositionAndLookPacket(), ConnectionState.Play);
+            registry.AddPacket(0x09, new Packets.Client.Play.HeldItemChangePacket(), ConnectionState.Play);
+            registry.AddPacket(0x0B, new Packets.Client.Play.AnimationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x0C, new Packets.Client.Play.SpawnPlayerPacket(), ConnectionState.Play);
+            registry.AddPacket(0x0D, new Packets.Client.Play.CollectItemPacket(), ConnectionState.Play);
+            registry.AddPacket(0x0E, new Packets.Client.Play.SpawnObjectPacket(), ConnectionState.Play);
+            registry.AddPacket(0x0F, new Packets.Client.Play.SpawnMobPacket(), ConnectionState.Play);
+            registry.AddPacket(0x12, new Packets.Client.Play.EntityVelocityPacket(), ConnectionState.Play);
+            registry.AddPacket(0x13, new Packets.Client.Play.DestroyEntitiesPacket(), ConnectionState.Play);
+            registry.AddPacket(0x14, new Packets.Client.Play.EntityPacket(), ConnectionState.Play);
+            registry.AddPacket(0x15, new Packets.Client.Play.EntityRelativeMovementPacket(), ConnectionState.Play);
+            registry.AddPacket(0x16, new Packets.Client.Play.EntityRotationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x17, new Packets.Client.Play.EntityRelativeMovementAndRotationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x18, new Packets.Client.Play.EntityTeleportPacket(), ConnectionState.Play);
+            registry.AddPacket(0x19, new Packets.Client.Play.EntityHeadLookPacket(), ConnectionState.Play);
+
+            registry.AddPacket(0x23, new Packets.Client.Play.BlockChangePacket(), ConnectionState.Play);
+
+            registry.AddPacket(0x3F, new Packets.Client.Play.PluginMessagePacket(), ConnectionState.Play);
+            registry.AddPacket(0x40, new Packets.Client.Play.DisconnectPacket(), ConnectionState.Play);
+
+            //registry.AddPacket(0x38, new Packets.Client.Play.PlayerListItemPacket(), ConnectionState.Play);
         }
 
         // Packets the server can understand
-        public static void RegisterServerPackets(PacketRegistry registry, int ProtocolVersion)
+        public static void RegisterServerPackets(PacketRegistry registry)
         {
             // Handshake
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Handshake.HandshakePacket()), new Packets.Server.Handshake.HandshakePacket(), ConnectionState.Handshaking);
+            registry.AddPacket(0x00, new Packets.Server.Handshake.HandshakePacket(), ConnectionState.Handshaking);
 
             // Login
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Login.LoginStartPacket()), new Packets.Server.Login.LoginStartPacket(), ConnectionState.Login);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Login.EncryptionResponsePacket()), new Packets.Server.Login.EncryptionResponsePacket(), ConnectionState.Login);
+            registry.AddPacket(0x00, new Packets.Server.Login.LoginStartPacket(), ConnectionState.Login);
+            registry.AddPacket(0x01, new Packets.Server.Login.EncryptionResponsePacket(), ConnectionState.Login);
 
             // Status
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Status.StatusRequestPacket()), new Packets.Server.Status.StatusRequestPacket(), ConnectionState.Status);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Status.PingPacket()), new Packets.Server.Status.PingPacket(), ConnectionState.Status);
+            registry.AddPacket(0x00, new Packets.Server.Status.StatusRequestPacket(), ConnectionState.Status);
+            registry.AddPacket(0x01, new Packets.Server.Status.PingPacket(), ConnectionState.Status);
 
             // Play
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.KeepAlivePacket()), new Packets.Server.Play.KeepAlivePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.TeleportConfirmPacket()), new Packets.Server.Play.TeleportConfirmPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.ClientSettingsPacket()), new Packets.Server.Play.ClientSettingsPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.ClientStatusPacket()), new Packets.Server.Play.ClientStatusPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.ChatMessagePacket()), new Packets.Server.Play.ChatMessagePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.PlayerPositionPacket()), new Packets.Server.Play.PlayerPositionPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.PlayerPositionAndRotationPacket()), new Packets.Server.Play.PlayerPositionAndRotationPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.EntityActionPacket()), new Packets.Server.Play.EntityActionPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.PlayerMovementPacket()), new Packets.Server.Play.PlayerMovementPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.PlayerRotationPacket()), new Packets.Server.Play.PlayerRotationPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.InteractEntityPacket()), new Packets.Server.Play.InteractEntityPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.HeldItemChangePacket()), new Packets.Server.Play.HeldItemChangePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.PluginMessagePacket()), new Packets.Server.Play.PluginMessagePacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.PongPacket()), new Packets.Server.Play.PongPacket(), ConnectionState.Play);
-            registry.AddPacket(PacketMapping.GetServerPacketID(ProtocolVersion, new Packets.Server.Play.AnimationPacket()), new Packets.Server.Play.AnimationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x00, new Packets.Server.Play.KeepAlivePacket(), ConnectionState.Play);
+            registry.AddPacket(0x01, new Packets.Server.Play.ChatMessagePacket(), ConnectionState.Play);
+            registry.AddPacket(0x02, new Packets.Server.Play.UseEntityPacket(), ConnectionState.Play);
+            registry.AddPacket(0x03, new Packets.Server.Play.PlayerMovementPacket(), ConnectionState.Play);
+            registry.AddPacket(0x04, new Packets.Server.Play.PlayerPositionPacket(), ConnectionState.Play);
+            registry.AddPacket(0x05, new Packets.Server.Play.PlayerRotationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x06, new Packets.Server.Play.PlayerPositionAndRotationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x09, new Packets.Server.Play.HeldItemChangePacket(), ConnectionState.Play);
+            registry.AddPacket(0x0A, new Packets.Server.Play.AnimationPacket(), ConnectionState.Play);
+            registry.AddPacket(0x0B, new Packets.Server.Play.EntityActionPacket(), ConnectionState.Play);
+            registry.AddPacket(0x15, new Packets.Server.Play.ClientSettingsPacket(), ConnectionState.Play);
+            registry.AddPacket(0x16, new Packets.Server.Play.ClientStatusPacket(), ConnectionState.Play);
+            registry.AddPacket(0x17, new Packets.Server.Play.PluginMessagePacket(), ConnectionState.Play);
         }
 
         public static void RegisterLabyClientPackets(PacketRegistry registry)

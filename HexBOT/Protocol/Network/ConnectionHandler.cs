@@ -93,7 +93,7 @@ namespace HexBOT.Network
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError($"Error reading Packet: (State {State}) {e.Message}");
+                    Logger.LogError($"Error reading Packet: [State {State}] {e.Message}");
                 }
             }
         }

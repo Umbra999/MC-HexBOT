@@ -33,7 +33,7 @@ namespace HexBOT.Features
                     break;
 
                 case "health":
-                    Bot.SendChat($"Health: {Bot.GetLocalPlayer().Health} | Food: {Bot.GetLocalPlayer().Food} | Saturation {Bot.GetLocalPlayer().Saturation}");
+                    Bot.SendChat($"Health: {Bot.EntityManager.LocalPlayer.Health} | Food: {Bot.EntityManager.LocalPlayer.Food} | Saturation {Bot.EntityManager.LocalPlayer.Saturation}");
                     break;
             }
         }

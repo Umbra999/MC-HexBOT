@@ -54,7 +54,7 @@ namespace HexBOT.Core
             MCConnection.SendPacket(new HandshakePacket()
             {
                 Auth = 0,
-                UUID = new UUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
+                UUID = UUID.AddDashesToUUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
                 Pin = LabyClient.DashboadPin,
                 ProtocolVersion = ProtocolVersion,
             });

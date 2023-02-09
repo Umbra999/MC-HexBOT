@@ -37,25 +37,25 @@ namespace HexBOT.Features
         {
             while (TargetNames.Count > 0)
             {
-                Player[] Founds = Bot.Players.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)).ToArray();
+                Player[] Founds = Bot.EntityManager.AllPlayers.Where(x => TargetNames.Contains(x.PlayerInfo?.Name)).ToArray();
                 if (Founds.Length == 0) return;
 
                 foreach (Player player in Founds)
                 {
                     if (RangeLimit)
                     {
-                        if (Vector3.Distance(Bot.GetLocalPlayer().Position, player.Position) < Range)
+                        if (Vector3.Distance(Bot.EntityManager.LocalPlayer.Position, player.Position) < Range)
                         {
                             Movement.LookAtPosition(Bot, player.Position);
-                            Bot.SendEntityInteraction(player.EntityID, Bot.GetLocalPlayer().IsSneaking, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
-                            Bot.SendAnimation(AnimationPacket.HandType.Main);
+                            Bot.SendEntityInteraction(player.EntityID, UseEntityPacket.EntityInteractType.Attack);
+                            Bot.SendAnimation();
                         }
                     }
                     else
                     {
                         Movement.LookAtPosition(Bot, player.Position);
-                        Bot.SendEntityInteraction(player.EntityID, Bot.GetLocalPlayer().IsSneaking, InteractEntityPacket.EntityInteractType.Attack, InteractEntityPacket.EntityInteractHandType.Main);
-                        Bot.SendAnimation(AnimationPacket.HandType.Main);
+                        Bot.SendEntityInteraction(player.EntityID, UseEntityPacket.EntityInteractType.Attack);
+                        Bot.SendAnimation();
                     }
                 }
 

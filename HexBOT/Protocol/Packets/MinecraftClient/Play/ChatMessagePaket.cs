@@ -1,7 +1,4 @@
 ﻿using HexBOT.Network;
-using HexBOT.Protocol;
-using HexBOT.Protocol.Utils;
-using HexBOT.Utils;
 
 namespace HexBOT.Packets.Client.Play
 {
@@ -9,13 +6,11 @@ namespace HexBOT.Packets.Client.Play
     {
         public string JsonData { get; set; } // ChatObject
         public ChatMessagePosition Position { get; set; }
-        public UUID Sender { get; set; }
 
         public void Decode(MinecraftStream minecraftStream)
         {
             JsonData = minecraftStream.ReadString();
             Position = (ChatMessagePosition)minecraftStream.ReadByte();
-            Sender = minecraftStream.ReadUuid();
         }
 
         public void Encode(MinecraftStream minecraftStream)
