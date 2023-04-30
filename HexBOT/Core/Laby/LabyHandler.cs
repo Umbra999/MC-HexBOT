@@ -31,7 +31,7 @@ namespace HexBOT.Core
                 {
                     name = LabyClient.MinecraftClient.APIClient.CurrentUser.name,
                     id = UUID.AddDashesToUUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
-                    motd = "www.logout.space"
+                    motd = "www.logout.rip | www.umbra.rest"
                 });
 
                 Connection.SendPacket(new LoginOptionPacket()
@@ -44,7 +44,7 @@ namespace HexBOT.Core
                 Connection.SendPacket(new LoginVersionPacket()
                 {
                     Version = LabyClient.ProtocolVersion,
-                    Name = "1.8.9_3.9.54",
+                    Name = "1.8.9_3.9.58",
                     UpdateUrl = ""
                 });
             }
@@ -64,13 +64,13 @@ namespace HexBOT.Core
 
                 Connection.SendPacket(new Protocol.Packets.LabyServer.Play.PlayServerPacket()
                 {
-                    IP = "➥ www.logout.space ⚠",
+                    IP = "§4➥ logout.rip | umbra.rest ⚠",
                     //IP = Encryption.RandomString(99900),
                     Port = 25565,
                     //Port = -999,
                     viaServerList = true,
                     //Gamemode = Encryption.RandomString(99900),
-                    Gamemode = "❤ i hate everything about u ❤"
+                    Gamemode = "§5❤ i hate everything about u ❤"
                 });
 
                 Logger.Log($"{LabyClient.MinecraftClient.APIClient.CurrentUser.name} connected to Labymod");

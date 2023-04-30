@@ -1,7 +1,7 @@
 ﻿using HexBOT.Core.API;
 using HexBOT.Core.Minecraft;
 using HexBOT.Features;
-using HexBOT.HexServer;
+using HexBOT.HexedServer;
 using HexBOT.Packets.Server.Play;
 using HexBOT.Protocol;
 using HexBOT.Utils;

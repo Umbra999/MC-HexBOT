@@ -1,7 +1,6 @@
-﻿using HexBOT.Core.Laby;
-using HexBOT.Core.Minecraft;
+﻿using HexBOT.Core.Minecraft;
 using HexBOT.Features;
-using HexBOT.HexServer;
+using HexBOT.HexedServer;
 using HexBOT.Network;
 using HexBOT.Packets;
 using HexBOT.Packets.Client.Login;
@@ -190,10 +189,9 @@ namespace HexBOT.Core
                 {
                     MinecraftClient.EntityManager.AddPlayer(new Player()
                     {
-                        Position = new Vector3(0, 0, 0),
-                        Rotation = new Vector2(0, 0),
-                        Velocity = new Vector3(0, 0, 0),
                         IsLocal = true,
+                        Position = Vector3.Zero,
+                        Rotation = Vector2.Zero,
                         IsOnGround = true,
                     });
                 }
@@ -216,7 +214,10 @@ namespace HexBOT.Core
                 if ((positionPacket.Flags & 0x10) == 0x10) NewPos.X += positionPacket.Yaw;
                 else NewRot.X = positionPacket.Yaw;
 
-                Movement.SendMovement(MinecraftClient, NewPos, NewRot, MinecraftClient.EntityManager.LocalPlayer.IsOnGround);
+                MinecraftClient.EntityManager.LocalPlayer.Position = NewPos;
+                MinecraftClient.EntityManager.LocalPlayer.Rotation = NewRot;
+
+                Movement.SendPositionAndRotation(MinecraftClient, NewPos, NewRot, MinecraftClient.EntityManager.LocalPlayer.IsOnGround);
             }
 
             if (Packet is Packets.Client.Play.DisconnectPacket disconnectPacket)

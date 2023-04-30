@@ -19,7 +19,7 @@ namespace HexBOT.Features
             Bot.EntityManager.LocalPlayer.IsOnGround = IsGround;
         }
 
-        private static void SendPositionAndRotation(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
+        public static void SendPositionAndRotation(MinecraftClient Bot, Vector3 Position, Vector2 Rotation, bool IsGround)
         {
             Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerPositionAndRotationPacket()
             {
@@ -53,7 +53,7 @@ namespace HexBOT.Features
             });
         }
 
-        private static void SendOnGround(MinecraftClient Bot, bool IsGround)
+        public static void SendOnGround(MinecraftClient Bot, bool IsGround)
         {
             Bot.MCConnection.SendPacket(new Packets.Server.Play.PlayerPacket()
             {

@@ -1,5 +1,5 @@
 ﻿using HexBOT.Core.Minecraft;
-using HexBOT.HexServer;
+using HexBOT.HexedServer;
 using HexBOT.Utils;
 
 namespace HexBOT.Features

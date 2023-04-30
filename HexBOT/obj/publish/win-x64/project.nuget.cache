@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2dHqFErCRvVe0scFHMXTv+r6Gi48/I+zI+uoDcamGtLIa0HSLU77LEMD6AQRra9TrSSQztbOwuiJ/GhC7gMsvQ==",
+  "dgSpecHash": "DfZFIk56kVWjSLGyTvRcqahVdQSYNqJtpjxfTyOWYs5GN7HmXbDVdwJE+LwpQE88f11XmA3Knp9NBUZnTgx9uA==",
   "success": true,
   "projectFilePath": "D:\\Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
   "expectedPackageFiles": [
@@ -11,7 +11,7 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.win32.primitives\\4.0.1\\microsoft.win32.primitives.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\minet.fnbt\\1.0.22\\minet.fnbt.1.0.22.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\netstandard.library\\1.6.0\\netstandard.library.1.6.0.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\newtonsoft.json\\13.0.2\\newtonsoft.json.13.0.2.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.any.system.collections\\4.0.11\\runtime.any.system.collections.4.0.11.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.any.system.diagnostics.tools\\4.0.1\\runtime.any.system.diagnostics.tools.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.any.system.diagnostics.tracing\\4.1.0\\runtime.any.system.diagnostics.tracing.4.1.0.nupkg.sha512",
@@ -99,20 +99,20 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\system.threading.timer\\4.0.1\\system.threading.timer.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.xml.readerwriter\\4.0.11\\system.xml.readerwriter.4.0.11.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\system.xml.xdocument\\4.0.11\\system.xml.xdocument.4.0.11.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\6.0.13\\microsoft.netcore.app.runtime.win-x64.6.0.13.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\6.0.13\\microsoft.windowsdesktop.app.runtime.win-x64.6.0.13.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\6.0.13\\microsoft.aspnetcore.app.runtime.win-x64.6.0.13.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\6.0.13\\microsoft.netcore.app.crossgen2.win-x64.6.0.13.nupkg.sha512"
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\7.0.5\\microsoft.netcore.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\7.0.5\\microsoft.windowsdesktop.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\7.0.5\\microsoft.aspnetcore.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\7.0.5\\microsoft.netcore.app.crossgen2.win-x64.7.0.5.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Das Paket \"BouncyCastle.Crypto.dll 1.8.1\" wurde nicht mit dem Projektzielframework \"net6.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "message": "Das Paket \"BouncyCastle.Crypto.dll 1.8.1\" wurde nicht mit dem Projektzielframework \"net7.0-windows7.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
       "libraryId": "BouncyCastle.Crypto.dll",
       "targetGraphs": [
-        "net6.0"
+        "net7.0-windows7.0"
       ]
     }
   ]

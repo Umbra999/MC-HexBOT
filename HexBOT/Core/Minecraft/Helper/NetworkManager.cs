@@ -37,12 +37,12 @@ namespace HexBOT.Core.Minecraft.Helper
             Bot.EntityManager.ClearAllPlayers();
         }
 
-        public static uint PingDelay = 0; 
+        public static int PingDelay = 0; 
         public void OnPingReceived(KeepAlivePacket packet)
         {
             Task.Run(async () =>
             {
-                await Task.Delay((int)PingDelay);
+                await Task.Delay(PingDelay);
                 Bot.MCConnection.SendPacket(new Packets.Server.Play.KeepAlivePacket()
                 {
                     KeepAliveID = packet.KeepAliveID
@@ -52,9 +52,11 @@ namespace HexBOT.Core.Minecraft.Helper
 
         public void OnPluginMessageReceived(PluginMessagePacket packet)
         {
+            //Logger.LogWarning(packet.Channel + ": " + Encoding.UTF8.GetString(packet.Data));
+
             switch (packet.Channel)
             {
-                case "minecraft:brand":
+                case "MC|Brand":
                     Bot.MCConnection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
                     {
                         Channel = packet.Channel,
@@ -62,7 +64,7 @@ namespace HexBOT.Core.Minecraft.Helper
                     });
                     break;
 
-                case "minecraft:register":
+                case "REGISTER":
                     Bot.MCConnection.SendPacket(new Packets.Server.Play.PluginMessagePacket()
                     {
                         Channel = packet.Channel,
