@@ -25,7 +25,7 @@ namespace HexBOT.Features
                 Logger.Log($"Added {Name} to Target List");
                 if (count < 1)
                 {
-                    foreach (MinecraftClient Bot in Main.Clients)
+                    foreach (MinecraftClient Bot in Boot.Clients)
                     {
                         Task.Run(() => CombatLoop(Bot));
                     }

@@ -5,15 +5,11 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <ApplicationIcon>AngyCat.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Kuromi.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="AngyCat.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <Content Include="Resources\Kuromi.ico" />
   </ItemGroup>
 
   <ItemGroup>
