@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0Cu0maMMdkdmyqOmVcoIlX0tta0yq+9y6q8lmlf/hz1EqlaWEwjK5MdufZoDcpXuiN1D7z/q3yrh1wNEZw2g7w==",
+  "dgSpecHash": "V69Y/gE3PaGiCoXxsNL241njyS7dKXvUKTA2T2mc2jsVpp1g6zbCrmYmjhYFNFbG0gwbkq5g2l6EGnfkETO+eg==",
   "success": true,
   "projectFilePath": "D:\\Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
   "expectedPackageFiles": [
@@ -11,7 +11,7 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.win32.primitives\\4.0.1\\microsoft.win32.primitives.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\minet.fnbt\\1.0.22\\minet.fnbt.1.0.22.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\netstandard.library\\1.6.0\\netstandard.library.1.6.0.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\newtonsoft.json\\13.0.2\\newtonsoft.json.13.0.2.nupkg.sha512",
+    "C:\\Users\\Umbra\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.native.system\\4.0.0\\runtime.native.system.4.0.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.native.system.io.compression\\4.1.0\\runtime.native.system.io.compression.4.1.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.native.system.net.http\\4.0.1\\runtime.native.system.net.http.4.0.1.nupkg.sha512",

@@ -6,9 +6,9 @@ namespace HexBOT.HexedServer
 {
     internal class ServerHandler
     {
-        private static string Token;
-
         public static Dictionary<string, string> OverseeUsers = new();
+
+        private static ServerObjects.UserData UserData;
 
         public static async Task Init()
         {
@@ -20,14 +20,14 @@ namespace HexBOT.HexedServer
                 File.WriteAllText("Key.Hexed", Encryption.ToBase64(NewKey));
             }
 
-            if (!await IsValidKey(Encryption.FromBase64(File.ReadAllText("Key.Hexed"))))
+            UserData = await Login(Encryption.FromBase64(File.ReadAllText("Key.Hexed")));
+
+            if (UserData == null || !UserData.KeyAccess.Contains(ServerObjects.KeyPermissionType.VRChatReuploader))
             {
                 Logger.LogError("Key is not Valid");
                 await Task.Delay(3000);
                 Environment.Exit(0);
             }
-
-            await FetchSearchList();
         }
 
         private static async Task<string> FetchTime()
@@ -41,12 +41,12 @@ namespace HexBOT.HexedServer
             return null;
         }
 
-        private static async Task<bool> IsValidKey(string Key)
+        private static async Task<ServerObjects.UserData> Login(string Key)
         {
             HttpClient Client = new(new HttpClientHandler { UseCookies = false });
             Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Hexed)");
 
-            HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/IsValid")
+            HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/Login")
             {
                 Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, await FetchTime(), Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
             };
@@ -55,11 +55,11 @@ namespace HexBOT.HexedServer
 
             if (Response.IsSuccessStatusCode)
             {
-                Token = await Response.Content.ReadAsStringAsync();
-                return true;
+                string RawData = await Response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<ServerObjects.UserData>(RawData);
             }
 
-            return false;
+            return null;
         }
 
         public static async Task FetchSearchList()
@@ -71,7 +71,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Minecraft/GetOverseeList")
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Token, await FetchTime(), Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(UserData.Token, await FetchTime(), Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -149,7 +149,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/Webhook")
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Token, Timestamp, Encryption.GetHWID()), Payload = JsonConvert.SerializeObject(EmbedPayload) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(UserData.Token, Timestamp, Encryption.GetHWID()), Payload = JsonConvert.SerializeObject(EmbedPayload) }), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
