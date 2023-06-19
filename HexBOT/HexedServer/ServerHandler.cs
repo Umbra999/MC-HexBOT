@@ -22,7 +22,7 @@ namespace HexBOT.HexedServer
 
             UserData = await Login(Encryption.FromBase64(File.ReadAllText("Key.Hexed")));
 
-            if (UserData == null || !UserData.KeyAccess.Contains(ServerObjects.KeyPermissionType.VRChatReuploader))
+            if (UserData == null || !UserData.KeyAccess.Contains(ServerObjects.KeyPermissionType.MinecraftBot))
             {
                 Logger.LogError("Key is not Valid");
                 await Task.Delay(3000);

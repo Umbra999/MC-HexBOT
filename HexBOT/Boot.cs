@@ -7,26 +7,29 @@ using HexBOT.Protocol;
 using HexBOT.Utils;
 using HexBOT.XboxAuth;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace HexBOT
 {
     internal class Boot
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetConsoleOutputCP(uint wCodePageID);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetConsoleCP(uint wCodePageID);
+
         public static List<MinecraftClient> Clients = new();
 
         public static void Main()
         {
-            var task = Task.Run(Load);
-            task.Wait();
-        }
-
-        public static async Task Load()
-        {
+            SetConsoleOutputCP(65001);
+            SetConsoleCP(65001);
             Console.OutputEncoding = Encoding.GetEncoding(65001);
             Console.InputEncoding = Encoding.GetEncoding(65001);
 
-            Console.Title = "HexBOT | Minecraft";
+            Console.Title = Encryption.RandomString(20);
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine(@"
 
@@ -46,6 +49,12 @@ namespace HexBOT
       \|
 ");
 
+            Task MainTask = Task.Run(Load);
+            MainTask.Wait();
+        }
+
+        public static async Task Load()
+        {
             await ServerHandler.Init();
 
             await CreateBots();
@@ -89,7 +98,8 @@ namespace HexBOT
 
                 Clients.Add(new MinecraftClient(Client));
             }
-            Console.Title = $"HexBOT | {Clients.Count} Bots";
+
+            Console.Title = $"HexBOT - {Clients.Count} Bots | {Encryption.RandomString(20)}";
 
             await Task.Delay(2500);
         }
