@@ -55,7 +55,7 @@ namespace HexBOT.Core
             {
                 Auth = 0,
                 UUID = UUID.AddDashesToUUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
-                Pin = LabyClient.DashboadPin,
+                Pin = LabyClient.DashboardPin,
                 ProtocolVersion = ProtocolVersion,
             });
 

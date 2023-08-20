@@ -10,7 +10,8 @@
             Minecraft = 3,
             VRChatBot = 4,
             VRChatReuploader = 5,
-            MinecraftBot = 6
+            MinecraftBot = 6,
+            LeagueOfLegends = 7,
         }
 
         public class UserData

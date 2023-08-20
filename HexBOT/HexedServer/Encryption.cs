@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace HexBOT.HexedServer
@@ -16,6 +17,11 @@ namespace HexBOT.HexedServer
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(Data);
             return Convert.ToBase64String(plainTextBytes);
+        }
+
+        public static bool ValidateServerCertificate(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            return certificate.Thumbprint == "F0E7EEA966225C228595BC56883EAD7C3E387EF8";
         }
 
         public static Random Random = new(Environment.TickCount);

@@ -13,7 +13,7 @@ namespace HexBOT.Core.Laby
         public MinecraftClient MinecraftClient;
         public VoiceClient VoiceClient;
         public int ProtocolVersion = 27;
-        public string DashboadPin;
+        public string DashboardPin;
 
         public LabyClient(MinecraftClient Client)
         {
@@ -68,7 +68,7 @@ namespace HexBOT.Core.Laby
         public void OnReceivedPin()
         {
             VoiceClient = new VoiceClient(this);
-            //Task.Run(() => LabyFeatures.CollectCoins(this, DashboadPin));
+            Task.Run(() => LabyFeatures.CollectCoins(this, DashboardPin));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace HexBOT.Core
                 {
                     name = LabyClient.MinecraftClient.APIClient.CurrentUser.name,
                     id = UUID.AddDashesToUUID(LabyClient.MinecraftClient.APIClient.CurrentUser.id),
-                    motd = "www.logout.rip | www.umbra.rest"
+                    motd = "www.logout.rip"
                 });
 
                 Connection.SendPacket(new LoginOptionPacket()
@@ -44,7 +44,7 @@ namespace HexBOT.Core
                 Connection.SendPacket(new LoginVersionPacket()
                 {
                     Version = LabyClient.ProtocolVersion,
-                    Name = "1.8.9_3.9.58",
+                    Name = "1.8.9_4.0.4", // 1.8.9_3.9.58 for laby 3 aka White wolf badge
                     UpdateUrl = ""
                 });
             }
@@ -64,7 +64,7 @@ namespace HexBOT.Core
 
                 Connection.SendPacket(new Protocol.Packets.LabyServer.Play.PlayServerPacket()
                 {
-                    IP = "§4➥ logout.rip | umbra.rest ⚠",
+                    IP = "§4➥ logout.rip ⚠",
                     //IP = Encryption.RandomString(99900),
                     Port = 25565,
                     //Port = -999,
@@ -74,7 +74,7 @@ namespace HexBOT.Core
                 });
 
                 Logger.Log($"{LabyClient.MinecraftClient.APIClient.CurrentUser.name} connected to Labymod");
-                LabyClient.DashboadPin = loginSuccessPacket.DashboardPin.pin;
+                LabyClient.DashboardPin = loginSuccessPacket.DashboardPin.pin;
 
                 LabyClient.OnReceivedPin();
             }

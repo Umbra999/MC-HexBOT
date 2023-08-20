@@ -45,7 +45,7 @@ namespace HexBOT.XboxAuth
                             if (toparse[cursorpos] == '"')
                             {
                                 JSONData propertyname = String2Data(toparse, ref cursorpos);
-                                if (toparse[cursorpos] == ':') { cursorpos++; } else { /* parse error ? */ }
+                                if (toparse[cursorpos] == ':') cursorpos++;
                                 JSONData propertyData = String2Data(toparse, ref cursorpos);
                                 data.Properties[propertyname.StringValue] = propertyData;
                             }

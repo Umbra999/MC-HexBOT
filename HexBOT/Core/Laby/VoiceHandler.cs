@@ -1,9 +1,5 @@
 ﻿using HexBOT.Network;
 using HexBOT.Packets;
-using HexBOT.Protocol.Packets.LabyClient.Login;
-using HexBOT.Protocol.Packets.LabyServer.Login;
-using HexBOT.Protocol.Utils;
-using System.Security.Cryptography;
 
 namespace HexBOT.Core
 {
