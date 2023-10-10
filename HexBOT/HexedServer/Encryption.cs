@@ -19,9 +19,10 @@ namespace HexBOT.HexedServer
             return Convert.ToBase64String(plainTextBytes);
         }
 
+        public static string ServerThumbprint;
         public static bool ValidateServerCertificate(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
         {
-            return certificate.Thumbprint == "F0E7EEA966225C228595BC56883EAD7C3E387EF8";
+            return certificate.Thumbprint == ServerThumbprint;
         }
 
         public static Random Random = new(Environment.TickCount);
