@@ -20,10 +20,12 @@ namespace HexBOT.HexedServer
                 File.WriteAllText("Key.Hexed", Encryption.ToBase64(NewKey));
             }
 
-            Encryption.ServerThumbprint = await FetchCert();
+            Encryption.ServerThumbprint = Encryption.FromBase64(await FetchCert());
+            Encryption.PublicEncryptionKey = Encryption.FromBase64(await FetchPublicKey());
+
             UserData = await Login(Encryption.FromBase64(File.ReadAllText("Key.Hexed")));
 
-            if (UserData == null || !UserData.KeyAccess.Contains(ServerObjects.KeyPermissionType.MinecraftBot))
+            if (UserData == null)
             {
                 Logger.LogError("Key is not Valid");
                 await Task.Delay(3000);
@@ -42,12 +44,12 @@ namespace HexBOT.HexedServer
             return null;
         }
 
-        private static async Task<string> FetchTime()
+        private static async Task<string> FetchPublicKey()
         {
             HttpClient Client = new(new HttpClientHandler { UseCookies = false, ServerCertificateCustomValidationCallback = Encryption.ValidateServerCertificate });
             Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Hexed)");
 
-            HttpRequestMessage Payload = new(HttpMethod.Get, "https://api.logout.rip/Server/Time");
+            HttpRequestMessage Payload = new(HttpMethod.Get, "https://api.logout.rip/Server/PublicKey");
             HttpResponseMessage Response = await Client.SendAsync(Payload);
             if (Response.IsSuccessStatusCode) return await Response.Content.ReadAsStringAsync();
             return null;
@@ -61,7 +63,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/Login")
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(Key, await FetchTime(), Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(Encryption.EncryptData(JsonConvert.SerializeObject(new { Key = Key, HWID = Encryption.GetHWID(), ServerTime = Encryption.GetUnixTime() })), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -84,7 +86,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Minecraft/GetOverseeList")
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(UserData.Token, await FetchTime(), Encryption.GetHWID()) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(Encryption.EncryptData(JsonConvert.SerializeObject(new { Key = UserData.Token, HWID = Encryption.GetHWID(), ServerTime = Encryption.GetUnixTime() })), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -128,8 +130,6 @@ namespace HexBOT.HexedServer
 
         private static async Task<bool> SendOverseeEmbded(string UUID, string Name, string Server, string Type, int Color)
         {
-            string Timestamp = await FetchTime();
-
             Misc.DiscordEmbedField PlayerInfos = new()
             {
                 name = "User",
@@ -142,11 +142,11 @@ namespace HexBOT.HexedServer
                 value = $"**{Server}**"
             };
 
-            Misc.DiscordEmbedField[] Fields = new Misc.DiscordEmbedField[]
-            {
+            Misc.DiscordEmbedField[] Fields =
+            [
                 PlayerInfos,
                 ServerInfos
-            };
+            ];
 
             Misc.DiscordPayload EmbedPayload = new()
             {
@@ -162,7 +162,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/Webhook")
             {
-                Content = new StringContent(JsonConvert.SerializeObject(new { Auth = Encryption.EncryptAuthKey(UserData.Token, Timestamp, Encryption.GetHWID()), Payload = JsonConvert.SerializeObject(EmbedPayload) }), Encoding.UTF8, "application/json")
+                Content = new StringContent(Encryption.EncryptData(JsonConvert.SerializeObject(new { Key = UserData.Token, HWID = Encryption.GetHWID(), ServerTime = Encryption.GetUnixTime(), Payload = EmbedPayload })), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);

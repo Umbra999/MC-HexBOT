@@ -7,6 +7,35 @@ namespace HexBOT.HexedServer
 {
     internal class Encryption
     {
+        public static string ServerThumbprint;
+        public static string PublicEncryptionKey;
+
+        // GENERAL UTILS
+
+        public static string GetMD5HashFromFile(string fileName)
+        {
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(fileName);
+            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+        }
+
+        public static Random Random = new(Environment.TickCount);
+        public static string RandomString(int length)
+        {
+            char[] array = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToArray();
+            string text = string.Empty;
+            for (int i = 0; i < length; i++)
+            {
+                text += array[Random.Next(array.Length)].ToString();
+            }
+            return text;
+        }
+
+        public static bool ValidateServerCertificate(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            return certificate.Thumbprint == ServerThumbprint;
+        }
+
         public static string FromBase64(string Data)
         {
             var base64EncodedBytes = Convert.FromBase64String(Data);
@@ -19,47 +48,61 @@ namespace HexBOT.HexedServer
             return Convert.ToBase64String(plainTextBytes);
         }
 
-        public static string ServerThumbprint;
-        public static bool ValidateServerCertificate(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        public static long GetUnixTime()
         {
-            return certificate.Thumbprint == ServerThumbprint;
+            return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
 
-        public static Random Random = new(Environment.TickCount);
-        public static string RandomString(int length)
+        // CLIENT SIDE ENCRYPTION
+
+        public static string EncryptData(string dataToEncrypt)
         {
-            char[] array = "abcdefghlijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToArray();
-            string text = string.Empty;
-            for (int i = 0; i < length; i++)
+            using (Aes aes = Aes.Create())
             {
-                text += array[Random.Next(array.Length)].ToString();
+                byte[] dataBytes = Encoding.UTF8.GetBytes(dataToEncrypt);
+                byte[] encryptedData = EncryptWithAes(dataBytes, aes.Key, aes.IV);
+
+                using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+                {
+                    rsa.FromXmlString(PublicEncryptionKey);
+
+                    byte[] encryptedAesKey = rsa.Encrypt(aes.Key, false);
+                    byte[] encryptedAesIV = rsa.Encrypt(aes.IV, false);
+
+                    return Convert.ToBase64String(encryptedData) + "|" + Convert.ToBase64String(encryptedAesKey) + "|" + Convert.ToBase64String(encryptedAesIV);
+                }
             }
-            return text;
         }
 
-        public static int RandomNumber(int Lowest, int Highest)
+        private static byte[] EncryptWithAes(byte[] data, byte[] key, byte[] iv)
         {
-            return Random.Next(Lowest, Highest);
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = key;
+                aesAlg.IV = iv;
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, aesAlg.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        csEncrypt.Write(data, 0, data.Length);
+                        csEncrypt.FlushFinalBlock();
+                    }
+                    return msEncrypt.ToArray();
+                }
+            }
         }
 
-        public static byte RandomByte()
+        // HWID FOR CLIENTS
+
+        public static string GenerateHash(string Text)
         {
-            return (byte)Random.Next(0, 255);
+            byte[] bytes = Encoding.UTF8.GetBytes(Text);
+            byte[] hash = SHA256.HashData(bytes);
+            string ComputeHash = string.Join("", from it in hash select it.ToString("x2"));
+            return ComputeHash;
         }
 
-        public static string EncryptAuthKey(string Key, string Timestamp, string HWID)
-        {
-            string EncryptedKey = "";
-            EncryptedKey += ToBase64(Timestamp);
-            EncryptedKey += ":";
-            EncryptedKey += ToBase64(HWID);
-            EncryptedKey += ":";
-            EncryptedKey += ToBase64(Key);
-
-            return ToBase64(ToBase64(EncryptedKey) + RandomString(5));
-        }
-
-        // HWID
         public static string GetHWID()
         {
             string HWID = Environment.MachineName;
@@ -72,16 +115,8 @@ namespace HexBOT.HexedServer
             HWID += GetDriveID();
             HWID += GetDriveID();
             HWID += GetHWIDProfile();
-            HWID = GenerateHash(ToBase64(HWID));
+            HWID = GenerateHash(HWID);
             return "H" + HWID + "EX";
-        }
-
-        public static string GenerateHash(string Text)
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(Text);
-            byte[] hash = SHA256.HashData(bytes);
-            string ComputeHash = string.Join("", from it in hash select it.ToString("x2"));
-            return ComputeHash;
         }
 
         private static string GetProcessorID()

@@ -29,7 +29,7 @@ namespace HexBOT.Features
             switch (CommandArguments[0])
             {
                 case "dice":
-                    Bot.SendChat("Dice: " + Encryption.RandomNumber(1, 6).ToString());
+                    Bot.SendChat("Dice: " + Encryption.Random.Next(1, 6).ToString());
                     break;
 
                 case "health":

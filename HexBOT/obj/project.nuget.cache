@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ejZ8UznhXoAnqLq4q+NLDA9Kw8o81VH/JrvK+eS4+IX848HYD60HxRK7UzFnHUhKe/60n6JvHuyY4G102Le2YA==",
+  "dgSpecHash": "7j798jOrb+Vb0VuarlUM4pddkg9LV9kkxws5siIQSuZlY1q4mU70/aAlVZNuph5JorDBUsH+kUoG+LXH5vjIDg==",
   "success": true,
-  "projectFilePath": "D:\\Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
+  "projectFilePath": "C:\\Users\\Umbra\\Documents\\Temp Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Umbra\\.nuget\\packages\\bouncycastle.crypto.dll\\1.8.1\\bouncycastle.crypto.dll.1.8.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\iconic.zlib.netstandard\\1.0.0\\iconic.zlib.netstandard.1.0.0.nupkg.sha512",
@@ -75,10 +75,10 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Das Paket \"BouncyCastle.Crypto.dll 1.8.1\" wurde nicht mit dem Projektzielframework \"net7.0-windows7.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "message": "Das Paket \"BouncyCastle.Crypto.dll 1.8.1\" wurde nicht mit dem Projektzielframework \"net8.0-windows7.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
       "libraryId": "BouncyCastle.Crypto.dll",
       "targetGraphs": [
-        "net7.0-windows7.0"
+        "net8.0-windows7.0"
       ]
     }
   ]
