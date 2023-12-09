@@ -29,7 +29,7 @@ namespace HexBOT
             Console.OutputEncoding = Encoding.GetEncoding(65001);
             Console.InputEncoding = Encoding.GetEncoding(65001);
 
-            Console.Title = Encryption.RandomString(20);
+            Console.Title = EncryptUtils.RandomString(20);
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine(@"
 
@@ -55,7 +55,7 @@ namespace HexBOT
 
         public static async Task Load()
         {
-            await ServerHandler.Init();
+            ServerHandler.Init();
 
             await CreateBots();
 
@@ -99,7 +99,7 @@ namespace HexBOT
                 Clients.Add(new MinecraftClient(Client));
             }
 
-            Console.Title = $"HexBOT - {Clients.Count} Bots | {Encryption.RandomString(20)}";
+            Console.Title = $"HexBOT - {Clients.Count} Bots | {EncryptUtils.RandomString(20)}";
 
             await Task.Delay(2500);
         }

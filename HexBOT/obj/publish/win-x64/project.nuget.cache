@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3wcJHwjedGkYr7hyHdktnPxlXhM/TRxNVY8IrYtOkVgjFCkmXKg6ypoXdIzDeWUsgXTKmlNXj+4ZHI8iromMQw==",
+  "dgSpecHash": "d8fYUwL4k0NH8+W3UUQWTs5sRjUhqsaRmQQhcRo+XbMwQaaOJQ+ZWrh//u39xo4yELjkXwZSSwc+e5c+PhWwsQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Umbra\\Documents\\Temp Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
+  "projectFilePath": "D:\\Coding\\Github\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Umbra\\.nuget\\packages\\bouncycastle.crypto.dll\\1.8.1\\bouncycastle.crypto.dll.1.8.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\iconic.zlib.netstandard\\1.0.0\\iconic.zlib.netstandard.1.0.0.nupkg.sha512",

@@ -21,7 +21,7 @@ namespace HexBOT.Features
 
             while (SkinBlinkToggle)
             {
-                byte Random = (byte)Encryption.Random.Next(0, 255);
+                byte Random = (byte)EncryptUtils.Random.Next(0, 255);
 
                 Bot.SendPlayerSetings(true, Packets.Server.Play.ClientSettingsPacket.ChatType.Enabled, Random, "en_us", 64);
 

@@ -6775,11 +6775,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Umbra\\Documents\\Temp Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
+      "projectUniqueName": "D:\\Coding\\Github\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
       "projectName": "HexBOT",
-      "projectPath": "C:\\Users\\Umbra\\Documents\\Temp Github Repos\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
+      "projectPath": "D:\\Coding\\Github\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
       "packagesPath": "C:\\Users\\Umbra\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Umbra\\Documents\\Temp Github Repos\\MC-HexBOT\\HexBOT\\obj\\publish\\win-x64\\",
+      "outputPath": "D:\\Coding\\Github\\MC-HexBOT\\HexBOT\\obj\\publish\\win-x64\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -6794,7 +6794,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Users\\Umbra\\Documents\\Temp Github Repos\\DBD-HexedProxy\\FiddlerCore": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
