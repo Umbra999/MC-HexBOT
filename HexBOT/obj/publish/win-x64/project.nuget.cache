@@ -1,12 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "d8fYUwL4k0NH8+W3UUQWTs5sRjUhqsaRmQQhcRo+XbMwQaaOJQ+ZWrh//u39xo4yELjkXwZSSwc+e5c+PhWwsQ==",
+  "dgSpecHash": "fcUFeN9+2ra7bNHg7cnG5kM90GhkycRAL/HHY99c/zb3c+qdTcHlySLutKAWkBpkWneGjVV6TW+Yz57GeUoHjQ==",
   "success": true,
   "projectFilePath": "D:\\Coding\\Github\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Umbra\\.nuget\\packages\\bouncycastle.crypto.dll\\1.8.1\\bouncycastle.crypto.dll.1.8.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\iconic.zlib.netstandard\\1.0.0\\iconic.zlib.netstandard.1.0.0.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.0\\microsoft.net.illink.tasks.8.0.0.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.platforms\\1.0.1\\microsoft.netcore.platforms.1.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.netcore.targets\\1.0.1\\microsoft.netcore.targets.1.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.win32.primitives\\4.0.1\\microsoft.win32.primitives.4.0.1.nupkg.sha512",

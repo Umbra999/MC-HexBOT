@@ -44,7 +44,7 @@ namespace HexBOT.Core
                 Connection.SendPacket(new LoginVersionPacket()
                 {
                     Version = LabyClient.ProtocolVersion,
-                    Name = "1.8.9_4.0.4", // 1.8.9_3.9.58 for laby 3 aka White wolf badge
+                    Name = "1.8.9_4.1.11", // 1.8.9_3.9.58 for laby 3 aka White wolf badge
                     UpdateUrl = ""
                 });
             }

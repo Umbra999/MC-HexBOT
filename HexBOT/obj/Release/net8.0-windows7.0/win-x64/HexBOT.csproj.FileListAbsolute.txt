@@ -19,24 +19,16 @@ C:\Users\Umbra\Documents\Temp Github Repos\MC-HexBOT\HexBOT\obj\Release\net8.0-w
 C:\Users\Umbra\Documents\Temp Github Repos\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.pdb
 C:\Users\Umbra\Documents\Temp Github Repos\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.genruntimeconfig.cache
 C:\Users\Umbra\Documents\Temp Github Repos\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\ref\HexBOT.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\HexBOT.exe
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\HexBOT.deps.json
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\HexBOT.runtimeconfig.json
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\HexBOT.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\HexBOT.pdb
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\BouncyCastle.Crypto.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\Iconic.Zlib.Netstandard.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\fNbt.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\win-x64\Newtonsoft.Json.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.csproj.AssemblyReference.cache
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.GeneratedMSBuildEditorConfig.editorconfig
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.AssemblyInfoInputs.cache
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.AssemblyInfo.cs
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.csproj.CoreCompileInputs.cache
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.sourcelink.json
-D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.csproj.CopyComplete
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\refint\HexBOT.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.pdb
-D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\HexBOT.genruntimeconfig.cache
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\win-x64\ref\HexBOT.dll

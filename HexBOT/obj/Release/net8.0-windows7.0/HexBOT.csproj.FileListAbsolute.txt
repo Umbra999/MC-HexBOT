@@ -28,15 +28,7 @@ D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\HexBOT.sourcelin
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\HexBOT.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\refint\HexBOT.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\HexBOT.pdb
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\HexBOT.exe
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\HexBOT.deps.json
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\HexBOT.runtimeconfig.json
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\HexBOT.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\HexBOT.pdb
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\BouncyCastle.Crypto.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\Iconic.Zlib.Netstandard.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\fNbt.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net8.0-windows7.0\Newtonsoft.Json.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\HexBOT.csproj.CopyComplete
-D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\HexBOT.genruntimeconfig.cache
 D:\Coding\Github\MC-HexBOT\HexBOT\obj\Release\net8.0-windows7.0\ref\HexBOT.dll
