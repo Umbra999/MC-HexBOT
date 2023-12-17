@@ -22,35 +22,17 @@ namespace HexBOT
 
         public static List<MinecraftClient> Clients = new();
 
-        public static void Main()
+        public sealed class HexedEntry : Attribute { }
+
+        [HexedEntry]
+        public static void Main(string[] args)
         {
             SetConsoleOutputCP(65001);
             SetConsoleCP(65001);
             Console.OutputEncoding = Encoding.GetEncoding(65001);
             Console.InputEncoding = Encoding.GetEncoding(65001);
 
-            Console.Title = EncryptUtils.RandomString(20);
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine(@"
-
- ▄▀▀▄ ▄▄   ▄▀▀█▄▄▄▄  ▄▀▀▄  ▄▀▄  ▄▀▀█▄▄▄▄  ▄▀▀█▄▄  
-█  █   ▄▀ ▐  ▄▀   ▐ █    █   █ ▐  ▄▀   ▐ █ ▄▀   █ 
-▐  █▄▄▄█    █▄▄▄▄▄  ▐     ▀▄▀    █▄▄▄▄▄  ▐ █    █ 
-   █   █    █    ▌       ▄▀ █    █    ▌    █    █ 
-  ▄▀  ▄▀   ▄▀▄▄▄▄       █  ▄▀   ▄▀▄▄▄▄    ▄▀▄▄▄▄▀ 
- █   █     █    ▐     ▄▀  ▄▀    █    ▐   █     ▐  
- ▐   ▐     ▐         █    ▐     ▐        ▐        
-      _
-     |u|
-   __|m|__
-   \+-b-+/       Beautiful girls, dead feelings...
-    ~|r|~        one day the sun is gonna explode and all this was for nothing.
-     |a|
-      \|
-");
-
-            Task MainTask = Task.Run(Load);
-            MainTask.Wait();
+            Task.Run(Load).Wait();
         }
 
         public static async Task Load()
