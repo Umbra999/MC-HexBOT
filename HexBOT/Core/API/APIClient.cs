@@ -1,8 +1,8 @@
 ﻿using HexBOT.Protocol.Utils;
 using HexBOT.Utils;
-using Newtonsoft.Json;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 
 namespace HexBOT.Core.API
 {
@@ -30,7 +30,7 @@ namespace HexBOT.Core.API
             Client.MinecraftClient.DefaultRequestHeaders.Add("Referer", "https://www.minecraft.net/");
             Client.MinecraftClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36 OPR/90.0.4480.100");
 
-            string Body = JsonConvert.SerializeObject(new { ensureLegacyEnabled = true, identityToken = Token });
+            string Body = JsonSerializer.Serialize(new { ensureLegacyEnabled = true, identityToken = Token });
 
             HttpRequestMessage Payload = new(HttpMethod.Post, $"https://api.minecraftservices.com/authentication/login_with_xbox")
             {
@@ -43,7 +43,7 @@ namespace HexBOT.Core.API
             if (Response.IsSuccessStatusCode)
             {
                 string ResponseBody = await Response.Content.ReadAsStringAsync();
-                Client.AuthUser = JsonConvert.DeserializeObject<SelfAuthUser>(ResponseBody);
+                Client.AuthUser = JsonSerializer.Deserialize<SelfAuthUser>(ResponseBody);
                 Client.MinecraftClient.DefaultRequestHeaders.Add("Authorization", $"{Client.AuthUser.token_type} {Client.AuthUser.access_token}");
                 Client.CurrentUser = await Client.GetCurrentUser();
                 return Client;
@@ -57,14 +57,14 @@ namespace HexBOT.Core.API
 
             HttpResponseMessage Response = await MinecraftClient.SendAsync(Payload);
 
-            if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<SelfAPIUser>(await Response.Content.ReadAsStringAsync());
+            if (Response.IsSuccessStatusCode) return JsonSerializer.Deserialize<SelfAPIUser>(await Response.Content.ReadAsStringAsync());
             return null;
         }
 
 
         public async Task<bool> ChangeSkin(string URL, bool Slim)
         {
-            string Body = JsonConvert.SerializeObject(new { url = URL, variant = Slim ? "slim" : "classic" });
+            string Body = JsonSerializer.Serialize(new { url = URL, variant = Slim ? "slim" : "classic" });
 
             HttpRequestMessage Payload = new(HttpMethod.Post, $"https://api.minecraftservices.com/minecraft/profile/skins")
             {
@@ -79,7 +79,7 @@ namespace HexBOT.Core.API
 
         public async Task<bool> ChangeName(string Name)
         {
-            string Body = JsonConvert.SerializeObject(new { url = Name });
+            string Body = JsonSerializer.Serialize(new { url = Name });
 
             HttpRequestMessage Payload = new(HttpMethod.Post, $"https://api.minecraftservices.com/minecraft/profile/namechange")
             {
@@ -100,7 +100,7 @@ namespace HexBOT.Core.API
 
             string content = await Response.Content.ReadAsStringAsync();
 
-            if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<APIUser>(content);
+            if (Response.IsSuccessStatusCode) return JsonSerializer.Deserialize<APIUser>(content);
             return null;
         }
 
@@ -112,13 +112,13 @@ namespace HexBOT.Core.API
 
             string content = await Response.Content.ReadAsStringAsync();
 
-            if (Response.IsSuccessStatusCode) return JsonConvert.DeserializeObject<APIUser>(content);
+            if (Response.IsSuccessStatusCode) return JsonSerializer.Deserialize<APIUser>(content);
             return null;
         }
 
         public async Task<bool> JoinServer(string serverHash)
         {
-            string Body = JsonConvert.SerializeObject(new { serverId = serverHash, accessToken = AuthUser.access_token, selectedProfile = CurrentUser.id });
+            string Body = JsonSerializer.Serialize(new { serverId = serverHash, accessToken = AuthUser.access_token, selectedProfile = CurrentUser.id });
 
             HttpRequestMessage Payload = new(HttpMethod.Post, $"https://sessionserver.mojang.com/session/minecraft/join")
             {
@@ -170,7 +170,7 @@ namespace HexBOT.Core.API
             if (Response.IsSuccessStatusCode)
             {
                 string content = await Response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<LabyCoinCount>(content);
+                return JsonSerializer.Deserialize<LabyCoinCount>(content);
             }
             return null;
         }

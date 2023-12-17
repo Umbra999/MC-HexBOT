@@ -1,6 +1,6 @@
 ﻿using HexBOT.Utils;
-using Newtonsoft.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace HexBOT.HexedServer
 {
@@ -77,7 +77,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/Login")
             {
-                Content = new StringContent(DataEncryptBase.EncryptData(JsonConvert.SerializeObject(new { Key = Key, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime() }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
+                Content = new StringContent(DataEncryptBase.EncryptData(JsonSerializer.Serialize(new { Key = Key, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime() }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -86,7 +86,7 @@ namespace HexBOT.HexedServer
             {
                 string EncryptedData = await Response.Content.ReadAsStringAsync();
                 string RawData = DataEncryptBase.DecryptData(EncryptedData, Encryption.DecryptionKey);
-                return JsonConvert.DeserializeObject<ServerObjects.UserData>(RawData);
+                return JsonSerializer.Deserialize<ServerObjects.UserData>(RawData);
             }
 
             return null;
@@ -101,7 +101,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Minecraft/GetOverseeList")
             {
-                Content = new StringContent(DataEncryptBase.EncryptData(JsonConvert.SerializeObject(new { Key = UserData.Token, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime() }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
+                Content = new StringContent(DataEncryptBase.EncryptData(JsonSerializer.Serialize(new { Key = UserData.Token, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime() }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);
@@ -178,7 +178,7 @@ namespace HexBOT.HexedServer
 
             HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/Webhook")
             {
-                Content = new StringContent(DataEncryptBase.EncryptData(JsonConvert.SerializeObject(new { Key = UserData.Token, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime(), Payload = EmbedPayload }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
+                Content = new StringContent(DataEncryptBase.EncryptData(JsonSerializer.Serialize(new { Key = UserData.Token, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime(), Payload = EmbedPayload }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
             };
 
             HttpResponseMessage Response = await Client.SendAsync(Payload);

@@ -4,4 +4,3 @@ D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net6.0\publish\win-x64\HexBOT.pdb
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net6.0\publish\win-x64\BouncyCastle.Crypto.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net6.0\publish\win-x64\Iconic.Zlib.Netstandard.dll
 D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net6.0\publish\win-x64\fNbt.dll
-D:\Coding\Github\MC-HexBOT\HexBOT\bin\Release\net6.0\publish\win-x64\Newtonsoft.Json.dll

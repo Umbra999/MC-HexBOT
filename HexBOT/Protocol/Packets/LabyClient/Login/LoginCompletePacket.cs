@@ -1,7 +1,7 @@
 ﻿using HexBOT.Network;
 using HexBOT.Packets;
 using HexBOT.Utils;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace HexBOT.Protocol.Packets.LabyClient.Login
 {
@@ -10,7 +10,7 @@ namespace HexBOT.Protocol.Packets.LabyClient.Login
         public LabyPin DashboardPin { get; set; }
         public void Decode(MinecraftStream minecraftStream)
         {
-            DashboardPin = JsonConvert.DeserializeObject<LabyPin>(minecraftStream.ReadString());
+            DashboardPin = JsonSerializer.Deserialize<LabyPin>(minecraftStream.ReadString());
         }
 
         public void Encode(MinecraftStream minecraftStream)

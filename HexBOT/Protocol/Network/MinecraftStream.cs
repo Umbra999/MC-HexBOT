@@ -1,8 +1,6 @@
 ﻿using fNbt;
-using HexBOT.Protocol;
 using HexBOT.Protocol.Utils;
 using HexBOT.Utils;
-using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
@@ -12,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
+using System.Text.Json;
 
 namespace HexBOT.Network
 {
@@ -415,7 +414,7 @@ namespace HexBOT.Network
 
 		public void WriteChatObject(ChatMessage data)
 		{
-			WriteString(JsonConvert.SerializeObject(data));
+			WriteString(JsonSerializer.Serialize(data));
 		}
 
 		public string ReadUuid()

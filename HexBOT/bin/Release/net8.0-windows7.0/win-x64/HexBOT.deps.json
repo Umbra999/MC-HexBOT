@@ -11,8 +11,7 @@
         "dependencies": {
           "BouncyCastle.Crypto.dll": "1.8.1",
           "Iconic.Zlib.Netstandard": "1.0.0",
-          "MiNET.fnbt": "1.0.22",
-          "Newtonsoft.Json": "13.0.3"
+          "MiNET.fnbt": "1.0.22"
         },
         "runtime": {
           "HexBOT.dll": {}
@@ -101,14 +100,6 @@
           "System.Threading.Timer": "4.0.1",
           "System.Xml.ReaderWriter": "4.0.11",
           "System.Xml.XDocument": "4.0.11"
-        }
-      },
-      "Newtonsoft.Json/13.0.3": {
-        "runtime": {
-          "lib/net6.0/Newtonsoft.Json.dll": {
-            "assemblyVersion": "13.0.0.0",
-            "fileVersion": "13.0.3.27908"
-          }
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -947,13 +938,6 @@
       "sha512": "sha512-ypsCvIdCZ4IoYASJHt6tF2fMo7N30NLgV1EbmC+snO490OMl9FvVxmumw14rhReWU3j3g7BYudG6YCrchwHJlA==",
       "path": "netstandard.library/1.6.0",
       "hashPath": "netstandard.library.1.6.0.nupkg.sha512"
-    },
-    "Newtonsoft.Json/13.0.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
-      "path": "newtonsoft.json/13.0.3",
-      "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
     },
     "runtime.any.System.Collections/4.0.11": {
       "type": "package",

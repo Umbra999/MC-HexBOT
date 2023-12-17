@@ -55,10 +55,6 @@
             "MiNET.fnbt": {
               "target": "Package",
               "version": "[1.0.22, )"
-            },
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.3, )"
             }
           },
           "imports": [

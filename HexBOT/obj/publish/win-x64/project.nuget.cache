@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fcUFeN9+2ra7bNHg7cnG5kM90GhkycRAL/HHY99c/zb3c+qdTcHlySLutKAWkBpkWneGjVV6TW+Yz57GeUoHjQ==",
+  "dgSpecHash": "v8UaZlKclfTU3ce7PxZ8LksYs+lm4dw8aiuRWl6787glhNpKKw3M7xlynfntkosjtceaAY4H9TX8VLCbJHyclg==",
   "success": true,
   "projectFilePath": "D:\\Coding\\Github\\MC-HexBOT\\HexBOT\\HexBOT.csproj",
   "expectedPackageFiles": [
@@ -11,7 +11,6 @@
     "C:\\Users\\Umbra\\.nuget\\packages\\microsoft.win32.primitives\\4.0.1\\microsoft.win32.primitives.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\minet.fnbt\\1.0.22\\minet.fnbt.1.0.22.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\netstandard.library\\1.6.0\\netstandard.library.1.6.0.nupkg.sha512",
-    "C:\\Users\\Umbra\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.any.system.collections\\4.0.11\\runtime.any.system.collections.4.0.11.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.any.system.diagnostics.tools\\4.0.1\\runtime.any.system.diagnostics.tools.4.0.1.nupkg.sha512",
     "C:\\Users\\Umbra\\.nuget\\packages\\runtime.any.system.diagnostics.tracing\\4.1.0\\runtime.any.system.diagnostics.tracing.4.1.0.nupkg.sha512",
