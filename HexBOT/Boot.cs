@@ -27,7 +27,7 @@ namespace HexBOT
         [HexedEntry]
         public static void Main(string[] args)
         {
-            if (args.Length == 0) return;
+            if (args.Length != 1) return;
 
             ServerHandler.Init(args[0]);
 
@@ -133,7 +133,6 @@ namespace HexBOT
                         Logger.LogImportant("-----------------");
                         Logger.LogImportant("N [NAME] - Change the Name");
                         Logger.LogImportant("S [URL] - Change the Skin");
-                        Logger.LogImportant("O - Refresh the Oversee");
                         Logger.LogImportant("D - Dump all Players");
                         Logger.LogImportant("-----------------");
                         HandleDebugInput(Console.ReadLine());
@@ -342,10 +341,6 @@ namespace HexBOT
                     {
                         Task.Run(() => Client.APIClient.ChangeSkin(input.Substring(2), true));
                     }
-                    break;
-
-                case "o":
-                    Task.Run(() => ServerHandler.FetchSearchList());
                     break;
 
                 case "d":

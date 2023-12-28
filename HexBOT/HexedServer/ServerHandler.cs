@@ -1,4 +1,5 @@
 ﻿using HexBOT.Utils;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -11,11 +12,15 @@ namespace HexBOT.HexedServer
 
         public static void Init(string Key)
         {
+            Token = Key;
+
             Encryption.ServerThumbprint = EncryptUtils.FromBase64(FetchCert().Result);
             Encryption.EncryptionKey = EncryptUtils.FromBase64(FetchEncryptionKey().Result);
             Encryption.DecryptionKey = EncryptUtils.FromBase64(FetchDecryptionKey().Result);
 
-            Token = Key;
+            if (!IsValidToken().Result) Process.GetCurrentProcess().Kill();
+
+            Task.Run(FetchSearchList).Wait();
         }
 
         private static async Task<string> FetchCert()
@@ -49,6 +54,21 @@ namespace HexBOT.HexedServer
             HttpResponseMessage Response = await Client.SendAsync(Payload);
             if (Response.IsSuccessStatusCode) return await Response.Content.ReadAsStringAsync();
             return null;
+        }
+
+        public static async Task<bool> IsValidToken()
+        {
+            HttpClient Client = new(new HttpClientHandler { UseCookies = false, ServerCertificateCustomValidationCallback = Encryption.ValidateServerCertificate });
+            Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Hexed)");
+
+            HttpRequestMessage Payload = new(HttpMethod.Post, "https://api.logout.rip/Server/IsValidToken")
+            {
+                Content = new StringContent(DataEncryptBase.EncryptData(JsonSerializer.Serialize(new { Key = Token, HWID = Encryption.GetHWID(), ServerTime = EncryptUtils.GetUnixTime() }), Encryption.EncryptionKey), Encoding.UTF8, "application/json")
+            };
+
+            HttpResponseMessage Response = await Client.SendAsync(Payload);
+
+            return Response.IsSuccessStatusCode;
         }
 
         public static async Task FetchSearchList()
