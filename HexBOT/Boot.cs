@@ -27,19 +27,16 @@ namespace HexBOT
         [HexedEntry]
         public static void Main(string[] args)
         {
+            if (args.Length == 0) return;
+
+            ServerHandler.Init(args[0]);
+
             SetConsoleOutputCP(65001);
             SetConsoleCP(65001);
             Console.OutputEncoding = Encoding.GetEncoding(65001);
             Console.InputEncoding = Encoding.GetEncoding(65001);
 
-            Task.Run(Load).Wait();
-        }
-
-        public static async Task Load()
-        {
-            ServerHandler.Init();
-
-            await CreateBots();
+            Task.Run(CreateBots).Wait();
 
             RunGUI();
         }

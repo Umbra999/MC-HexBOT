@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HexBOT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ffeb114827a3c83a241bcf7ff2e88d8e05293619")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ef97ac003982059a9605ad0bd81a97f7b7cb486")]
 [assembly: System.Reflection.AssemblyProductAttribute("HexBOT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HexBOT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
